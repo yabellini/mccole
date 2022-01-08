@@ -4,10 +4,10 @@
 
 import argparse
 from pathlib import Path
-
 import yaml
-from transform import find_files, gather_data, parse_files, transform_files
-from util import DEFAULTS, McColeExc, fail, obj2ns
+
+from mccole.transform import find_files, gather_data, parse_files, transform_files
+from mccole.util import DEFAULTS, McColeExc, fail, obj2ns
 
 
 def main():
