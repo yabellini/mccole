@@ -16,12 +16,12 @@ def main():
     try:
         options = parse_args()
         config = get_config(options.config)
-        to_transform, to_copy = find_files(config, config.src)
-        parse_files(config, to_transform)
-        gather_data(config, to_transform)
-        transform_files(config, to_transform)
-        write_files(config, to_transform)
-        copy_files(config, to_copy)
+        files = find_files(config, config.src)
+        subset = [info for info in files if info["action"] == "transform"]
+        parse_files(config, subset)
+        gather_data(config, subset)
+        transform_files(config, subset)
+        write_files(config, files)
     except McColeExc as exc:
         fail(exc)
 
