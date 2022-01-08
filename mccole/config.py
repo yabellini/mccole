@@ -5,7 +5,7 @@ from pathlib import Path
 
 import yaml
 
-from mccole.util import McColeExc
+from .util import McColeExc
 
 # Default configuration settings.
 DEFAULTS = {

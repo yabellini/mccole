@@ -1,6 +1,6 @@
 """File transformation tools."""
 
-from mccole.util import McColeExc
+from .util import McColeExc
 
 
 def gather_data(config, files):

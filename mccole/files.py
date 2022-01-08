@@ -15,17 +15,15 @@ def find_files(config, root):
         elif _should_exclude(config, p):
             continue
         elif _should_transform(config, p):
-            files.append({
-                "action": "transform",
-                "from": p,
-                "to": _change_path(config, p, ".html")
-            })
+            files.append(
+                {
+                    "action": "transform",
+                    "from": p,
+                    "to": _change_path(config, p, ".html"),
+                }
+            )
         else:
-            files.append({
-                "action": "copy",
-                "from": p,
-                "to": _change_path(config, p)
-            })
+            files.append({"action": "copy", "from": p, "to": _change_path(config, p)})
     return files
 
 

@@ -1,5 +1,6 @@
-import pytest
 from textwrap import dedent
+
+import pytest
 
 from mccole.convert import md_to_html
 from mccole.util import McColeExc
@@ -33,7 +34,10 @@ def test_bib_cite_with_one_key():
 
 def test_bib_cite_with_multiple_keys():
     html = md_to_html("@b(key1,key2)")
-    assert html.strip() == '<p>[<a href="bib.html#key1">key1</a>,<a href="bib.html#key2">key2</a>]</p>'
+    assert (
+        html.strip()
+        == '<p>[<a href="bib.html#key1">key1</a>,<a href="bib.html#key2">key2</a>]</p>'
+    )
 
 
 def test_bib_cite_with_trailing_comma():
@@ -108,12 +112,18 @@ def test_index_ref_too_many_fields():
 
 def test_gloss_index_ref_correctly_formatted():
     html = md_to_html("@gi(text|gloss|index)")
-    assert html.strip() == '<p><a href="gloss.html#gloss" index="index.html#index">text</a></p>'
+    assert (
+        html.strip()
+        == '<p><a href="gloss.html#gloss" index="index.html#index">text</a></p>'
+    )
 
 
 def test_gloss_index_ref_with_spaces():
     html = md_to_html("@gi(text| gloss\t|   index)")
-    assert html.strip() == '<p><a href="gloss.html#gloss" index="index.html#index">text</a></p>'
+    assert (
+        html.strip()
+        == '<p><a href="gloss.html#gloss" index="index.html#index">text</a></p>'
+    )
 
 
 def test_gloss_index_ref_missing_text():
