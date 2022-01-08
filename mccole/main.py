@@ -6,7 +6,8 @@ import argparse
 from pathlib import Path
 import yaml
 
-from mccole.transform import find_files, gather_data, parse_files, transform_files
+from mccole.files import find_files
+from mccole.transform import gather_data, parse_files, transform_files
 from mccole.util import DEFAULTS, McColeExc, fail, obj2ns
 
 
@@ -15,7 +16,7 @@ def main():
     try:
         options = parse_args()
         config = get_config(options.config)
-        to_transform, to_copy = find_files(config)
+        to_transform, to_copy = find_files(config, config.src)
         parse_files(config, to_transform)
         gather_data(config, to_transform)
         transform_files(config, to_transform)

@@ -1,11 +1,5 @@
 """File transformation tools."""
 
-
-def find_files(config):
-    """Find files to transform and files to copy."""
-    return {}, {}
-
-
 def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
     pass

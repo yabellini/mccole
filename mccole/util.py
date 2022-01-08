@@ -11,6 +11,8 @@ DEFAULTS = SimpleNamespace(
     config=Path(os.curdir) / "mccole.yml",
     dst=Path("_site"),
     src=Path(os.curdir),
+    transform=["*.md"],
+    exclude=["*~"],
 )
 
 
