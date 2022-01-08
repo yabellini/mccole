@@ -1,3 +1,9 @@
+black>=21.12b0
+flake8 >=4.0.1
+isort>=5.10.1
+mistletoe>=0.8.1
 mkdocs>=1.2.3
 mkdocstrings>=0.17.0
+pycodestyle>=2.8.0
 pyfakefs>=4.5.3
+pytest>=6.2.5

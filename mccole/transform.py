@@ -1,5 +1,7 @@
 """File transformation tools."""
 
+from mccole.util import McColeExc
+
 
 def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
@@ -7,10 +9,16 @@ def gather_data(config, files):
 
 
 def parse_files(config, files):
-    """Turn Markdown into AST."""
-    pass
+    """Load Markdown."""
+    for info in files:
+        try:
+            with open(info["from"], "r") as reader:
+                info["raw"] = reader.read()
+        except OSError as exc:
+            raise McColeExc(str(exc))
 
 
 def transform_files(config, files):
-    """Convert ASTs to HTML."""
-    pass
+    """Convert to HTML."""
+    for info in files:
+        info["cooked"] = info["raw"]
