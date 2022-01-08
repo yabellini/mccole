@@ -1,19 +1,8 @@
 """Utilities."""
 
-import os
 import sys
 from collections.abc import Sequence
-from pathlib import Path
 from types import SimpleNamespace
-
-# Default configuration settings.
-DEFAULTS = SimpleNamespace(
-    config=Path(os.curdir) / "mccole.yml",
-    dst=Path("_site"),
-    src=Path(os.curdir),
-    transform=["*.md"],
-    exclude=["*~"],
-)
 
 
 class McColeExc(Exception):
@@ -32,7 +21,7 @@ def fail(arg):
     sys.exit(1)
 
 
-def obj2ns(obj, root=False):
+def json_to_ns(obj, root=False):
     """Recursively convert JSON-compatible structure to namespace."""
     if (obj is None) and root:
         return {}
@@ -41,6 +30,6 @@ def obj2ns(obj, root=False):
     elif isinstance(obj, Sequence):
         return list(obj)
     elif isinstance(obj, dict):
-        return SimpleNamespace(**{k: obj2ns(v) for (k, v) in obj.items()})
+        return SimpleNamespace(**{k: json_to_ns(v) for (k, v) in obj.items()})
     else:
         return obj

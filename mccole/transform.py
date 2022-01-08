@@ -1,5 +1,6 @@
 """File transformation tools."""
 
+
 def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
     pass

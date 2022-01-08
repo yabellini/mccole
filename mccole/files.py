@@ -22,8 +22,8 @@ def find_files(config, root):
 
 
 def _should_exclude(config, p):
-    return any(fnmatch(p, pat) for pat in config.exclude)
+    return any(fnmatch(p, pat) for pat in config["exclude"])
 
 
 def _should_transform(config, p):
-    return any(fnmatch(p, pat) for pat in config.transform)
+    return any(fnmatch(p, pat) for pat in config["transform"])

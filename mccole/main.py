@@ -4,11 +4,11 @@
 
 import argparse
 from pathlib import Path
-import yaml
 
+from mccole.config import DEFAULTS, get_config
 from mccole.files import find_files
 from mccole.transform import gather_data, parse_files, transform_files
-from mccole.util import DEFAULTS, McColeExc, fail, obj2ns
+from mccole.util import McColeExc, fail
 
 
 def main():
@@ -41,16 +41,6 @@ def parse_args():
         "--src", type=Path, default=DEFAULTS.src, help="Source directory."
     )
     return parser.parse_args()
-
-
-def get_config(filename):
-    """Load configuration file."""
-    try:
-        with open(filename, "r") as reader:
-            loaded = yaml.safe_load(reader)
-            return obj2ns(loaded, root=True)
-    except OSError as exc:
-        raise McColeExc(str(exc))
 
 
 def write_files(config, files):
