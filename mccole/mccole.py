@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 from .config import DEFAULTS, get_config
-from .files import find_files
+from .files import get_files
 from .transform import gather_data, parse_files, transform_files
 from .util import McColeExc, fail
 
@@ -19,7 +19,7 @@ def main():
         _configure_logging(options)
         config = get_config(options.config)
 
-        files = find_files(config, config["src"])
+        files = get_files(config, config["src"])
         logging.info(f"found {len(files)} files")
         subset = [info for info in files if info["action"] == "transform"]
 

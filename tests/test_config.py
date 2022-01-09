@@ -19,11 +19,11 @@ def test_empty_config_file_handled(fs):
 def test_config_file_parsed(fs):
     text = dedent(
         """
-    first: second
-    third:
-    - 4
-    - 5
-    """
+        first: second
+        third:
+        - 4
+        - 5
+        """
     )
     fs.create_file("test.yml", contents=text)
     actual = get_config("test.yml")

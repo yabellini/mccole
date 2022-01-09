@@ -4,26 +4,42 @@ import glob
 from fnmatch import fnmatch
 from pathlib import Path
 
+import frontmatter
 
-def find_files(config, root):
+from .util import McColeExc
+
+
+def get_files(config, root):
     """Find files to transform and files to copy."""
     files = []
     for name in glob.glob("**/*", recursive=True):
         p = Path(name)
+
         if not p.is_file():
             continue
-        elif _should_exclude(config, p):
+
+        if _should_exclude(config, p):
             continue
-        elif _should_transform(config, p):
-            files.append(
-                {
-                    "action": "transform",
-                    "from": p,
-                    "to": _change_path(config, p, ".html"),
-                }
-            )
-        else:
+
+        if not _should_transform(config, p):
             files.append({"action": "copy", "from": p, "to": _change_path(config, p)})
+            continue
+
+        try:
+            with open(p, "r") as reader:
+                page, raw = frontmatter.parse(reader.read())
+                files.append(
+                    {
+                        "action": "transform",
+                        "from": p,
+                        "to": _change_path(config, p, ".html"),
+                        "raw": raw,
+                        "page": page,
+                    }
+                )
+        except OSError as exc:
+            raise McColeExc(str(exc))
+
     return files
 
 
