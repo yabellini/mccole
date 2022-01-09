@@ -21,7 +21,7 @@ install:
 ## coverage: run available tests and report coverage
 .PHONY: coverage
 coverage:
-	@coverage run --branch -m pytest
+	@coverage run -m pytest
 	@coverage html
 
 ## docs: build documentation

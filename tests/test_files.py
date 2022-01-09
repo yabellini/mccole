@@ -1,7 +1,9 @@
 from pathlib import Path
 from textwrap import dedent
 
-from mccole.config import DEFAULTS
+import pytest
+
+from mccole.config import DEFAULTS, McColeExc
 from mccole.files import get_files
 
 from .util import create_files, dict_has_all
@@ -108,3 +110,8 @@ def test_get_no_frontmatter_when_absent(fs):
     assert len(actual) == 1
     assert actual[0]["raw"].rstrip() == "first line\nsecond line"
     assert actual[0]["page"] == {}
+
+def test_unreadable_file_to_convert(fs):
+    fs.create_file("src/a.md", st_mode=0o000)
+    with pytest.raises(McColeExc):
+        get_files(DEFAULTS, "src")
