@@ -5,17 +5,14 @@ from .util import McColeExc
 
 def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
-    pass
-
-
-def parse_files(config, files):
-    """Load Markdown."""
-    for info in files:
-        try:
-            with open(info["from"], "r") as reader:
-                info["raw"] = reader.read()
-        except OSError as exc:
-            raise McColeExc(str(exc))
+    overall = {
+        "order": {}
+    }
+    for (i, info) in enumerate(files):
+        assert info["action"] == "transform"
+        assert all(key in info.keys() for key in ["from", "raw", "page"])
+        overall["order"][info["from"]] = i + 1
+    return overall
 
 
 def transform_files(config, files):

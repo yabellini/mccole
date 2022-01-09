@@ -23,7 +23,6 @@ def main():
         logging.info(f"found {len(files)} files")
         subset = [info for info in files if info["action"] == "transform"]
 
-        parse_files(config, subset)
         gather_data(config, subset)
         transform_files(config, subset)
 

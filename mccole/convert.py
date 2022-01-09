@@ -7,7 +7,7 @@ from mistletoe.html_renderer import HTMLRenderer
 from mistletoe.span_token import SpanToken
 
 from .patch import patch_divs
-from .util import McColeExc
+from .util import McColeExc, EXTENSIONS
 
 
 def md_to_html(text):
@@ -21,56 +21,40 @@ def md_to_html(text):
 class BibCite(SpanToken):
     """Parse `@b(key,key)` bibliographic citation."""
 
-    pattern = re.compile(r"@b\(([^)]*)\)")
+    pattern = EXTENSIONS["@b"]["re"]
 
     def __init__(self, match):
         """Check contained value during construction."""
-        self.cites = [s.strip() for s in match.group(1).split(",")]
-        if (not self.cites) or not all(len(s) > 0 for s in self.cites):
-            raise McColeExc("Empty @b() bibliographic citation.")
+        self.cites = EXTENSIONS["@b"]["func"](self, match)
 
 
 class GlossRef(SpanToken):
     """Parse `@g(text|key)` glossary reference."""
 
-    pattern = re.compile(r"@g\((.+?)\)")
+    pattern = EXTENSIONS["@g"]["re"]
 
     def __init__(self, match):
-        """Check contained value during construction."""
-        content = [s.strip() for s in match.group(1).split("|")]
-        if (len(content) != 2) or not all(len(x) > 0 for x in content):
-            raise McColeExc(f"Unrecognized glossary content '{match.group(1)}'")
-        self.text = content[0]
-        self.key = content[1]
+        self.text, self.key = EXTENSIONS["@g"]["func"](self, match)
 
 
 class IndexRef(SpanToken):
     """Parse `@i(text|key)` index reference."""
 
-    pattern = re.compile(r"@i\((.+?)\)")
+    pattern = EXTENSIONS["@i"]["re"]
 
     def __init__(self, match):
         """Check contained value during construction."""
-        content = [s.strip() for s in match.group(1).split("|")]
-        if (len(content) != 2) or not all(len(x) > 0 for x in content):
-            raise McColeExc(f"Unrecognized index content '{match.group(1)}'")
-        self.text = content[0]
-        self.key = content[1]
+        self.text, self.key = EXTENSIONS["@i"]["func"](self, match)
 
 
 class GlossIndexRef(SpanToken):
     """Parse combined `@gi(text|gloss|index)` glossary/index reference."""
 
-    pattern = re.compile(r"@gi\((.+?)\)")
+    pattern = EXTENSIONS["@gi"]["re"]
 
     def __init__(self, match):
         """Check contained value during construction."""
-        content = [s.strip() for s in match.group(1).split("|")]
-        if (len(content) != 3) or not all(len(x) > 0 for x in content):
-            raise McColeExc(f"Unrecognized glossary/index content '{match.group(1)}'")
-        self.text = content[0]
-        self.gloss_key = content[1]
-        self.index_key = content[2]
+        self.text, self.gloss_key, self.index_key = EXTENSIONS["@gi"]["func"](self, match)
 
 
 class McColeHtml(HTMLRenderer):
