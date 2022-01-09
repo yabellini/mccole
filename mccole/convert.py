@@ -6,13 +6,16 @@ from mistletoe import Document
 from mistletoe.html_renderer import HTMLRenderer
 from mistletoe.span_token import SpanToken
 
+from .patch import Div, patch_divs
 from .util import McColeExc
 
 
 def md_to_html(text):
     """Convert Markdown to HTML."""
     with McColeHtml() as renderer:
-        return renderer.render(Document(text))
+        doc = Document(text)
+        patch_divs(doc)
+        return renderer.render(doc)
 
 
 class BibCite(SpanToken):
@@ -76,6 +79,13 @@ class McColeHtml(HTMLRenderer):
     def __init__(self):
         """Add special handlers to conversion chain."""
         super().__init__(BibCite, GlossRef, IndexRef, GlossIndexRef)
+        self.render_map['Div'] = self.render_div
+
+    def render_div(self, token):
+        """Render a <div>."""
+        template = "<div{}>\n{}\n</div>"
+        attrs = "".join(f' {k}="{v}"' for (k, v) in token.attributes.items())
+        return template.format(attrs, self.render_inner(token))
 
     def render_bib_cite(self, token):
         """Render bibliographic citations."""
