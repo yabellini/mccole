@@ -1,6 +1,8 @@
 import pytest
 from textwrap import dedent
 
+from mistletoe import Document
+
 from mccole.config import DEFAULTS
 from mccole.files import md_to_doc
 from mccole.gather import gather_data
@@ -10,12 +12,12 @@ from .util import dict_has_all
 
 @pytest.fixture
 def a_md():
-    return {"action": "transform", "from": "a.md", "raw": "", "page": {}}
+    return {"action": "transform", "from": "a.md", "raw": "", "header": {}, "doc": Document([])}
 
 
 @pytest.fixture
 def b_md():
-    return {"action": "transform", "from": "b.md", "raw": "", "page": {}}
+    return {"action": "transform", "from": "b.md", "raw": "", "header": {}, "doc": Document([])}
 
 
 def test_gather_order_no_files():
@@ -40,13 +42,54 @@ def test_gather_order_multiple_files(a_md, b_md):
 
 
 def test_find_bib_keys_none_in_document(a_md):
-    md = dedent(
+    a_md["doc"] = md_to_doc(dedent(
         """\
         # Title
 
         paragraph
         """
-    )
-    a_md["doc"] = md_to_doc(md)
+    ))
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["bibkeys"] == {}
+    assert overall["bib_keys"] == {}
+
+
+def test_find_bib_keys_several_in_document(a_md):
+    a_md["doc"] = md_to_doc(dedent(
+        """\
+        # Title
+
+        paragraph @b(key1,key2)
+
+        **bold @b(key3)**
+        """
+    ))
+    overall = gather_data(DEFAULTS, [a_md])
+    assert overall["bib_keys"] == {
+        "key1": {"a.md"},
+        "key2": {"a.md"},
+        "key3": {"a.md"}
+    }
+
+
+def test_find_bib_keys_several_in_document(a_md, b_md):
+    a_md["doc"] = md_to_doc(dedent(
+        """\
+        # Title
+
+        paragraph @b(key1,key2)
+
+        **bold @b(key3)**
+        """
+    ))
+    b_md["doc"] = md_to_doc(dedent(
+        """\
+        paragraph @b(key3) and @b(key4)
+        """
+    ))
+    overall = gather_data(DEFAULTS, [a_md, b_md])
+    assert overall["bib_keys"] == {
+        "key1": {"a.md"},
+        "key2": {"a.md"},
+        "key3": {"a.md", "b.md"},
+        "key4": {"b.md"}
+    }

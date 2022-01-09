@@ -36,7 +36,7 @@ def json_to_ns(obj, root=False):
         return obj
 
 
-def _bib_cite(obj, match):
+def _bib_cite(match):
     """Handle `@b(key,key)` during parsing."""
     result = [s.strip() for s in match.group(1).split(",")]
     if (not result) or not all(len(s) > 0 for s in result):
@@ -44,7 +44,7 @@ def _bib_cite(obj, match):
     return result
 
 
-def _gloss_ref(obj, match):
+def _gloss_ref(match):
     """Handle `@g(text|key)` glossary reference during parsing."""
     content = [s.strip() for s in match.group(1).split("|")]
     if (len(content) != 2) or not all(len(x) > 0 for x in content):
@@ -52,7 +52,7 @@ def _gloss_ref(obj, match):
     return content
 
 
-def _index_ref(obj, match):
+def _index_ref(match):
     """Handle `@i(text|key)` index reference during parsing."""
     content = [s.strip() for s in match.group(1).split("|")]
     if (len(content) != 2) or not all(len(x) > 0 for x in content):
@@ -60,7 +60,7 @@ def _index_ref(obj, match):
     return content
 
 
-def _gloss_index_ref(obj, match):
+def _gloss_index_ref(match):
     """Handle combined `@gi(text|gloss|index)` glossary/index reference during parsing."""
     content = [s.strip() for s in match.group(1).split("|")]
     if (len(content) != 3) or not all(len(x) > 0 for x in content):

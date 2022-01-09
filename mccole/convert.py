@@ -25,7 +25,7 @@ class BibCite(SpanToken):
 
     def __init__(self, match):
         """Check contained value during construction."""
-        self.cites = EXTENSIONS["@b"]["func"](self, match)
+        self.cites = EXTENSIONS["@b"]["func"](match)
 
 
 class GlossRef(SpanToken):
@@ -34,7 +34,7 @@ class GlossRef(SpanToken):
     pattern = EXTENSIONS["@g"]["re"]
 
     def __init__(self, match):
-        self.text, self.key = EXTENSIONS["@g"]["func"](self, match)
+        self.text, self.key = EXTENSIONS["@g"]["func"](match)
 
 
 class IndexRef(SpanToken):
@@ -44,7 +44,7 @@ class IndexRef(SpanToken):
 
     def __init__(self, match):
         """Check contained value during construction."""
-        self.text, self.key = EXTENSIONS["@i"]["func"](self, match)
+        self.text, self.key = EXTENSIONS["@i"]["func"](match)
 
 
 class GlossIndexRef(SpanToken):
@@ -54,7 +54,7 @@ class GlossIndexRef(SpanToken):
 
     def __init__(self, match):
         """Check contained value during construction."""
-        self.text, self.gloss_key, self.index_key = EXTENSIONS["@gi"]["func"](self, match)
+        self.text, self.gloss_key, self.index_key = EXTENSIONS["@gi"]["func"](match)
 
 
 class McColeHtml(HTMLRenderer):
