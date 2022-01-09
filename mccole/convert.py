@@ -6,7 +6,7 @@ from mistletoe import Document
 from mistletoe.html_renderer import HTMLRenderer
 from mistletoe.span_token import SpanToken
 
-from .patch import Div, patch_divs
+from .patch import patch_divs
 from .util import McColeExc
 
 
@@ -79,7 +79,7 @@ class McColeHtml(HTMLRenderer):
     def __init__(self):
         """Add special handlers to conversion chain."""
         super().__init__(BibCite, GlossRef, IndexRef, GlossIndexRef)
-        self.render_map['Div'] = self.render_div
+        self.render_map["Div"] = self.render_div
 
     def render_div(self, token):
         """Render a <div>."""

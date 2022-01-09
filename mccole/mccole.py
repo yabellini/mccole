@@ -3,6 +3,7 @@
 """Read, transform, and write."""
 
 import argparse
+import logging
 from pathlib import Path
 
 from .config import DEFAULTS, get_config
@@ -15,15 +16,19 @@ def main():
     """Main driver."""
     try:
         options = parse_args()
+        _configure_logging(options)
         config = get_config(options.config)
+
         files = find_files(config, config["src"])
-        if options.verbose:
-            print(f"found {len(files)} files")
+        logging.info(f"found {len(files)} files")
         subset = [info for info in files if info["action"] == "transform"]
+
         parse_files(config, subset)
         gather_data(config, subset)
         transform_files(config, subset)
-        write_files(config, files)
+
+        _write_files(config, files)
+
     except McColeExc as exc:
         fail(exc)
 
@@ -42,15 +47,25 @@ def parse_args():
     parser.add_argument(
         "--src", type=Path, default=DEFAULTS["src"], help="Source directory."
     )
-    parser.add_argument("--verbose", action="store_true", help="Report progress.")
+    logging_choices = "debug info warning error critical".split()
+    parser.add_argument(
+        "--logging",
+        type=str,
+        choices=logging_choices,
+        default="error",
+        help="Logging level.",
+    )
     return parser.parse_args()
 
 
-def write_files(config, files):
+def _configure_logging(options):
+    """Set up logging."""
+    level_name = options.logging.upper()
+    logging.basicConfig(
+        level=logging._nameToLevel[level_name], format="%(levelname)s: %(message)s"
+    )
+
+
+def _write_files(config, files):
     """Save all files in a fileset."""
-    pass
-
-
-def copy_files(config, files):
-    """Copy all files in a fileset."""
     pass

@@ -1,3 +1,5 @@
+"""Patch divs in the mistletoe parse tree."""
+
 import re
 
 from mistletoe.block_token import BlockToken, HTMLBlock
@@ -9,7 +11,10 @@ ATTR_PAT = re.compile(r'(\w+)="(.+?)"')
 
 
 class Div(BlockToken):
+    """Represent a div elements with attributes and children."""
+
     def __init__(self, attributes, children):
+        """Save data for later rendering."""
         self.attributes = attributes
         self.children = children
 

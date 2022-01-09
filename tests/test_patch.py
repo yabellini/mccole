@@ -1,11 +1,7 @@
 import re
-
 from textwrap import dedent
 
-import pytest
-
 from mccole.convert import md_to_html
-from mccole.util import McColeExc
 
 
 def test_div_with_no_content():
@@ -62,4 +58,6 @@ def test_div_with_nested_div():
         """
     )
     html = md_to_html(md)
-    assert re.match(r"^\s*<div>\s*<div>\s*<p>paragraph</p>\s*</div>\s*</div>$", html, re.DOTALL)
+    assert re.match(
+        r"^\s*<div>\s*<div>\s*<p>paragraph</p>\s*</div>\s*</div>$", html, re.DOTALL
+    )
