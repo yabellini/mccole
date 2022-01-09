@@ -4,5 +4,5 @@ def create_files(fs, *names):
         fs.create_file(name)
 
 
-def dict_has_all(expected, actual):
-    return all(actual[k] == expected[k] for k in expected)
+def dict_has_all(required, actual):
+    return all(actual[k] == required[k] for k in required)

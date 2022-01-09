@@ -8,7 +8,8 @@ from pathlib import Path
 
 from .config import DEFAULTS, get_config
 from .files import get_files
-from .transform import gather_data, parse_files, transform_files
+from .gather import gather_data
+from .transform import transform_files
 from .util import McColeExc, fail
 
 

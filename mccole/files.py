@@ -30,8 +30,6 @@ def get_files(config, root):
         try:
             with open(p, "r") as reader:
                 header, raw = frontmatter.parse(reader.read())
-                with ASTRenderer() as renderer:
-                    doc = Document(raw)
                 files.append(
                     {
                         "action": "transform",
@@ -39,13 +37,19 @@ def get_files(config, root):
                         "to": _change_path(config, p, ".html"),
                         "header": header,
                         "raw": raw,
-                        "doc": doc
+                        "doc": md_to_doc(raw)
                     }
                 )
         except OSError as exc:
             raise McColeExc(str(exc))
 
     return files
+
+
+def md_to_doc(md):
+    """Convert Markdown to mistletoe Document."""
+    with ASTRenderer() as renderer:
+        return Document(md)
 
 
 def _change_path(config, original, suffix=None):
