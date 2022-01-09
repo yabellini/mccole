@@ -3,6 +3,8 @@ from textwrap import dedent
 
 import pytest
 
+from mistletoe import Document
+
 from mccole.config import DEFAULTS, McColeExc
 from mccole.files import get_files
 
@@ -64,7 +66,8 @@ def test_get_no_frontmatter_for_copied_file(fs):
     actual = get_files(DEFAULTS, "src")
     assert len(actual) == 1
     assert "raw" not in actual[0]
-    assert "pages" not in actual[0]
+    assert "headers" not in actual[0]
+    assert "doc" not in actual[0]
 
 
 def test_get_no_frontmatter_when_none_present(fs):
@@ -78,7 +81,9 @@ def test_get_no_frontmatter_when_none_present(fs):
     actual = get_files(DEFAULTS, "src")
     assert len(actual) == 1
     assert actual[0]["raw"].rstrip() == contents.rstrip()
-    assert actual[0]["page"] == {}
+    assert actual[0]["header"] == {}
+    assert isinstance(actual[0]["doc"], Document)
+    assert len(actual[0]["doc"].children) > 0
 
 
 def test_get_frontmatter_when_present(fs):
@@ -95,7 +100,9 @@ def test_get_frontmatter_when_present(fs):
     actual = get_files(DEFAULTS, "src")
     assert len(actual) == 1
     assert actual[0]["raw"].rstrip() == "first line\nsecond line"
-    assert actual[0]["page"] == {"front": "back"}
+    assert actual[0]["header"] == {"front": "back"}
+    assert isinstance(actual[0]["doc"], Document)
+    assert len(actual[0]["doc"].children) > 0
 
 
 def test_get_no_frontmatter_when_absent(fs):
@@ -109,7 +116,10 @@ def test_get_no_frontmatter_when_absent(fs):
     actual = get_files(DEFAULTS, "src")
     assert len(actual) == 1
     assert actual[0]["raw"].rstrip() == "first line\nsecond line"
-    assert actual[0]["page"] == {}
+    assert actual[0]["header"] == {}
+    assert isinstance(actual[0]["doc"], Document)
+    assert len(actual[0]["doc"].children) > 0
+
 
 def test_unreadable_file_to_convert(fs):
     fs.create_file("src/a.md", st_mode=0o000)

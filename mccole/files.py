@@ -5,6 +5,8 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 import frontmatter
+from mistletoe import Document
+from mistletoe.ast_renderer import ASTRenderer
 
 from .util import McColeExc
 
@@ -27,14 +29,17 @@ def get_files(config, root):
 
         try:
             with open(p, "r") as reader:
-                page, raw = frontmatter.parse(reader.read())
+                header, raw = frontmatter.parse(reader.read())
+                with ASTRenderer() as renderer:
+                    doc = Document(raw)
                 files.append(
                     {
                         "action": "transform",
                         "from": p,
                         "to": _change_path(config, p, ".html"),
+                        "header": header,
                         "raw": raw,
-                        "page": page,
+                        "doc": doc
                     }
                 )
         except OSError as exc:
