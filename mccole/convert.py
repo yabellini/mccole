@@ -1,11 +1,18 @@
 """Convert Markdown to other formats."""
 
 from mistletoe import Document
+from mistletoe.ast_renderer import ASTRenderer
 from mistletoe.html_renderer import HTMLRenderer
 from mistletoe.span_token import SpanToken
 
 from .patch import patch_divs
 from .util import EXTENSIONS
+
+
+def md_to_doc(md):
+    """Convert Markdown to mistletoe Document."""
+    with ASTRenderer() as renderer:  # noqa F841
+        return Document(md)
 
 
 def md_to_html(text):

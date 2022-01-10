@@ -5,7 +5,7 @@ from mistletoe import Document
 
 from mccole.config import DEFAULTS, McColeExc
 from mccole.gather import gather_data
-from mccole.transform import md_to_doc
+from mccole.convert import md_to_doc
 
 from .util import dict_has_all
 

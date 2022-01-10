@@ -6,7 +6,7 @@ from pathlib import Path
 
 import frontmatter
 
-from .transform import md_to_doc
+from .convert import md_to_doc
 from .util import McColeExc
 
 
@@ -51,7 +51,14 @@ def read_files(config, root):
 
 def write_files(config, files):
     """Save all files in a fileset."""
-    pass
+    for info in files:
+        if info["action"] == "copy":
+            _copy_file(info["from"], info["to"])
+        elif info["action"] == "transform":
+            text = _transform_file(config, info["doc"])
+            _write_file(text, info["to"])
+        else:
+            assert False, f"Unknown action {info['action']}"
 
 
 def _change_path(config, original, suffix=None):
@@ -66,6 +73,11 @@ def _change_path(config, original, suffix=None):
     return result
 
 
+def _copy_file(from_path, to_path):
+    """Copy a file (binary)."""
+    to_path.write_bytes(from_path.read_bytes())
+
+
 def _should_exclude(config, p):
     """Ignore this file if it matches an exclusion pattern."""
     return any(fnmatch(p, pat) for pat in config["exclude"])
@@ -74,3 +86,14 @@ def _should_exclude(config, p):
 def _should_transform(config, p):
     """Transform this file if it matches a transformation pattern."""
     return any(fnmatch(p, pat) for pat in config["transform"])
+
+
+def _transform_file(config, doc):
+    """Transform a document into text."""
+    return "TRANSFORMED"
+
+
+def _write_file(text, to_path):
+    """Write a file."""
+    with open(to_path, 'w') as writer:
+        writer.write(text)

@@ -22,10 +22,9 @@ def main():
 
         files = read_files(config, config["src"])
         logging.info(f"found {len(files)} files")
-        subset = [info for info in files if info["action"] == "transform"]
 
+        subset = [info for info in files if info["action"] == "transform"]
         gather_data(config, subset)
-        transform_files(config, subset)
 
         write_files(config, files)
 
