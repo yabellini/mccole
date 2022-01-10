@@ -15,6 +15,6 @@ else:
     for filename in sys.argv[1:]:
         if len(sys.argv) > 2:
             print(f"==== {filename}")
-        with open(filename, 'r') as reader:
+        with open(filename, "r") as reader:
             with ASTRenderer() as renderer:
                 print(renderer.render(Document(sys.stdin)))

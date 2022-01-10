@@ -61,7 +61,7 @@ def _index_ref(match):
 
 
 def _gloss_index_ref(match):
-    """Handle combined `@gi(text:gloss:index)` glossary/index reference during parsing."""
+    """Handle combined `@gi(text:gloss:index)` reference during parsing."""
     content = [s.strip() for s in match.group(1).split(":")]
     if (len(content) != 3) or not all(len(x) > 0 for x in content):
         raise McColeExc(f"Unrecognized glossary/index content '{match.group(1)}'")
@@ -70,20 +70,8 @@ def _gloss_index_ref(match):
 
 # Regular expressions and functions for extensions.
 EXTENSIONS = {
-    "@b": {
-        "re": re.compile(r"@b\(([^)]*)\)"),
-        "func": _bib_cite
-    },
-    "@g": {
-        "re": re.compile(r"@g\((.+?)\)"),
-        "func": _gloss_ref
-    },
-    "@i": {
-        "re": re.compile(r"@i\((.+?)\)"),
-        "func": _index_ref
-    },
-    "@gi": {
-        "re": re.compile(r"@gi\((.+?)\)"),
-        "func": _gloss_index_ref
-    }
+    "@b": {"re": re.compile(r"@b\(([^)]*)\)"), "func": _bib_cite},
+    "@g": {"re": re.compile(r"@g\((.+?)\)"), "func": _gloss_ref},
+    "@i": {"re": re.compile(r"@i\((.+?)\)"), "func": _index_ref},
+    "@gi": {"re": re.compile(r"@gi\((.+?)\)"), "func": _gloss_index_ref},
 }

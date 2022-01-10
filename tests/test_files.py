@@ -2,7 +2,6 @@ from pathlib import Path
 from textwrap import dedent
 
 import pytest
-
 from mistletoe import Document
 
 from mccole.config import DEFAULTS, McColeExc

@@ -7,9 +7,7 @@ from .util import EXTENSIONS
 
 def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
-    overall = {
-        "order": {}
-    }
+    overall = {"order": {}}
     for (i, info) in enumerate(files):
         assert info["action"] == "transform"
         assert set(info.keys()).issuperset({"from", "raw", "header", "doc"})

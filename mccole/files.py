@@ -37,7 +37,7 @@ def get_files(config, root):
                         "to": _change_path(config, p, ".html"),
                         "header": header,
                         "raw": raw,
-                        "doc": md_to_doc(raw)
+                        "doc": md_to_doc(raw),
                     }
                 )
         except OSError as exc:
@@ -48,7 +48,7 @@ def get_files(config, root):
 
 def md_to_doc(md):
     """Convert Markdown to mistletoe Document."""
-    with ASTRenderer() as renderer:
+    with ASTRenderer() as renderer:  # noqa F841
         return Document(md)
 
 

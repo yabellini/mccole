@@ -1,13 +1,11 @@
 """Convert Markdown to other formats."""
 
-import re
-
 from mistletoe import Document
 from mistletoe.html_renderer import HTMLRenderer
 from mistletoe.span_token import SpanToken
 
 from .patch import patch_divs
-from .util import McColeExc, EXTENSIONS
+from .util import EXTENSIONS
 
 
 def md_to_html(text):
@@ -34,6 +32,7 @@ class GlossRef(SpanToken):
     pattern = EXTENSIONS["@g"]["re"]
 
     def __init__(self, match):
+        """Check contained value during construction."""
         self.text, self.key = EXTENSIONS["@g"]["func"](match)
 
 
