@@ -71,7 +71,7 @@ def test_find_bib_keys_several_in_document(a_md):
     }
 
 
-def test_find_bib_keys_several_in_document(a_md, b_md):
+def test_find_bib_keys_in_multiple_documents(a_md, b_md):
     a_md["doc"] = md_to_doc(dedent(
         """\
         # Title
@@ -92,4 +92,27 @@ def test_find_bib_keys_several_in_document(a_md, b_md):
         "key2": {"a.md"},
         "key3": {"a.md", "b.md"},
         "key4": {"b.md"}
+    }
+
+
+def test_find_gloss_keys_in_multiple_documents(a_md, b_md):
+    a_md["doc"] = md_to_doc(dedent(
+        """\
+        # Title
+
+        paragraph @g(term|key1)
+
+        **bold @g(term|key2)**
+        """
+    ))
+    b_md["doc"] = md_to_doc(dedent(
+        """\
+        paragraph @g(term|key1) and @g(term|key3)
+        """
+    ))
+    overall = gather_data(DEFAULTS, [a_md, b_md])
+    assert overall["gloss_keys"] == {
+        "key1": {"a.md", "b.md"},
+        "key2": {"a.md"},
+        "key3": {"b.md"}
     }

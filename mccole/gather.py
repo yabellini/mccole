@@ -8,14 +8,16 @@ from .util import EXTENSIONS
 def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
     overall = {
-        "bib_keys": {},
         "order": {}
     }
     for (i, info) in enumerate(files):
         assert info["action"] == "transform"
         assert set(info.keys()).issuperset({"from", "raw", "header", "doc"})
         overall["order"][info["from"]] = i + 1
-        _visit(info["from"], info["doc"], _get_bib_keys, overall["bib_keys"])
+        for (key, func) in VISITORS:
+            if key not in overall:
+                overall[key] = {}
+            _visit(info["from"], info["doc"], func, overall[key])
     return overall
 
 
@@ -34,3 +36,18 @@ def _get_bib_keys(path, node, accum):
                 if key not in accum:
                     accum[key] = set()
                 accum[key].add(path)
+
+
+def _get_gloss_keys(path, node, accum):
+    if isinstance(node, RawText):
+        for match in EXTENSIONS["@g"]["re"].finditer(node.content):
+            _, key = EXTENSIONS["@g"]["func"](match)
+            if key not in accum:
+                accum[key] = set()
+            accum[key].add(path)
+
+# All visitor functions and their overall keys.
+VISITORS = (
+    ("bib_keys", _get_bib_keys),
+    ("gloss_keys", _get_gloss_keys),
+)
