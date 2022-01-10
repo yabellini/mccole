@@ -17,7 +17,7 @@ def md_to_html(text):
 
 
 class BibCite(SpanToken):
-    """Parse `@b(key,key)` bibliographic citation."""
+    """Parse `@b(key1:key2:key3 citation."""
 
     pattern = EXTENSIONS["@b"]["re"]
 
@@ -27,7 +27,7 @@ class BibCite(SpanToken):
 
 
 class GlossRef(SpanToken):
-    """Parse `@g(text|key)` glossary reference."""
+    """Parse `@g(text:key)` glossary reference."""
 
     pattern = EXTENSIONS["@g"]["re"]
 
@@ -37,7 +37,7 @@ class GlossRef(SpanToken):
 
 
 class IndexRef(SpanToken):
-    """Parse `@i(text|key)` index reference."""
+    """Parse `@i(text:key)` index reference."""
 
     pattern = EXTENSIONS["@i"]["re"]
 
@@ -47,7 +47,7 @@ class IndexRef(SpanToken):
 
 
 class GlossIndexRef(SpanToken):
-    """Parse combined `@gi(text|gloss|index)` glossary/index reference."""
+    """Parse combined `@gi(text:gloss:index)` glossary/index reference."""
 
     pattern = EXTENSIONS["@gi"]["re"]
 
