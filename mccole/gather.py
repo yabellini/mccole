@@ -28,10 +28,11 @@ def _visit(path, node, func, *accum):
             _visit(path, child, func, *accum)
 
 
-def _add_to_set(accum, key, path):
+def _add_to_set(accum, key, value):
+    """Add a value to a set under a key in a dict."""
     if key not in accum:
         accum[key] = set()
-    accum[key].add(path)
+    accum[key].add(value)
 
 
 def _get_bib_keys(path, node, accum):

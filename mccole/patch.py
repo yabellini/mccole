@@ -6,12 +6,15 @@ from mistletoe.block_token import BlockToken, HTMLBlock
 
 from .util import McColeExc
 
-DIV_PAT = re.compile(r'<div((\s+\w+=".+?"\s*)*)>')
-ATTR_PAT = re.compile(r'(\w+)="(.+?)"')
-
 
 class Div(BlockToken):
     """Represent a div elements with attributes and children."""
+
+    # Match a well-formed 'div' with attributes.
+    DIV_PAT = re.compile(r'<div((\s+\w+=".+?"\s*)*)>')
+
+    # Match an attribute within a 'div' tag.
+    ATTR_PAT = re.compile(r'(\w+)="(.+?)"')
 
     def __init__(self, attributes, children):
         """Save data for later rendering."""
@@ -44,14 +47,17 @@ def patch_divs(node):
 
 
 def _make_div(start, children):
-    match = DIV_PAT.match(start.content)
-    attributes = {x.group(1): x.group(2) for x in ATTR_PAT.finditer(match.group(1))}
+    """Create a 'div' node with the given children."""
+    match = Div.DIV_PAT.match(start.content)
+    attributes = {x.group(1): x.group(2) for x in Div.ATTR_PAT.finditer(match.group(1))}
     return Div(attributes, children)
 
 
 def _is_div_start(node):
+    """Does this node start a div?"""
     return isinstance(node, HTMLBlock) and node.content.startswith("<div")
 
 
 def _is_div_end(node):
+    """Does this node end a div?"""
     return isinstance(node, HTMLBlock) and node.content.startswith("</div>")

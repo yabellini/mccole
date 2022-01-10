@@ -4,8 +4,8 @@ import pytest
 from mistletoe import Document
 
 from mccole.config import DEFAULTS
-from mccole.files import md_to_doc
 from mccole.gather import gather_data
+from mccole.transform import md_to_doc
 
 from .util import dict_has_all
 

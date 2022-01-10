@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 from .config import DEFAULTS, get_config
-from .files import get_files
+from .fileio import read_files, write_files
 from .gather import gather_data
 from .transform import transform_files
 from .util import McColeExc, fail
@@ -20,14 +20,14 @@ def main():
         _configure_logging(options)
         config = get_config(options.config)
 
-        files = get_files(config, config["src"])
+        files = read_files(config, config["src"])
         logging.info(f"found {len(files)} files")
         subset = [info for info in files if info["action"] == "transform"]
 
         gather_data(config, subset)
         transform_files(config, subset)
 
-        _write_files(config, files)
+        write_files(config, files)
 
     except McColeExc as exc:
         fail(exc)
@@ -64,8 +64,3 @@ def _configure_logging(options):
     logging.basicConfig(
         level=logging._nameToLevel[level_name], format="%(levelname)s: %(message)s"
     )
-
-
-def _write_files(config, files):
-    """Save all files in a fileset."""
-    pass

@@ -5,28 +5,31 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 import frontmatter
-from mistletoe import Document
-from mistletoe.ast_renderer import ASTRenderer
 
+from .transform import md_to_doc
 from .util import McColeExc
 
 
-def get_files(config, root):
+def read_files(config, root):
     """Find files to transform and files to copy."""
     files = []
     for name in glob.glob("**/*", recursive=True):
         p = Path(name)
 
+        # Not a file.
         if not p.is_file():
             continue
 
+        # Ignored.
         if _should_exclude(config, p):
             continue
 
+        # Copied.
         if not _should_transform(config, p):
             files.append({"action": "copy", "from": p, "to": _change_path(config, p)})
             continue
 
+        # Transformed.
         try:
             with open(p, "r") as reader:
                 header, raw = frontmatter.parse(reader.read())
@@ -46,10 +49,9 @@ def get_files(config, root):
     return files
 
 
-def md_to_doc(md):
-    """Convert Markdown to mistletoe Document."""
-    with ASTRenderer() as renderer:  # noqa F841
-        return Document(md)
+def write_files(config, files):
+    """Save all files in a fileset."""
+    pass
 
 
 def _change_path(config, original, suffix=None):
@@ -65,8 +67,10 @@ def _change_path(config, original, suffix=None):
 
 
 def _should_exclude(config, p):
+    """Ignore this file if it matches an exclusion pattern."""
     return any(fnmatch(p, pat) for pat in config["exclude"])
 
 
 def _should_transform(config, p):
+    """Transform this file if it matches a transformation pattern."""
     return any(fnmatch(p, pat) for pat in config["transform"])
