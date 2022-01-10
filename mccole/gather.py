@@ -30,6 +30,7 @@ def _visit(path, node, func, accum):
 
 
 def _get_bib_keys(path, node, accum):
+    """Collect bibliographic citation keys."""
     if isinstance(node, RawText):
         for match in EXTENSIONS["@b"]["re"].finditer(node.content):
             for key in EXTENSIONS["@b"]["func"](match):
@@ -39,9 +40,20 @@ def _get_bib_keys(path, node, accum):
 
 
 def _get_gloss_keys(path, node, accum):
+    """Collect glossary keys."""
     if isinstance(node, RawText):
         for match in EXTENSIONS["@g"]["re"].finditer(node.content):
             _, key = EXTENSIONS["@g"]["func"](match)
+            if key not in accum:
+                accum[key] = set()
+            accum[key].add(path)
+
+
+def _get_index_keys(path, node, accum):
+    """Collect index keys."""
+    if isinstance(node, RawText):
+        for match in EXTENSIONS["@i"]["re"].finditer(node.content):
+            _, key = EXTENSIONS["@i"]["func"](match)
             if key not in accum:
                 accum[key] = set()
             accum[key].add(path)
@@ -50,4 +62,5 @@ def _get_gloss_keys(path, node, accum):
 VISITORS = (
     ("bib_keys", _get_bib_keys),
     ("gloss_keys", _get_gloss_keys),
+    ("index_keys", _get_index_keys),
 )

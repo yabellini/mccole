@@ -116,3 +116,26 @@ def test_find_gloss_keys_in_multiple_documents(a_md, b_md):
         "key2": {"a.md"},
         "key3": {"b.md"}
     }
+
+
+def test_find_index_keys_in_multiple_documents(a_md, b_md):
+    a_md["doc"] = md_to_doc(dedent(
+        """\
+        # Title
+
+        paragraph @i(term|key1)
+
+        **bold @i(term|key2)**
+        """
+    ))
+    b_md["doc"] = md_to_doc(dedent(
+        """\
+        paragraph @i(term|key1) and @i(term|key3)
+        """
+    ))
+    overall = gather_data(DEFAULTS, [a_md, b_md])
+    assert overall["index_keys"] == {
+        "key1": {"a.md", "b.md"},
+        "key2": {"a.md"},
+        "key3": {"b.md"}
+    }
