@@ -47,6 +47,6 @@ reformat:
 .PHONY: clean
 clean:
 	@find . -name '*~' -exec rm {} \;
-	@find . -name '*.pyc' -exec rm {} \;
+	@rm -rf $$(find . -name __pycache__ -print)
 	@find . -name .DS_Store -exec rm {} \;
 	@rm -rf htmlcov
