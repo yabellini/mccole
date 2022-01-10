@@ -37,32 +37,32 @@ def json_to_ns(obj, root=False):
 
 
 def _bib_cite(match):
-    """Handle `@b(key,key)` during parsing."""
-    result = [s.strip() for s in match.group(1).split(",")]
+    """Handle `@b(key:key)` during parsing."""
+    result = [s.strip() for s in match.group(1).split(":")]
     if (not result) or not all(len(s) > 0 for s in result):
         raise McColeExc("Empty @b() bibliographic citation.")
     return result
 
 
 def _gloss_ref(match):
-    """Handle `@g(text|key)` glossary reference during parsing."""
-    content = [s.strip() for s in match.group(1).split("|")]
+    """Handle `@g(text:key)` glossary reference during parsing."""
+    content = [s.strip() for s in match.group(1).split(":")]
     if (len(content) != 2) or not all(len(x) > 0 for x in content):
         raise McColeExc(f"Unrecognized glossary content '{match.group(1)}'")
     return content
 
 
 def _index_ref(match):
-    """Handle `@i(text|key)` index reference during parsing."""
-    content = [s.strip() for s in match.group(1).split("|")]
+    """Handle `@i(text:key)` index reference during parsing."""
+    content = [s.strip() for s in match.group(1).split(":")]
     if (len(content) != 2) or not all(len(x) > 0 for x in content):
         raise McColeExc(f"Unrecognized index content '{match.group(1)}'")
     return content
 
 
 def _gloss_index_ref(match):
-    """Handle combined `@gi(text|gloss|index)` glossary/index reference during parsing."""
-    content = [s.strip() for s in match.group(1).split("|")]
+    """Handle combined `@gi(text:gloss:index)` glossary/index reference during parsing."""
+    content = [s.strip() for s in match.group(1).split(":")]
     if (len(content) != 3) or not all(len(x) > 0 for x in content):
         raise McColeExc(f"Unrecognized glossary/index content '{match.group(1)}'")
     return content
