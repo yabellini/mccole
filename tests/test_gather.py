@@ -3,7 +3,7 @@ from textwrap import dedent
 import pytest
 from mistletoe import Document
 
-from mccole.config import DEFAULTS
+from mccole.config import DEFAULTS, McColeExc
 from mccole.gather import gather_data
 from mccole.transform import md_to_doc
 
@@ -193,3 +193,145 @@ def test_find_gloss_index_keys_in_multiple_documents(a_md, b_md):
         "index2": {"a.md"},
         "index3": {"b.md"},
     }
+
+
+def test_enumerate_no_headings(a_md):
+    a_md["doc"] = md_to_doc(
+        dedent(
+            """\
+        paragraph
+        """
+        )
+    )
+    overall = gather_data(DEFAULTS, [a_md])
+    assert overall["labels"] == {"a.md": {}}
+
+
+def test_enumerate_single_heading(a_md):
+    a_md["doc"] = md_to_doc(
+        dedent(
+            """\
+        # Title
+        """
+        )
+    )
+    overall = gather_data(DEFAULTS, [a_md])
+    assert overall["labels"] == {"a.md": {(1,): "Title"}}
+
+
+def test_enumerate_sub_heading(a_md):
+    a_md["doc"] = md_to_doc(
+        dedent(
+            """\
+        # Title
+        ## Section
+        """
+        )
+    )
+    overall = gather_data(DEFAULTS, [a_md])
+    assert overall["labels"] == {"a.md": {(1,): "Title", (1,1): "Section"}}
+
+
+def test_enumerate_multiple_headings(a_md):
+    a_md["doc"] = md_to_doc(
+        dedent(
+            """\
+        # Title
+        ## Section A
+        ### Section A.1
+        ### Section A.2
+        ## Section B
+        ## Section C
+        ### Section C.1
+        """
+        )
+    )
+    overall = gather_data(DEFAULTS, [a_md])
+    assert overall["labels"] == {"a.md": {
+        (1,): "Title",
+        (1,1): "Section A",
+        (1,1,1): "Section A.1",
+        (1,1,2): "Section A.2",
+        (1,2): "Section B",
+        (1,3): "Section C",
+        (1,3,1): "Section C.1",
+    }}
+
+
+def test_enumerate_headings_with_filler(a_md):
+    a_md["doc"] = md_to_doc(
+        dedent(
+            """\
+        # Title
+
+        para
+
+        ## Section A
+
+        para
+
+        ### Section A.1
+
+        para
+
+        ## Section B
+
+        para
+
+        """
+        )
+    )
+    overall = gather_data(DEFAULTS, [a_md])
+    assert overall["labels"] == {"a.md": {
+        (1,): "Title",
+        (1,1): "Section A",
+        (1,1,1): "Section A.1",
+        (1,2): "Section B",
+    }}
+
+
+def test_enumerate_headings_multiple_docs(a_md, b_md):
+    a_md["doc"] = md_to_doc(
+        dedent(
+            """\
+        # Title A
+        ## Section B
+        ## Section C
+        """
+        )
+    )
+    b_md["doc"] = md_to_doc(
+        dedent(
+            """\
+        # Title X
+        ## Section Y
+        ## Section Z
+        """
+        )
+    )
+    overall = gather_data(DEFAULTS, [a_md, b_md])
+    assert overall["labels"] == {
+        "a.md": {
+            (1,): "Title A",
+            (1,1): "Section B",
+            (1,2): "Section C",
+        },
+        "b.md": {
+            (2,): "Title X",
+            (2,1): "Section Y",
+            (2,2): "Section Z",
+        }
+    }
+
+
+def test_enumerate_headings_fails_out_of_order(a_md):
+    a_md["doc"] = md_to_doc(
+        dedent(
+            """\
+        # Title
+        ### Section A.1
+        """
+        )
+    )
+    with pytest.raises(McColeExc):
+        gather_data(DEFAULTS, [a_md])
