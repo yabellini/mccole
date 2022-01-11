@@ -22,6 +22,9 @@ def test_h1_and_paragraph_becomes_html():
     assert "<p>paragraph</p>" in html
 
 
+# ----------------------------------------------------------------------
+
+
 def test_bib_cite_with_no_keys():
     with pytest.raises(McColeExc):
         md_to_html("@b()")
@@ -48,6 +51,9 @@ def test_bib_cite_with_trailing_comma():
 def test_bib_cite_with_leading_comma():
     with pytest.raises(McColeExc):
         md_to_html("@b(:key)")
+
+
+# ----------------------------------------------------------------------
 
 
 def test_gloss_ref_correctly_formatted():
@@ -80,6 +86,9 @@ def test_gloss_ref_too_many_fields():
         md_to_html("@g(first:second:third)")
 
 
+# ----------------------------------------------------------------------
+
+
 def test_index_ref_correctly_formatted():
     html = md_to_html("@i(text:key)")
     assert html.strip() == '<p><a href="index.html#key">text</a></p>'
@@ -108,6 +117,9 @@ def test_index_ref_missing_both():
 def test_index_ref_too_many_fields():
     with pytest.raises(McColeExc):
         md_to_html("@i(first:second:third)")
+
+
+# ----------------------------------------------------------------------
 
 
 def test_gloss_index_ref_correctly_formatted():
@@ -149,3 +161,58 @@ def test_gloss_index_ref_too_few_fields():
 def test_gloss_index_ref_too_many_fields():
     with pytest.raises(McColeExc):
         md_to_html("@gi(t:g:i:x:y)")
+
+
+# ----------------------------------------------------------------------
+
+
+def test_fig_def_correctly_formatted():
+    html = md_to_html("@fig(label:file:alt:cap)")
+    assert html.strip() == "".join(
+        [
+            "<p>",
+            '<figure id="label">',
+            '<img src="file" alt="alt"/>',
+            "<figcaption>cap</figcaption>",
+            "</figure>",
+            "</p>",
+        ]
+    )
+
+
+def test_fig_def_with_spaces():
+    html = md_to_html("@fig( label : file : \t alt \t : cap  )")
+    assert all(
+        x in html
+        for x in [
+            '<figure id="label">',
+            '<img src="file" alt="alt"/>',
+            "<figcaption>cap</figcaption>",
+            "</figure>",
+        ]
+    )
+
+
+def test_fig_def_missing_label():
+    with pytest.raises(McColeExc):
+        md_to_html("@fig(:file:alt:cap)")
+
+
+def test_fig_def_missing_file():
+    with pytest.raises(McColeExc):
+        md_to_html("@fig(label::alt:cap)")
+
+
+def test_fig_def_missing_alt():
+    with pytest.raises(McColeExc):
+        md_to_html("@fig(label:file::cap)")
+
+
+def test_fig_def_missing_cap():
+    with pytest.raises(McColeExc):
+        md_to_html("@fig(label:file:alt:)")
+
+
+def test_fig_def_too_many_fields():
+    with pytest.raises(McColeExc):
+        md_to_html("@fig(label:file:alt:cap:something)")

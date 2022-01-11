@@ -3,7 +3,7 @@
 from mistletoe.block_token import Heading
 from mistletoe.span_token import RawText
 
-from .util import EXTENSIONS, McColeExc
+from .util import EXTENSIONS, McColeExc, visit
 
 
 def gather_data(config, files):
@@ -14,38 +14,25 @@ def gather_data(config, files):
         assert set(info.keys()).issuperset({"from", "raw", "header", "doc"})
         major = i + 1
         overall["order"][info["from"]] = major
-        _gather_embedded(overall, info)
-        _gather_heading_labels(overall, major, info)
+        _label_headings(overall, major, info)
+        _run_collectors(overall, info)
+        _run_enumerators(overall, major, info)
     return overall
 
 
-def _gather_embedded(overall, info):
-    """Get simple embedded references like `@b(...)`."""
-    for (keys, func) in VISITORS:
-        for k in keys:
-            if k not in overall:
-                overall[k] = {}
-        _visit(info["from"], info["doc"], func, *[overall[k] for k in keys])
+# ----------------------------------------------------------------------
 
 
-def _gather_heading_labels(overall, major, info):
+def _label_headings(overall, major, info):
     """Collect all heading labels, numbering along the way."""
     path = info["from"]
     stack = [major - 1]
     accum = {}
-    _visit(path, info["doc"], _enumerate_headings, stack, accum)
+    visit(path, info["doc"], _label_single_heading, stack, accum)
     overall["labels"][path] = accum
 
 
-def _visit(path, node, func, *accum):
-    """Visit document nodes recursively."""
-    func(path, node, *accum)
-    if hasattr(node, "children"):
-        for child in node.children:
-            _visit(path, child, func, *accum)
-
-
-def _enumerate_headings(path, node, stack, labels):
+def _label_single_heading(path, node, stack, labels):
     """Add numbering information to headings."""
     if isinstance(node, Heading):
         _ensure_attr(node, "attr", {})
@@ -76,6 +63,18 @@ def _get_heading_text(node):
     assert len(node.children) == 1
     assert isinstance(node.children[0], RawText)
     return node.children[0].content.strip()
+
+
+# ----------------------------------------------------------------------
+
+
+def _run_collectors(overall, info):
+    """Get simple embedded references like `@b(...)`."""
+    for (func, keys) in COLLECTORS:
+        for k in keys:
+            if k not in overall:
+                overall[k] = {}
+        visit(info["from"], info["doc"], func, *[overall[k] for k in keys])
 
 
 def _get_bib_keys(path, node, accum):
@@ -111,13 +110,52 @@ def _get_gloss_index_keys(path, node, gloss_accum, index_accum):
             _add_to_set(index_accum, index_key, path)
 
 
-# All visitor functions and their overall keys.
-VISITORS = (
-    [["bib_keys"], _get_bib_keys],
-    [["gloss_keys"], _get_gloss_keys],
-    [["index_keys"], _get_index_keys],
-    [["gloss_keys", "index_keys"], _get_gloss_index_keys],
+# Collector functions and their overall keys.
+COLLECTORS = (
+    [_get_bib_keys, ["bib_keys"]],
+    [_get_gloss_keys, ["gloss_keys"]],
+    [_get_index_keys, ["index_keys"]],
+    [_get_gloss_index_keys, ["gloss_keys", "index_keys"]],
 )
+
+# ----------------------------------------------------------------------
+
+
+def _run_enumerators(overall, major, info):
+    """Get enumerated items `@fig(...)`."""
+    for (func, key) in ENUMERATORS:
+        if key not in overall:
+            overall[key] = {}
+        enumerator = [major, 0]
+        visit(info["from"], info["doc"], func, overall[key], enumerator)
+
+
+def _enumerate_fig_defs(path, node, fig_def_accum, enumerator):
+    """Enumerate figure definitions."""
+    if isinstance(node, RawText):
+        for match in EXTENSIONS["@fig"]["re"].finditer(node.content):
+            key, _, _, _ = EXTENSIONS["@fig"]["func"](match)
+            _add_counter(fig_def_accum, key, _update_enumerator(enumerator))
+
+
+def _update_enumerator(enumerator):
+    """Update the counter in place, returning a tuple for storage."""
+    assert len(enumerator) == 2
+    enumerator[1] += 1
+    return tuple(enumerator)
+
+
+# Enumerator functions and their overall keys.
+ENUMERATORS = ([_enumerate_fig_defs, "fig_defs"],)
+
+# ----------------------------------------------------------------------
+
+
+def _add_counter(accum, key, value):
+    """Add a new value directly to a dict, disallowing duplicates."""
+    if key in accum:
+        raise McColeExc(f"Duplicate identifier {key}.")
+    accum[key] = value
 
 
 def _add_to_set(accum, key, value):

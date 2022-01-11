@@ -7,6 +7,7 @@ from pathlib import Path
 from .config import DEFAULTS, get_config
 from .fileio import read_files, write_files
 from .gather import gather_data
+from .spread import spread_data
 from .util import McColeExc, fail
 
 
@@ -22,6 +23,7 @@ def main():
 
         subset = [info for info in files if info["action"] == "transform"]
         gather_data(config, subset)
+        spread_data(config, subset)
 
         write_files(config, files)
 

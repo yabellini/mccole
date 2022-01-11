@@ -66,12 +66,22 @@ class GlossIndexRef(SpanToken):
         self.text, self.gloss_key, self.index_key = EXTENSIONS["@gi"]["func"](match)
 
 
+class FigDef(SpanToken):
+    """Parse `@fig(label:filename:alt:caption)`."""
+
+    pattern = EXTENSIONS["@fig"]["re"]
+
+    def __init__(self, match):
+        """Check contained value during construction."""
+        self.label, self.file, self.alt, self.cap = EXTENSIONS["@fig"]["func"](match)
+
+
 class McColeHtml(HTMLRenderer):
     """Convert directly to HTML."""
 
     def __init__(self, config=None):
         """Add special handlers to conversion chain."""
-        super().__init__(BibCite, GlossRef, IndexRef, GlossIndexRef)
+        super().__init__(BibCite, GlossRef, IndexRef, GlossIndexRef, FigDef)
         self.config = config
         self.render_map["Div"] = self.render_div
 
@@ -104,3 +114,10 @@ class McColeHtml(HTMLRenderer):
         gloss_ref = f'href="gloss.html#{token.gloss_key.strip()}"'
         index_ref = f'index="index.html#{token.index_key.strip()}'
         return f'<a {gloss_ref} {index_ref}">{text}</a>'
+
+    def render_fig_def(self, token):
+        """Render figure definition."""
+        label = token.label.strip()
+        img = f'<img src="{token.file.strip()}" alt="{token.alt.strip()}"/>'
+        caption = f"<figcaption>{token.cap.strip()}</figcaption>"
+        return f'<figure id="{label}">{img}{caption}</figure>'
