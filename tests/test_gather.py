@@ -65,7 +65,7 @@ def test_find_bib_keys_none_in_document(a_md):
     assert overall["bib_keys"] == {}
 
 
-def test_find_bib_keys_several_in_document(a_md):
+def test_find_bib_keys_in_one_document(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\

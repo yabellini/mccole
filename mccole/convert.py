@@ -10,14 +10,17 @@ from .util import EXTENSIONS
 
 
 def md_to_doc(md):
-    """Convert Markdown to mistletoe Document."""
+    """Convert Markdown to plain mistletoe Document.
+
+    Need the plain Document in order to find uses of special tags.
+    """
     with ASTRenderer() as renderer:  # noqa F841
         return Document(md)
 
 
-def md_to_html(text):
-    """Convert Markdown to HTML."""
-    with McColeHtml() as renderer:
+def md_to_html(text, config=None):
+    """Convert Markdown to HTML using information in `config` (if any)."""
+    with McColeHtml(config) as renderer:
         doc = Document(text)
         patch_divs(doc)
         return renderer.render(doc)
@@ -66,9 +69,10 @@ class GlossIndexRef(SpanToken):
 class McColeHtml(HTMLRenderer):
     """Convert directly to HTML."""
 
-    def __init__(self):
+    def __init__(self, config=None):
         """Add special handlers to conversion chain."""
         super().__init__(BibCite, GlossRef, IndexRef, GlossIndexRef)
+        self.config = config
         self.render_map["Div"] = self.render_div
 
     def render_div(self, token):
