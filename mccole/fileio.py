@@ -95,5 +95,5 @@ def _transform_file(config, doc):
 
 def _write_file(text, to_path):
     """Write a file."""
-    with open(to_path, 'w') as writer:
+    with open(to_path, "w") as writer:
         writer.write(text)

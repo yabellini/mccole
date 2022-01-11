@@ -4,8 +4,8 @@ import pytest
 from mistletoe import Document
 
 from mccole.config import DEFAULTS, McColeExc
-from mccole.gather import gather_data
 from mccole.convert import md_to_doc
+from mccole.gather import gather_data
 
 from .util import dict_has_all
 
@@ -229,7 +229,7 @@ def test_enumerate_sub_heading(a_md):
         )
     )
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["labels"] == {"a.md": {(1,): "Title", (1,1): "Section"}}
+    assert overall["labels"] == {"a.md": {(1,): "Title", (1, 1): "Section"}}
 
 
 def test_enumerate_multiple_headings(a_md):
@@ -247,15 +247,17 @@ def test_enumerate_multiple_headings(a_md):
         )
     )
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["labels"] == {"a.md": {
-        (1,): "Title",
-        (1,1): "Section A",
-        (1,1,1): "Section A.1",
-        (1,1,2): "Section A.2",
-        (1,2): "Section B",
-        (1,3): "Section C",
-        (1,3,1): "Section C.1",
-    }}
+    assert overall["labels"] == {
+        "a.md": {
+            (1,): "Title",
+            (1, 1): "Section A",
+            (1, 1, 1): "Section A.1",
+            (1, 1, 2): "Section A.2",
+            (1, 2): "Section B",
+            (1, 3): "Section C",
+            (1, 3, 1): "Section C.1",
+        }
+    }
 
 
 def test_enumerate_headings_with_filler(a_md):
@@ -282,12 +284,14 @@ def test_enumerate_headings_with_filler(a_md):
         )
     )
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["labels"] == {"a.md": {
-        (1,): "Title",
-        (1,1): "Section A",
-        (1,1,1): "Section A.1",
-        (1,2): "Section B",
-    }}
+    assert overall["labels"] == {
+        "a.md": {
+            (1,): "Title",
+            (1, 1): "Section A",
+            (1, 1, 1): "Section A.1",
+            (1, 2): "Section B",
+        }
+    }
 
 
 def test_enumerate_headings_multiple_docs(a_md, b_md):
@@ -313,14 +317,14 @@ def test_enumerate_headings_multiple_docs(a_md, b_md):
     assert overall["labels"] == {
         "a.md": {
             (1,): "Title A",
-            (1,1): "Section B",
-            (1,2): "Section C",
+            (1, 1): "Section B",
+            (1, 2): "Section C",
         },
         "b.md": {
             (2,): "Title X",
-            (2,1): "Section Y",
-            (2,2): "Section Z",
-        }
+            (2, 1): "Section Y",
+            (2, 2): "Section Z",
+        },
     }
 
 

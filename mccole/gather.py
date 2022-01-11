@@ -57,7 +57,9 @@ def _enumerate_headings(path, node, stack, labels):
 def _update_heading_stack(level, stack):
     """Modify the current stack of heading numbers."""
     if level > len(stack) + 1:
-        raise McColeExc(f"Level {level} heading immediately under level {len(stack)} heading.")
+        raise McColeExc(
+            f"Level {level} heading immediately under level {len(stack)} heading."
+        )
     elif level == len(stack) + 1:
         stack.append(0)
     else:

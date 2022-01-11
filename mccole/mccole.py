@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Read, transform, and write."""
 
 import argparse
@@ -9,7 +7,6 @@ from pathlib import Path
 from .config import DEFAULTS, get_config
 from .fileio import read_files, write_files
 from .gather import gather_data
-from .transform import transform_files
 from .util import McColeExc, fail
 
 
