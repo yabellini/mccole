@@ -39,6 +39,14 @@ def _bib_cite(match):
     return result
 
 
+def _fig_ref(match):
+    """Handle `@f(label)` figure reference during parsing."""
+    content = [s.strip() for s in match.group(1).split(SEP)]
+    if (len(content) != 1) or not all(len(x) > 0 for x in content):
+        raise McColeExc(f"Unrecognized figure reference '{match.group(1)}'")
+    return content
+
+
 def _gloss_ref(match):
     """Handle `@g(text:key)` glossary reference during parsing."""
     content = [s.strip() for s in match.group(1).split(SEP)]
@@ -60,6 +68,14 @@ def _gloss_index_ref(match):
     content = [s.strip() for s in match.group(1).split(SEP)]
     if (len(content) != 3) or not all(len(x) > 0 for x in content):
         raise McColeExc(f"Unrecognized glossary/index content '{match.group(1)}'")
+    return content
+
+
+def _tbl_ref(match):
+    """Handle `@t(label)` table reference during parsing."""
+    content = [s.strip() for s in match.group(1).split(SEP)]
+    if (len(content) != 1) or not all(len(x) > 0 for x in content):
+        raise McColeExc(f"Unrecognized table reference '{match.group(1)}'")
     return content
 
 
@@ -85,6 +101,8 @@ EXTENSIONS = {
     "@g": {"re": re.compile(r"@g\((.+?)\)"), "func": _gloss_ref},
     "@i": {"re": re.compile(r"@i\((.+?)\)"), "func": _index_ref},
     "@gi": {"re": re.compile(r"@gi\((.+?)\)"), "func": _gloss_index_ref},
+    "@f": {"re": re.compile(r"@f\((.+?)\)"), "func": _fig_ref},
+    "@t": {"re": re.compile(r"@t\((.+?)\)"), "func": _tbl_ref},
     "@fig": {"re": re.compile(r"@fig\((.+?)\)"), "func": _fig_def},
     "@tbl": {"re": re.compile(r"@tbl\((.+?)\)"), "func": _tbl_def},
 }

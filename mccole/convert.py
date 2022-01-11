@@ -36,6 +36,16 @@ class BibCite(SpanToken):
         self.cites = EXTENSIONS["@b"]["func"](match)
 
 
+class FigRef(SpanToken):
+    """Parse `@f(label)` figure reference."""
+
+    pattern = EXTENSIONS["@f"]["re"]
+
+    def __init__(self, match):
+        """Check contained value during construction."""
+        self.label = EXTENSIONS["@f"]["func"](match)
+
+
 class GlossRef(SpanToken):
     """Parse `@g(text:key)` glossary reference."""
 
@@ -66,6 +76,16 @@ class GlossIndexRef(SpanToken):
         self.text, self.gloss_key, self.index_key = EXTENSIONS["@gi"]["func"](match)
 
 
+class TblRef(SpanToken):
+    """Parse `@t(label)` table reference."""
+
+    pattern = EXTENSIONS["@t"]["re"]
+
+    def __init__(self, match):
+        """Check contained value during construction."""
+        self.label = EXTENSIONS["@t"]["func"](match)
+
+
 class FigDef(SpanToken):
     """Parse `@fig(label:filename:alt:caption)`."""
 
@@ -91,7 +111,7 @@ class McColeHtml(HTMLRenderer):
 
     def __init__(self, config=None):
         """Add special handlers to conversion chain."""
-        super().__init__(BibCite, GlossRef, IndexRef, GlossIndexRef, FigDef, TblDef)
+        super().__init__(BibCite, FigRef, GlossRef, IndexRef, GlossIndexRef, TblRef, FigDef, TblDef)
         self.config = config
         self.render_map["Div"] = self.render_div
 
@@ -105,6 +125,11 @@ class McColeHtml(HTMLRenderer):
         """Render bibliographic citations."""
         cites = [f'<a href="bib.html#{c}">{c}</a>' for c in token.cites]
         return f"[{','.join(cites)}]"
+
+    def render_fig_ref(self, token):
+        """Render figure references."""
+        label = token.label.strip()
+        return f'<a href="#{label}">Figure&nbsp;{label}</a>'
 
     def render_gloss_ref(self, token):
         """Render glossary references."""
@@ -124,6 +149,11 @@ class McColeHtml(HTMLRenderer):
         gloss_ref = f'href="gloss.html#{token.gloss_key.strip()}"'
         index_ref = f'index="index.html#{token.index_key.strip()}'
         return f'<a {gloss_ref} {index_ref}">{text}</a>'
+
+    def render_tbl_ref(self, token):
+        """Render table references."""
+        label = token.label.strip()
+        return f'<a href="#{label}">Table&nbsp;{label}</a>'
 
     def render_fig_def(self, token):
         """Render figure definition."""
