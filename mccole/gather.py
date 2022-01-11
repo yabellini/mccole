@@ -138,6 +138,14 @@ def _enumerate_fig_defs(path, node, fig_def_accum, enumerator):
             _add_counter(fig_def_accum, key, _update_enumerator(enumerator))
 
 
+def _enumerate_tbl_defs(path, node, tbl_def_accum, enumerator):
+    """Enumerate table definitions."""
+    if isinstance(node, RawText):
+        for match in EXTENSIONS["@tbl"]["re"].finditer(node.content):
+            key, _, _ = EXTENSIONS["@tbl"]["func"](match)
+            _add_counter(tbl_def_accum, key, _update_enumerator(enumerator))
+
+
 def _update_enumerator(enumerator):
     """Update the counter in place, returning a tuple for storage."""
     assert len(enumerator) == 2
@@ -146,7 +154,10 @@ def _update_enumerator(enumerator):
 
 
 # Enumerator functions and their overall keys.
-ENUMERATORS = ([_enumerate_fig_defs, "fig_defs"],)
+ENUMERATORS = (
+    [_enumerate_fig_defs, "fig_defs"],
+    [_enumerate_tbl_defs, "tbl_defs"],
+)
 
 # ----------------------------------------------------------------------
 

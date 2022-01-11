@@ -76,12 +76,22 @@ class FigDef(SpanToken):
         self.label, self.file, self.alt, self.cap = EXTENSIONS["@fig"]["func"](match)
 
 
+class TblDef(SpanToken):
+    """Parse `@tbl(label:filename:caption)`."""
+
+    pattern = EXTENSIONS["@tbl"]["re"]
+
+    def __init__(self, match):
+        """Check contained value during construction."""
+        self.label, self.file, self.cap = EXTENSIONS["@tbl"]["func"](match)
+
+
 class McColeHtml(HTMLRenderer):
     """Convert directly to HTML."""
 
     def __init__(self, config=None):
         """Add special handlers to conversion chain."""
-        super().__init__(BibCite, GlossRef, IndexRef, GlossIndexRef, FigDef)
+        super().__init__(BibCite, GlossRef, IndexRef, GlossIndexRef, FigDef, TblDef)
         self.config = config
         self.render_map["Div"] = self.render_div
 
@@ -121,3 +131,10 @@ class McColeHtml(HTMLRenderer):
         img = f'<img src="{token.file.strip()}" alt="{token.alt.strip()}"/>'
         caption = f"<figcaption>{token.cap.strip()}</figcaption>"
         return f'<figure id="{label}">{img}{caption}</figure>'
+
+    def render_tbl_def(self, token):
+        """Render table definition."""
+        label = token.label.strip()
+        caption = f"<caption>{token.cap.strip()}</caption>"
+        file = token.file.strip()
+        return f'<table id="{label}">\n{file}\n{caption}\n</table>'

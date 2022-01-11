@@ -71,6 +71,14 @@ def _fig_def(match):
     return content
 
 
+def _tbl_def(match):
+    """Handle `@tbl(label:file:caption)` table during parsing."""
+    content = [s.strip() for s in match.group(1).split(SEP)]
+    if (len(content) != 3) or not all(len(x) > 0 for x in content):
+        raise McColeExc(f"Unrecognized table definition '{match.group(1)}'")
+    return content
+
+
 # Regular expressions and functions for extensions.
 EXTENSIONS = {
     "@b": {"re": re.compile(r"@b\(([^)]*)\)"), "func": _bib_cite},
@@ -78,4 +86,5 @@ EXTENSIONS = {
     "@i": {"re": re.compile(r"@i\((.+?)\)"), "func": _index_ref},
     "@gi": {"re": re.compile(r"@gi\((.+?)\)"), "func": _gloss_index_ref},
     "@fig": {"re": re.compile(r"@fig\((.+?)\)"), "func": _fig_def},
+    "@tbl": {"re": re.compile(r"@tbl\((.+?)\)"), "func": _tbl_def},
 }
