@@ -23,7 +23,6 @@ def main():
 
         subset = [info for info in files if info["action"] == "transform"]
         gather_data(config, subset)
-        spread_data(config, subset)
 
         write_files(config, files)
 

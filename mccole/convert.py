@@ -6,7 +6,7 @@ from mistletoe.html_renderer import HTMLRenderer
 from mistletoe.span_token import SpanToken
 
 from .patch import patch_divs
-from .util import EXTENSIONS
+from .util import EXTENSIONS, McColeExc
 
 
 def md_to_doc(md):
@@ -126,10 +126,20 @@ class McColeHtml(HTMLRenderer):
         cites = [f'<a href="bib.html#{c}">{c}</a>' for c in token.cites]
         return f"[{','.join(cites)}]"
 
+    def render_fig_def(self, token):
+        """Render figure definition."""
+        label = token.label.strip()
+        img = f'<img src="{token.file.strip()}" alt="{token.alt.strip()}"/>'
+        caption = f"<figcaption>{token.cap.strip()}</figcaption>"
+        return f'<figure id="{label}">{img}{caption}</figure>'
+
     def render_fig_ref(self, token):
         """Render figure references."""
         label = token.label.strip()
-        return f'<a href="#{label}">Figure&nbsp;{label}</a>'
+        if label not in self.config["fig_defs"]:
+            raise McColeExc(f"Reference to unknown figure label {label}")
+        major, minor = self.config["fig_defs"][label]
+        return f'<a href="#{label}">Figure&nbsp;{major}.{minor}</a>'
 
     def render_gloss_ref(self, token):
         """Render glossary references."""
@@ -153,14 +163,10 @@ class McColeHtml(HTMLRenderer):
     def render_tbl_ref(self, token):
         """Render table references."""
         label = token.label.strip()
-        return f'<a href="#{label}">Table&nbsp;{label}</a>'
-
-    def render_fig_def(self, token):
-        """Render figure definition."""
-        label = token.label.strip()
-        img = f'<img src="{token.file.strip()}" alt="{token.alt.strip()}"/>'
-        caption = f"<figcaption>{token.cap.strip()}</figcaption>"
-        return f'<figure id="{label}">{img}{caption}</figure>'
+        if label not in self.config["tbl_defs"]:
+            raise McColeExc(f"Reference to unknown table label {label}")
+        major, minor = self.config["tbl_defs"][label]
+        return f'<a href="#{label}">Table&nbsp;{major}.{minor}</a>'
 
     def render_tbl_def(self, token):
         """Render table definition."""

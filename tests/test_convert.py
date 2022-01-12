@@ -221,6 +221,29 @@ def test_fig_def_too_many_fields():
 # ----------------------------------------------------------------------
 
 
+def test_fig_ref_found():
+    html = md_to_html("@f(key)", {"fig_defs": {"key": (2, 3)}})
+    assert html.strip() == '<p><a href="#key">Figure&nbsp;2.3</a></p>'
+
+
+def test_fig_ref_not_found():
+    with pytest.raises(McColeExc):
+        md_to_html("@f(other)", {"fig_defs": {"key": (2, 3)}})
+
+
+def test_fig_ref_missing_key():
+    with pytest.raises(McColeExc):
+        md_to_html("@f()", {"fig_defs": {"key": (2, 3)}})
+
+
+def test_fig_ref_multiple_keys():
+    with pytest.raises(McColeExc):
+        md_to_html("@f(one:two)", {"fig_defs": {"key": (2, 3)}})
+
+
+# ----------------------------------------------------------------------
+
+
 def test_tbl_def_correctly_formatted():
     html = md_to_html("@tbl(label:file:cap)")
     assert all(
@@ -265,3 +288,26 @@ def test_tbl_def_missing_cap():
 def test_tbl_def_too_many_fields():
     with pytest.raises(McColeExc):
         md_to_html("@tbl(label:file:cap:something)")
+
+
+# ----------------------------------------------------------------------
+
+
+def test_tbl_ref_found():
+    html = md_to_html("@t(key)", {"tbl_defs": {"key": (2, 3)}})
+    assert html.strip() == '<p><a href="#key">Table&nbsp;2.3</a></p>'
+
+
+def test_tbl_ref_not_found():
+    with pytest.raises(McColeExc):
+        md_to_html("@t(other)", {"tbl_defs": {"key": (2, 3)}})
+
+
+def test_tbl_ref_missing_key():
+    with pytest.raises(McColeExc):
+        md_to_html("@t()", {"tbl_defs": {"key": (2, 3)}})
+
+
+def test_tbl_ref_multiple_keys():
+    with pytest.raises(McColeExc):
+        md_to_html("@t(one:two)", {"tbl_defs": {"key": (2, 3)}})
