@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from mccole.convert import md_to_html
+from mccole.convert import md_to_doc, doc_to_html, md_to_html
 from mccole.util import McColeExc
 
 
@@ -311,3 +311,12 @@ def test_tbl_ref_missing_key():
 def test_tbl_ref_multiple_keys():
     with pytest.raises(McColeExc):
         md_to_html("@t{one:two}", {"tbl_defs": {"key": (2, 3)}})
+
+
+# ----------------------------------------------------------------------
+
+
+def test_two_stage_conversion():
+    doc = md_to_doc("# Title")
+    html = doc_to_html(doc)
+    assert html.rstrip() == "<h1>Title</h1>"

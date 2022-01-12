@@ -6,7 +6,7 @@ from pathlib import Path
 
 import frontmatter
 
-from .convert import md_to_doc
+from .convert import md_to_doc, doc_to_html
 from .util import McColeExc
 
 
@@ -55,7 +55,7 @@ def write_files(config, files):
         if info["action"] == "copy":
             _copy_file(info["from"], info["to"])
         elif info["action"] == "transform":
-            text = _transform_file(config, info["doc"])
+            text = doc_to_html(info["doc"], config)
             _write_file(text, info["to"])
         else:
             assert False, f"Unknown action {info['action']}"
@@ -86,11 +86,6 @@ def _should_exclude(config, p):
 def _should_transform(config, p):
     """Transform this file if it matches a transformation pattern."""
     return any(fnmatch(p, pat) for pat in config["transform"])
-
-
-def _transform_file(config, doc):
-    """Transform a document into text."""
-    return "TRANSFORMED"
 
 
 def _write_file(text, to_path):
