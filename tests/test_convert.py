@@ -250,7 +250,7 @@ def test_tbl_def_correctly_formatted():
         x in html
         for x in [
             '<table id="label">',
-            'file',
+            "file",
             "<caption>cap</caption>",
             "</table>",
         ]
@@ -263,7 +263,7 @@ def test_tbl_def_with_spaces():
         x in html
         for x in [
             '<table id="label">',
-            'file',
+            "file",
             "<caption>cap</caption>",
             "</table>",
         ]

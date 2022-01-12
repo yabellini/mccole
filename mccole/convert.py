@@ -26,84 +26,36 @@ def md_to_html(text, config=None):
         return renderer.render(doc)
 
 
-class BibCite(SpanToken):
-    """Parse `@b(key1:key2:key3 citation."""
+def _make_parser(class_name, tag, *fields):
+    """Make a mistletoe-compatible parsing class."""
 
-    pattern = EXTENSIONS["@b"]["re"]
+    class result(SpanToken):
+        pattern = EXTENSIONS[tag]["re"]
 
-    def __init__(self, match):
-        """Check contained value during construction."""
-        self.cites = EXTENSIONS["@b"]["func"](match)
+        def __init__(self, match):
+            values = EXTENSIONS[tag]["func"](match)
+            if (len(fields) == 1) and (fields[0][0] == "*"):
+                field = fields[0][1:]
+                setattr(self, field, values)
+            else:
+                for (i, name) in enumerate(fields):
+                    setattr(self, name, values[i])
 
+    result.__name__ = class_name
 
-class FigRef(SpanToken):
-    """Parse `@f(label)` figure reference."""
-
-    pattern = EXTENSIONS["@f"]["re"]
-
-    def __init__(self, match):
-        """Check contained value during construction."""
-        self.label = EXTENSIONS["@f"]["func"](match)
-
-
-class GlossRef(SpanToken):
-    """Parse `@g(text:key)` glossary reference."""
-
-    pattern = EXTENSIONS["@g"]["re"]
-
-    def __init__(self, match):
-        """Check contained value during construction."""
-        self.text, self.key = EXTENSIONS["@g"]["func"](match)
+    return result
 
 
-class IndexRef(SpanToken):
-    """Parse `@i(text:key)` index reference."""
-
-    pattern = EXTENSIONS["@i"]["re"]
-
-    def __init__(self, match):
-        """Check contained value during construction."""
-        self.text, self.key = EXTENSIONS["@i"]["func"](match)
-
-
-class GlossIndexRef(SpanToken):
-    """Parse combined `@gi(text:gloss:index)` glossary/index reference."""
-
-    pattern = EXTENSIONS["@gi"]["re"]
-
-    def __init__(self, match):
-        """Check contained value during construction."""
-        self.text, self.gloss_key, self.index_key = EXTENSIONS["@gi"]["func"](match)
-
-
-class TblRef(SpanToken):
-    """Parse `@t(label)` table reference."""
-
-    pattern = EXTENSIONS["@t"]["re"]
-
-    def __init__(self, match):
-        """Check contained value during construction."""
-        self.label = EXTENSIONS["@t"]["func"](match)
-
-
-class FigDef(SpanToken):
-    """Parse `@fig(label:filename:alt:caption)`."""
-
-    pattern = EXTENSIONS["@fig"]["re"]
-
-    def __init__(self, match):
-        """Check contained value during construction."""
-        self.label, self.file, self.alt, self.cap = EXTENSIONS["@fig"]["func"](match)
-
-
-class TblDef(SpanToken):
-    """Parse `@tbl(label:filename:caption)`."""
-
-    pattern = EXTENSIONS["@tbl"]["re"]
-
-    def __init__(self, match):
-        """Check contained value during construction."""
-        self.label, self.file, self.cap = EXTENSIONS["@tbl"]["func"](match)
+RENDERERS = [
+    _make_parser("BibCite", "@b", "*cites"),
+    _make_parser("FigRef", "@f", "label"),
+    _make_parser("GlossRef", "@g", "text", "key"),
+    _make_parser("IndexRef", "@i", "text", "key"),
+    _make_parser("GlossIndexRef", "@gi", "text", "gloss_key", "index_key"),
+    _make_parser("TblRef", "@t", "label"),
+    _make_parser("FigDef", "@fig", "label", "file", "alt", "cap"),
+    _make_parser("TblDef", "@tbl", "label", "file", "cap"),
+]
 
 
 class McColeHtml(HTMLRenderer):
@@ -111,7 +63,7 @@ class McColeHtml(HTMLRenderer):
 
     def __init__(self, config=None):
         """Add special handlers to conversion chain."""
-        super().__init__(BibCite, FigRef, GlossRef, IndexRef, GlossIndexRef, TblRef, FigDef, TblDef)
+        super().__init__(*RENDERERS)
         self.config = config
         self.render_map["Div"] = self.render_div
 
