@@ -5,7 +5,7 @@ import pytest
 from mistletoe import Document
 
 from mccole.config import DEFAULTS, McColeExc
-from mccole.fileio import read_files
+from mccole.fileio import read_files, write_files
 
 from .util import create_files, dict_has_all
 
@@ -124,3 +124,39 @@ def test_unreadable_file_to_convert(fs):
     fs.create_file("src/a.md", st_mode=0o000)
     with pytest.raises(McColeExc):
         read_files(DEFAULTS, "src")
+
+
+# ----------------------------------------------------------------------
+
+
+def test_copy_single_file(fs):
+    fs.create_file("a.txt")
+    fs.create_dir(DEFAULTS["dst"])
+    files = [{
+        "action": "copy",
+        "from": Path("a.txt"),
+        "to": Path(DEFAULTS["dst"]) / "a.txt"
+    }]
+    write_files(DEFAULTS, files)
+
+
+def test_copy_single_file_fails_if_no_file(fs):
+    fs.create_dir(DEFAULTS["dst"])
+    files = [{
+        "action": "copy",
+        "from": Path("a.txt"),
+        "to": Path(DEFAULTS["dst"]) / "a.txt"
+    }]
+    with pytest.raises(McColeExc):
+        write_files(DEFAULTS, files)
+
+
+def test_copy_single_file_fails_if_no_dir(fs):
+    fs.create_file("a.txt")
+    files = [{
+        "action": "copy",
+        "from": Path("a.txt"),
+        "to": Path(DEFAULTS["dst"]) / "a.txt"
+    }]
+    with pytest.raises(McColeExc):
+        write_files(DEFAULTS, files)

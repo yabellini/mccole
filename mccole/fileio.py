@@ -75,7 +75,10 @@ def _change_path(config, original, suffix=None):
 
 def _copy_file(from_path, to_path):
     """Copy a file (binary)."""
-    to_path.write_bytes(from_path.read_bytes())
+    try:
+        to_path.write_bytes(from_path.read_bytes())
+    except IOError as exc:
+        raise McColeExc(str(exc))
 
 
 def _should_exclude(config, p):
