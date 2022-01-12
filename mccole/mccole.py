@@ -3,6 +3,7 @@
 import argparse
 import logging
 from pathlib import Path
+import sys
 
 from .config import DEFAULTS, get_config
 from .evaluate import create_env
@@ -28,7 +29,8 @@ def main():
         write_files(config, files)
 
     except McColeExc as exc:
-        fail(exc)
+        print(exc.msg, file=sys.stderr)
+        sys.exit(1)
 
 
 def parse_args():

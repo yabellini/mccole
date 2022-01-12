@@ -1,7 +1,7 @@
 """Utilities."""
 
 import re
-import sys
+
 
 # Field separator inside directives.
 SEP = ":"
@@ -13,14 +13,6 @@ class McColeExc(Exception):
     def __init__(self, msg):
         """Save the message."""
         self.msg = msg
-
-
-def fail(arg):
-    """Report failure and exit."""
-    if isinstance(arg, McColeExc):
-        arg = arg.msg
-    print(arg, file=sys.stderr)
-    sys.exit(1)
 
 
 def visit(path, node, func, *accum):
