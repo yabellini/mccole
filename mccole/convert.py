@@ -5,6 +5,7 @@ from mistletoe.ast_renderer import ASTRenderer
 from mistletoe.html_renderer import HTMLRenderer
 from mistletoe.span_token import SpanToken
 
+from .evaluate import evaluate
 from .patch import patch_divs
 from .util import EXTENSIONS, McColeExc
 
@@ -46,6 +47,13 @@ def _make_parser(class_name, tag, *fields):
     return result
 
 
+class Expression(SpanToken):
+    pattern = EXTENSIONS["@x"]["re"]
+
+    def __init__(self, match):
+        self.expr = EXTENSIONS["@x"]["func"](match)[0]
+
+
 RENDERERS = [
     _make_parser("BibCite", "@b", "*cites"),
     _make_parser("FigRef", "@f", "label"),
@@ -55,6 +63,7 @@ RENDERERS = [
     _make_parser("TblRef", "@t", "label"),
     _make_parser("FigDef", "@fig", "label", "file", "alt", "cap"),
     _make_parser("TblDef", "@tbl", "label", "file", "cap"),
+    Expression,
 ]
 
 
@@ -126,3 +135,9 @@ class McColeHtml(HTMLRenderer):
         caption = f"<caption>{token.cap.strip()}</caption>"
         file = token.file.strip()
         return f'<table id="{label}">\n{file}\n{caption}\n</table>'
+
+    def render_expression(self, token):
+        """Render embedded expression."""
+        expr = token.expr.strip()
+        value = evaluate(self.config, expr)
+        return value

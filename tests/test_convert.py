@@ -27,16 +27,16 @@ def test_h1_and_paragraph_becomes_html():
 
 def test_bib_cite_with_no_keys():
     with pytest.raises(McColeExc):
-        md_to_html("@b()")
+        md_to_html("@b{}")
 
 
 def test_bib_cite_with_one_key():
-    html = md_to_html("@b(key)")
+    html = md_to_html("@b{key}")
     assert html.strip() == '<p>[<a href="bib.html#key">key</a>]</p>'
 
 
 def test_bib_cite_with_multiple_keys():
-    html = md_to_html("@b(key1:key2)")
+    html = md_to_html("@b{key1:key2}")
     assert (
         html.strip()
         == '<p>[<a href="bib.html#key1">key1</a>,<a href="bib.html#key2">key2</a>]</p>'
@@ -45,85 +45,85 @@ def test_bib_cite_with_multiple_keys():
 
 def test_bib_cite_with_trailing_comma():
     with pytest.raises(McColeExc):
-        md_to_html("@b(key:)")
+        md_to_html("@b{key:}")
 
 
 def test_bib_cite_with_leading_comma():
     with pytest.raises(McColeExc):
-        md_to_html("@b(:key)")
+        md_to_html("@b{:key}")
 
 
 # ----------------------------------------------------------------------
 
 
 def test_gloss_ref_correctly_formatted():
-    html = md_to_html("@g(text:key)")
+    html = md_to_html("@g{text:key}")
     assert html.strip() == '<p><a href="gloss.html#key">text</a></p>'
 
 
 def test_gloss_ref_with_spaces():
-    html = md_to_html("@g( text   :\tkey )")
+    html = md_to_html("@g{ text   :\tkey }")
     assert html.strip() == '<p><a href="gloss.html#key">text</a></p>'
 
 
 def test_gloss_ref_missing_text():
     with pytest.raises(McColeExc):
-        md_to_html("@g(:key)")
+        md_to_html("@g{:key}")
 
 
 def test_gloss_ref_missing_key():
     with pytest.raises(McColeExc):
-        md_to_html("@g(text:)")
+        md_to_html("@g{text:}")
 
 
 def test_gloss_ref_missing_both():
     with pytest.raises(McColeExc):
-        md_to_html("@g(:)")
+        md_to_html("@g{:}")
 
 
 def test_gloss_ref_too_many_fields():
     with pytest.raises(McColeExc):
-        md_to_html("@g(first:second:third)")
+        md_to_html("@g{first:second:third}")
 
 
 # ----------------------------------------------------------------------
 
 
 def test_index_ref_correctly_formatted():
-    html = md_to_html("@i(text:key)")
+    html = md_to_html("@i{text:key}")
     assert html.strip() == '<p><a href="index.html#key">text</a></p>'
 
 
 def test_index_ref_with_spaces():
-    html = md_to_html("@i( text   :\tkey )")
+    html = md_to_html("@i{ text   :\tkey }")
     assert html.strip() == '<p><a href="index.html#key">text</a></p>'
 
 
 def test_index_ref_missing_text():
     with pytest.raises(McColeExc):
-        md_to_html("@i(:key)")
+        md_to_html("@i{:key}")
 
 
 def test_index_ref_missing_key():
     with pytest.raises(McColeExc):
-        md_to_html("@i(text:)")
+        md_to_html("@i{text:}")
 
 
 def test_index_ref_missing_both():
     with pytest.raises(McColeExc):
-        md_to_html("@i(:)")
+        md_to_html("@i{:}")
 
 
 def test_index_ref_too_many_fields():
     with pytest.raises(McColeExc):
-        md_to_html("@i(first:second:third)")
+        md_to_html("@i{first:second:third}")
 
 
 # ----------------------------------------------------------------------
 
 
 def test_gloss_index_ref_correctly_formatted():
-    html = md_to_html("@gi(text:gloss:index)")
+    html = md_to_html("@gi{text:gloss:index}")
     assert (
         html.strip()
         == '<p><a href="gloss.html#gloss" index="index.html#index">text</a></p>'
@@ -131,7 +131,7 @@ def test_gloss_index_ref_correctly_formatted():
 
 
 def test_gloss_index_ref_with_spaces():
-    html = md_to_html("@gi(text: gloss\t:   index)")
+    html = md_to_html("@gi{text: gloss\t:   index}")
     assert (
         html.strip()
         == '<p><a href="gloss.html#gloss" index="index.html#index">text</a></p>'
@@ -140,34 +140,34 @@ def test_gloss_index_ref_with_spaces():
 
 def test_gloss_index_ref_missing_text():
     with pytest.raises(McColeExc):
-        md_to_html("@gi(:g:i)")
+        md_to_html("@gi{:g:i}")
 
 
 def test_gloss_index_ref_missing_gloss():
     with pytest.raises(McColeExc):
-        md_to_html("@gi(t::i)")
+        md_to_html("@gi{t::i}")
 
 
 def test_gloss_index_ref_missing_index():
     with pytest.raises(McColeExc):
-        md_to_html("@gi(t:g:)")
+        md_to_html("@gi{t:g:}")
 
 
 def test_gloss_index_ref_too_few_fields():
     with pytest.raises(McColeExc):
-        md_to_html("@gi(t:g)")
+        md_to_html("@gi{t:g}")
 
 
 def test_gloss_index_ref_too_many_fields():
     with pytest.raises(McColeExc):
-        md_to_html("@gi(t:g:i:x:y)")
+        md_to_html("@gi{t:g:i:x:y}")
 
 
 # ----------------------------------------------------------------------
 
 
 def test_fig_def_correctly_formatted():
-    html = md_to_html("@fig(label:file:alt:cap)")
+    html = md_to_html("@fig{label:file:alt:cap}")
     assert html.strip() == "".join(
         [
             "<p>",
@@ -181,7 +181,7 @@ def test_fig_def_correctly_formatted():
 
 
 def test_fig_def_with_spaces():
-    html = md_to_html("@fig( label : file : \t alt \t : cap  )")
+    html = md_to_html("@fig{ label : file : \t alt \t : cap  }")
     assert all(
         x in html
         for x in [
@@ -195,57 +195,57 @@ def test_fig_def_with_spaces():
 
 def test_fig_def_missing_label():
     with pytest.raises(McColeExc):
-        md_to_html("@fig(:file:alt:cap)")
+        md_to_html("@fig{:file:alt:cap}")
 
 
 def test_fig_def_missing_file():
     with pytest.raises(McColeExc):
-        md_to_html("@fig(label::alt:cap)")
+        md_to_html("@fig{label::alt:cap}")
 
 
 def test_fig_def_missing_alt():
     with pytest.raises(McColeExc):
-        md_to_html("@fig(label:file::cap)")
+        md_to_html("@fig{label:file::cap}")
 
 
 def test_fig_def_missing_cap():
     with pytest.raises(McColeExc):
-        md_to_html("@fig(label:file:alt:)")
+        md_to_html("@fig{label:file:alt:}")
 
 
 def test_fig_def_too_many_fields():
     with pytest.raises(McColeExc):
-        md_to_html("@fig(label:file:alt:cap:something)")
+        md_to_html("@fig{label:file:alt:cap:something}")
 
 
 # ----------------------------------------------------------------------
 
 
 def test_fig_ref_found():
-    html = md_to_html("@f(key)", {"fig_defs": {"key": (2, 3)}})
+    html = md_to_html("@f{key}", {"fig_defs": {"key": (2, 3)}})
     assert html.strip() == '<p><a href="#key">Figure&nbsp;2.3</a></p>'
 
 
 def test_fig_ref_not_found():
     with pytest.raises(McColeExc):
-        md_to_html("@f(other)", {"fig_defs": {"key": (2, 3)}})
+        md_to_html("@f{other}", {"fig_defs": {"key": (2, 3)}})
 
 
 def test_fig_ref_missing_key():
     with pytest.raises(McColeExc):
-        md_to_html("@f()", {"fig_defs": {"key": (2, 3)}})
+        md_to_html("@f{}", {"fig_defs": {"key": (2, 3)}})
 
 
 def test_fig_ref_multiple_keys():
     with pytest.raises(McColeExc):
-        md_to_html("@f(one:two)", {"fig_defs": {"key": (2, 3)}})
+        md_to_html("@f{one:two}", {"fig_defs": {"key": (2, 3)}})
 
 
 # ----------------------------------------------------------------------
 
 
 def test_tbl_def_correctly_formatted():
-    html = md_to_html("@tbl(label:file:cap)")
+    html = md_to_html("@tbl{label:file:cap}")
     assert all(
         x in html
         for x in [
@@ -258,7 +258,7 @@ def test_tbl_def_correctly_formatted():
 
 
 def test_tbl_def_with_spaces():
-    html = md_to_html("@tbl( label\t:\tfile : cap  )")
+    html = md_to_html("@tbl{ label\t:\tfile : cap  }")
     assert all(
         x in html
         for x in [
@@ -272,42 +272,42 @@ def test_tbl_def_with_spaces():
 
 def test_tbl_def_missing_label():
     with pytest.raises(McColeExc):
-        md_to_html("@tbl(:file:cap)")
+        md_to_html("@tbl{:file:cap}")
 
 
 def test_tbl_def_missing_file():
     with pytest.raises(McColeExc):
-        md_to_html("@tbl(label::cap)")
+        md_to_html("@tbl{label::cap}")
 
 
 def test_tbl_def_missing_cap():
     with pytest.raises(McColeExc):
-        md_to_html("@tbl(label:file:)")
+        md_to_html("@tbl{label:file:}")
 
 
 def test_tbl_def_too_many_fields():
     with pytest.raises(McColeExc):
-        md_to_html("@tbl(label:file:cap:something)")
+        md_to_html("@tbl{label:file:cap:something}")
 
 
 # ----------------------------------------------------------------------
 
 
 def test_tbl_ref_found():
-    html = md_to_html("@t(key)", {"tbl_defs": {"key": (2, 3)}})
+    html = md_to_html("@t{key}", {"tbl_defs": {"key": (2, 3)}})
     assert html.strip() == '<p><a href="#key">Table&nbsp;2.3</a></p>'
 
 
 def test_tbl_ref_not_found():
     with pytest.raises(McColeExc):
-        md_to_html("@t(other)", {"tbl_defs": {"key": (2, 3)}})
+        md_to_html("@t{other}", {"tbl_defs": {"key": (2, 3)}})
 
 
 def test_tbl_ref_missing_key():
     with pytest.raises(McColeExc):
-        md_to_html("@t()", {"tbl_defs": {"key": (2, 3)}})
+        md_to_html("@t{}", {"tbl_defs": {"key": (2, 3)}})
 
 
 def test_tbl_ref_multiple_keys():
     with pytest.raises(McColeExc):
-        md_to_html("@t(one:two)", {"tbl_defs": {"key": (2, 3)}})
+        md_to_html("@t{one:two}", {"tbl_defs": {"key": (2, 3)}})

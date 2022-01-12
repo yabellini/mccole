@@ -226,9 +226,9 @@ def test_get_bib_keys_in_one_document(a_md):
             """\
         # Title
 
-        paragraph @b(key1:key2)
+        paragraph @b{key1:key2}
 
-        **bold @b(key3)**
+        **bold @b{key3}**
         """
         )
     )
@@ -242,16 +242,16 @@ def test_get_bib_keys_in_multiple_documents(a_md, b_md):
             """\
         # Title
 
-        paragraph @b(key1:key2)
+        paragraph @b{key1:key2}
 
-        **bold @b(key3)**
+        **bold @b{key3}**
         """
         )
     )
     b_md["doc"] = md_to_doc(
         dedent(
             """\
-        paragraph @b(key3) and @b(key4)
+        paragraph @b{key3} and @b{key4}
         """
         )
     )
@@ -270,16 +270,16 @@ def test_get_gloss_keys_in_multiple_documents(a_md, b_md):
             """\
         # Title
 
-        paragraph @g(term:key1)
+        paragraph @g{term:key1}
 
-        **bold @g(term:key2)**
+        **bold @g{term:key2}**
         """
         )
     )
     b_md["doc"] = md_to_doc(
         dedent(
             """\
-        paragraph @g(term:key1) and @g(term:key3)
+        paragraph @g{term:key1} and @g{term:key3}
         """
         )
     )
@@ -297,16 +297,16 @@ def test_get_index_keys_in_multiple_documents(a_md, b_md):
             """\
         # Title
 
-        paragraph @i(term:key1)
+        paragraph @i{term:key1}
 
-        **bold @i(term:key2)**
+        **bold @i{term:key2}**
         """
         )
     )
     b_md["doc"] = md_to_doc(
         dedent(
             """\
-        paragraph @i(term:key1) and @i(term:key3)
+        paragraph @i{term:key1} and @i{term:key3}
         """
         )
     )
@@ -324,16 +324,16 @@ def test_get_gloss_index_keys_in_multiple_documents(a_md, b_md):
             """\
         # Title
 
-        paragraph @gi(term:gloss1:index1)
+        paragraph @gi{term:gloss1:index1}
 
-        **bold @gi(term:gloss2:index2)**
+        **bold @gi{term:gloss2:index2}**
         """
         )
     )
     b_md["doc"] = md_to_doc(
         dedent(
             """\
-        paragraph @gi(term:gloss1:index1) and @gi(term:gloss3:index3)
+        paragraph @gi{term:gloss1:index1} and @gi{term:gloss3:index3}
         """
         )
     )
@@ -367,7 +367,7 @@ def test_enumerate_fig_defs_no_figures(a_md):
 
 
 def test_enumerate_fig_defs_one_figure(a_md):
-    a_md["doc"] = md_to_doc("@fig(label:file:alt:cap)")
+    a_md["doc"] = md_to_doc("@fig{label:file:alt:cap}")
     overall = gather_data(DEFAULTS, [a_md])
     assert overall["fig_defs"] == {"label": (1, 1)}
 
@@ -377,17 +377,17 @@ def test_enumerate_fig_defs_multiple_files(a_md, b_md):
         dedent(
             """\
         # Title
-        @fig(first:file:alt:cap)
-        @fig(second:file:alt:cap)
+        @fig{first:file:alt:cap}
+        @fig{second:file:alt:cap}
         """
         )
     )
     b_md["doc"] = md_to_doc(
         dedent(
             """\
-        @fig(third:file:alt:cap)
+        @fig{third:file:alt:cap}
         paragraph
-        @fig(fourth:file:alt:cap)
+        @fig{fourth:file:alt:cap}
         """
         )
     )

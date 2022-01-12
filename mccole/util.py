@@ -47,35 +47,39 @@ def _make_extractor(name, code, width):
 # Regular expressions and functions for extensions.
 EXTENSIONS = {
     "@b": {
-        "re": re.compile(r"@b\((.*?)\)"),
+        "re": re.compile(r"@b\{(.*?)\}"),
         "func": _make_extractor("citation", "b", "*"),
     },
     "@g": {
-        "re": re.compile(r"@g\((.*?)\)"),
+        "re": re.compile(r"@g\{(.*?)\}"),
         "func": _make_extractor("glossary reference", "g", 2),
     },
     "@i": {
-        "re": re.compile(r"@i\((.*?)\)"),
+        "re": re.compile(r"@i\{(.*?)\}"),
         "func": _make_extractor("index reference", "i", 2),
     },
     "@gi": {
-        "re": re.compile(r"@gi\((.*?)\)"),
+        "re": re.compile(r"@gi\{(.*?)\}"),
         "func": _make_extractor("glossary/index reference", "gi", 3),
     },
     "@f": {
-        "re": re.compile(r"@f\((.*?)\)"),
+        "re": re.compile(r"@f\{(.*?)\}"),
         "func": _make_extractor("figure reference", "f", 1),
     },
     "@t": {
-        "re": re.compile(r"@t\((.*?)\)"),
+        "re": re.compile(r"@t\{(.*?)\}"),
         "func": _make_extractor("table reference", "t", 1),
     },
     "@fig": {
-        "re": re.compile(r"@fig\((.*?)\)"),
+        "re": re.compile(r"@fig\{(.*?)\}"),
         "func": _make_extractor("figure definition", "fig", 4),
     },
     "@tbl": {
-        "re": re.compile(r"@tbl\((.*?)\)"),
+        "re": re.compile(r"@tbl\{(.*?)\}"),
         "func": _make_extractor("table definition", "tbl", 3),
+    },
+    "@x": {
+        "re": re.compile(r"@x\{(.*?)\}"),
+        "func": _make_extractor("expression", "x", 1),
     },
 }

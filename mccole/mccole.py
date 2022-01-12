@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 
 from .config import DEFAULTS, get_config
+from .evaluate import create_env
 from .fileio import read_files, write_files
 from .gather import gather_data
 from .util import McColeExc, fail
@@ -23,6 +24,7 @@ def main():
         subset = [info for info in files if info["action"] == "transform"]
         gather_data(config, subset)
 
+        create_env(config)
         write_files(config, files)
 
     except McColeExc as exc:
