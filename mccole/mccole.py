@@ -12,10 +12,10 @@ from .gather import gather_data
 from .util import McColeExc, fail
 
 
-def main():
+def main(argv):
     """Main driver."""
     try:
-        options = parse_args()
+        options = parse_args(argv)
         _configure_logging(options)
         config = get_config(options.config)
 
