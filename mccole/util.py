@@ -31,78 +31,25 @@ def visit(path, node, func, *accum):
             visit(path, child, func, *accum)
 
 
-def _bib_cite(match):
-    """Handle `@b(key:key)` during parsing."""
-    result = [s.strip() for s in match.group(1).split(SEP)]
-    if (not result) or not all(len(s) > 0 for s in result):
-        raise McColeExc("Empty @b() bibliographic citation.")
-    return result
-
-
-def _fig_ref(match):
-    """Handle `@f(label)` figure reference during parsing."""
-    content = [s.strip() for s in match.group(1).split(SEP)]
-    if (len(content) != 1) or not all(len(x) > 0 for x in content):
-        raise McColeExc(f"Unrecognized figure reference '{match.group(1)}'")
-    return content[0]
-
-
-def _gloss_ref(match):
-    """Handle `@g(text:key)` glossary reference during parsing."""
-    content = [s.strip() for s in match.group(1).split(SEP)]
-    if (len(content) != 2) or not all(len(x) > 0 for x in content):
-        raise McColeExc(f"Unrecognized glossary content '{match.group(1)}'")
-    return content
-
-
-def _index_ref(match):
-    """Handle `@i(text:key)` index reference during parsing."""
-    content = [s.strip() for s in match.group(1).split(SEP)]
-    if (len(content) != 2) or not all(len(x) > 0 for x in content):
-        raise McColeExc(f"Unrecognized index content '{match.group(1)}'")
-    return content
-
-
-def _gloss_index_ref(match):
-    """Handle combined `@gi(text:gloss:index)` reference during parsing."""
-    content = [s.strip() for s in match.group(1).split(SEP)]
-    if (len(content) != 3) or not all(len(x) > 0 for x in content):
-        raise McColeExc(f"Unrecognized glossary/index content '{match.group(1)}'")
-    return content
-
-
-def _tbl_ref(match):
-    """Handle `@t(label)` table reference during parsing."""
-    content = [s.strip() for s in match.group(1).split(SEP)]
-    if (len(content) != 1) or not all(len(x) > 0 for x in content):
-        raise McColeExc(f"Unrecognized table reference '{match.group(1)}'")
-    return content[0]
-
-
-def _fig_def(match):
-    """Handle `@fig(label:file:alt:caption)` figure during parsing."""
-    content = [s.strip() for s in match.group(1).split(SEP)]
-    if (len(content) != 4) or not all(len(x) > 0 for x in content):
-        raise McColeExc(f"Unrecognized figure definition '{match.group(1)}'")
-    return content
-
-
-def _tbl_def(match):
-    """Handle `@tbl(label:file:caption)` table during parsing."""
-    content = [s.strip() for s in match.group(1).split(SEP)]
-    if (len(content) != 3) or not all(len(x) > 0 for x in content):
-        raise McColeExc(f"Unrecognized table definition '{match.group(1)}'")
-    return content
+def _make_extractor(name, code, width):
+    """Create function to handle `@code(p1:p2:...)` (with `width` args)."""
+    def handler(match):
+        result = [s.strip() for s in match.group(1).split(SEP)]
+        len_ok = ((width == "+") and (len(result) > 0)) or (len(result) == width)
+        if (not len_ok) or not all(len(r) > 0 for r in result):
+            raise McColeExc(f"Badly-formatted {name}: @{code}({match.group(1)}).")
+        return result[0] if (width == 1) else result
+    return handler
 
 
 # Regular expressions and functions for extensions.
 EXTENSIONS = {
-    "@b": {"re": re.compile(r"@b\((.*?)\)"), "func": _bib_cite},
-    "@g": {"re": re.compile(r"@g\((.*?)\)"), "func": _gloss_ref},
-    "@i": {"re": re.compile(r"@i\((.*?)\)"), "func": _index_ref},
-    "@gi": {"re": re.compile(r"@gi\((.*?)\)"), "func": _gloss_index_ref},
-    "@f": {"re": re.compile(r"@f\((.*?)\)"), "func": _fig_ref},
-    "@t": {"re": re.compile(r"@t\((.*?)\)"), "func": _tbl_ref},
-    "@fig": {"re": re.compile(r"@fig\((.*?)\)"), "func": _fig_def},
-    "@tbl": {"re": re.compile(r"@tbl\((.*?)\)"), "func": _tbl_def},
+    "@b": {"re": re.compile(r"@b\((.*?)\)"), "func": _make_extractor("citation", "b", "+")},
+    "@g": {"re": re.compile(r"@g\((.*?)\)"), "func": _make_extractor("glossary reference", "g", 2)},
+    "@i": {"re": re.compile(r"@i\((.*?)\)"), "func": _make_extractor("index reference", "i", 2)},
+    "@gi": {"re": re.compile(r"@gi\((.*?)\)"), "func": _make_extractor("glossary/index reference", "gi", 3)},
+    "@f": {"re": re.compile(r"@f\((.*?)\)"), "func": _make_extractor("figure reference", "f", 1)},
+    "@t": {"re": re.compile(r"@t\((.*?)\)"), "func": _make_extractor("table reference", "t", 1)},
+    "@fig": {"re": re.compile(r"@fig\((.*?)\)"), "func": _make_extractor("figure definition", "fig", 4)},
+    "@tbl": {"re": re.compile(r"@tbl\((.*?)\)"), "func": _make_extractor("table definition", "tbl", 3)},
 }
