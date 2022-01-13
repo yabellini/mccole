@@ -2,5 +2,5 @@
 *~
 .DS_Store
 .coverage
-_*
+_site
 site
