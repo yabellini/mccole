@@ -171,14 +171,14 @@ def test_copy_single_file_fails_if_no_dst_dir(fs):
 
 def test_write_single_file_successful(fs):
     fs.create_dir(DEFAULTS["dst"])
-    dst = DEFAULTS["dst"] / "a.html"
+    dst = Path(DEFAULTS["dst"]) / "a.html"
     files = [{"action": "transform", "to": dst, "doc": md_to_doc("# Title")}]
     write_files(DEFAULTS, files)
     assert dst.read_text().rstrip() == "<h1>Title</h1>"
 
 
 def test_write_single_file_fails_if_no_dst_dir(fs):
-    dst = DEFAULTS["dst"] / "a.txt"
+    dst = Path(DEFAULTS["dst"]) / "a.txt"
     files = [{"action": "transform", "to": dst, "doc": md_to_doc("# Title")}]
     with pytest.raises(McColeExc):
         write_files(DEFAULTS, files)

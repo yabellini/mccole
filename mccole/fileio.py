@@ -63,8 +63,8 @@ def write_files(config, files):
 
 def _change_path(config, original, suffix=None):
     """Change source path to destination path."""
-    src_base = config["src"].parts
-    dst_base = config["dst"].parts
+    src_base = Path(config["src"]).parts
+    dst_base = Path(config["dst"]).parts
     combined = dst_base + original.parts[len(src_base) :]  # noqa: E203
     # Replace leading double slash with single slash if absolute path.
     result = Path("/".join(combined).replace("//", "/"))

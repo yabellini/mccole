@@ -1,17 +1,17 @@
 """Configuration."""
 
 import os
-from pathlib import Path
 
 import yaml
 
 from .util import McColeExc
 
 # Default configuration settings.
+# Must use strings rather than Path objects for YAML persistence.
 DEFAULTS = {
-    "config": Path(os.curdir) / "mccole.yml",
-    "src": Path(os.curdir),
-    "dst": Path("_site"),
+    "config": os.path.join(os.curdir, "mccole.yml"),
+    "src": os.curdir,
+    "dst": "_site",
     "transform": ["*.md"],
     "exclude": ["*~"],
 }

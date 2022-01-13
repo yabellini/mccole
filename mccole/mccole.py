@@ -12,28 +12,23 @@ from .gather import gather_data
 from .util import McColeExc
 
 
-def main(argv):
+def mccole(args):
     """Main driver."""
-    try:
-        options = parse_args(argv)
-        _configure_logging(options)
-        config = get_config(options.config)
+    options = _parse_args(args)
+    _configure_logging(options)
+    config = get_config(options.config)
 
-        files = read_files(config, config["src"])
-        logging.info(f"found {len(files)} files")
+    files = read_files(config, config["src"])
+    logging.info(f"found {len(files)} files")
 
-        subset = [info for info in files if info["action"] == "transform"]
-        gather_data(config, subset)
+    subset = [info for info in files if info["action"] == "transform"]
+    gather_data(config, subset)
 
-        create_env(config)
-        write_files(config, files)
-
-    except McColeExc as exc:
-        print(exc.msg, file=sys.stderr)
-        sys.exit(1)
+    create_env(config)
+    write_files(config, files)
 
 
-def parse_args():
+def _parse_args(args):
     """Get command-line arguments."""
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -55,7 +50,7 @@ def parse_args():
         default="error",
         help="Logging level.",
     )
-    return parser.parse_args()
+    return parser.parse_args(args)
 
 
 def _configure_logging(options):
