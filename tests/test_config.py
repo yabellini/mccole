@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from mccole.config import DEFAULTS, get_config
+from mccole.config import DEFAULTS, SCALAR_KEYS, MULTI_KEYS, get_config
 from mccole.util import McColeExc
 
 
@@ -13,7 +13,9 @@ def test_config_file_not_found(fs):
 
 def test_empty_config_file_handled(fs):
     fs.create_file("test.yml")
-    assert get_config("test.yml") == DEFAULTS
+    actual = get_config("test.yml")
+    assert all(actual[k] == DEFAULTS[k] for k in SCALAR_KEYS)
+    assert all(actual[k] == set(DEFAULTS[k]) for k in MULTI_KEYS)
 
 
 def test_config_file_parsed(fs):
@@ -27,9 +29,10 @@ def test_config_file_parsed(fs):
     )
     fs.create_file("test.yml", contents=text)
     actual = get_config("test.yml")
-    assert all(actual[k] == DEFAULTS[k] for k in DEFAULTS)
+    assert all(actual[k] == DEFAULTS[k] for k in SCALAR_KEYS)
+    assert all(actual[k] == set(DEFAULTS[k]) for k in MULTI_KEYS)
     assert actual["first"] == "second"
-    assert actual["third"] == [4, 5]
+    assert actual["third"] == {4, 5}
 
 
 def test_config_file_overlay(fs):
@@ -44,4 +47,4 @@ def test_config_file_overlay(fs):
     fs.create_file("test.yml", contents=text)
     actual = get_config("test.yml")
     assert actual["src"] == "changed"
-    assert actual["transform"] == ["*.md", "*.markdown"]
+    assert actual["transform"] == {"*.md", "*.markdown"}

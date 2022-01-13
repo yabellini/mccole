@@ -6,7 +6,7 @@ import os
 import sys
 from pathlib import Path
 
-from .config import DEFAULTS, get_config
+from .config import DEFAULTS, DEFAULT_CONFIG_PATH, get_config
 from .evaluate import create_env
 from .fileio import read_files, write_files
 from .gather import gather_data
@@ -16,17 +16,21 @@ from .util import McColeExc
 def mccole(args):
     """Main driver."""
     options = _parse_args(args)
-    if options.chdir is not None:
-        os.chdir(options.chdir)
     _configure_logging(options)
+    if options.chdir is not None:
+        logging.info(f"changing working directory to {options.chdir}")
+        os.chdir(options.chdir)
 
     config = get_config(options.config)
+    logging.debug(f"config is {config}")
 
     files = read_files(config, config["src"])
     logging.info(f"found {len(files)} files")
+    logging.debug(", ".join([str(info["from"]) for info in files]))
 
     subset = [info for info in files if info["action"] == "transform"]
     gather_data(config, subset)
+    logging.debug(f"config with gathered data is {config}")
 
     create_env(config)
     write_files(config, files)
@@ -44,7 +48,7 @@ def _parse_args(args):
         "-C", "--chdir", type=Path, default=None, help="Change directory before running."
     )
     parser.add_argument(
-        "-F", "--config", type=Path, default=DEFAULTS["config"], help="Configuration file."
+        "-F", "--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Configuration file."
     )
     parser.add_argument(
         "-s", "--src", type=Path, default=DEFAULTS["src"], help="Source directory."

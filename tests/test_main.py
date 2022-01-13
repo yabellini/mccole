@@ -1,13 +1,13 @@
 import pytest
 import yaml
 
-from mccole.config import DEFAULTS
+from mccole.config import DEFAULT_CONFIG_PATH, DEFAULTS
 from mccole.mccole import mccole
 
 
 @pytest.fixture
 def default_config(fs):
-    with open(DEFAULTS["config"], "w") as writer:
+    with open(DEFAULT_CONFIG_PATH, "w") as writer:
         yaml.dump(DEFAULTS, writer)
     return DEFAULTS
 

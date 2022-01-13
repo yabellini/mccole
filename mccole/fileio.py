@@ -2,6 +2,7 @@
 
 import glob
 from fnmatch import fnmatch
+import logging
 from pathlib import Path
 
 import frontmatter
@@ -56,7 +57,7 @@ def write_files(config, files):
             _copy_file(info["from"], info["to"])
         elif info["action"] == "transform":
             text = doc_to_html(info["doc"], config)
-            _write_file(info["to"], text)
+            _write_file(info["from"], info["to"], text)
         else:
             raise McColeExc(f"Unknown action {info['action']}")
 
@@ -75,7 +76,9 @@ def _change_path(config, original, suffix=None):
 
 def _copy_file(from_path, to_path):
     """Copy a file (binary)."""
+    logging.debug(f"copying {from_path} to {to_path}")
     try:
+        to_path.parent.mkdir(parents=True, exist_ok=True)
         to_path.write_bytes(from_path.read_bytes())
     except IOError as exc:
         raise McColeExc(str(exc))
@@ -91,9 +94,11 @@ def _should_transform(config, p):
     return any(fnmatch(p, pat) for pat in config["transform"])
 
 
-def _write_file(to_path, text):
+def _write_file(from_path, to_path, text):
     """Write a file."""
+    logging.debug(f"transforming {from_path} to {to_path}")
     try:
+        to_path.parent.mkdir(parents=True, exist_ok=True)
         to_path.write_text(text)
     except IOError as exc:
         raise McColeExc(str(exc))

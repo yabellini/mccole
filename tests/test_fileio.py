@@ -157,28 +157,12 @@ def test_copy_single_file_fails_if_no_src_file(fs):
         write_files(DEFAULTS, files)
 
 
-def test_copy_single_file_fails_if_no_dst_dir(fs):
-    fs.create_file("a.txt")
-    files = [
-        {"action": "copy", "from": Path("a.txt"), "to": Path(DEFAULTS["dst"]) / "a.txt"}
-    ]
-    with pytest.raises(McColeExc):
-        write_files(DEFAULTS, files)
-
-
 # ----------------------------------------------------------------------
 
 
 def test_write_single_file_successful(fs):
     fs.create_dir(DEFAULTS["dst"])
     dst = Path(DEFAULTS["dst"]) / "a.html"
-    files = [{"action": "transform", "to": dst, "doc": md_to_doc("# Title")}]
+    files = [{"action": "transform", "from": "a.md", "to": dst, "doc": md_to_doc("# Title")}]
     write_files(DEFAULTS, files)
     assert dst.read_text().rstrip() == "<h1>Title</h1>"
-
-
-def test_write_single_file_fails_if_no_dst_dir(fs):
-    dst = Path(DEFAULTS["dst"]) / "a.txt"
-    files = [{"action": "transform", "to": dst, "doc": md_to_doc("# Title")}]
-    with pytest.raises(McColeExc):
-        write_files(DEFAULTS, files)

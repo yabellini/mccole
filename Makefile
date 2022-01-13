@@ -50,3 +50,4 @@ clean:
 	@rm -rf $$(find . -name __pycache__ -print)
 	@find . -name .DS_Store -exec rm {} \;
 	@rm -rf htmlcov
+	@rm -rf manual/*/actual
