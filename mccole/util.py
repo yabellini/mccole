@@ -2,7 +2,6 @@
 
 import re
 
-
 # Field separator inside directives.
 SEP = ":"
 

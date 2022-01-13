@@ -6,7 +6,7 @@ from pathlib import Path
 
 import frontmatter
 
-from .convert import md_to_doc, doc_to_html
+from .convert import doc_to_html, md_to_doc
 from .util import McColeExc
 
 
@@ -56,9 +56,9 @@ def write_files(config, files):
             _copy_file(info["from"], info["to"])
         elif info["action"] == "transform":
             text = doc_to_html(info["doc"], config)
-            _write_file(text, info["to"])
+            _write_file(info["to"], text)
         else:
-            assert False, f"Unknown action {info['action']}"
+            raise McColeExc(f"Unknown action {info['action']}")
 
 
 def _change_path(config, original, suffix=None):
@@ -91,7 +91,9 @@ def _should_transform(config, p):
     return any(fnmatch(p, pat) for pat in config["transform"])
 
 
-def _write_file(text, to_path):
+def _write_file(to_path, text):
     """Write a file."""
-    with open(to_path, "w") as writer:
-        writer.write(text)
+    try:
+        to_path.write_text(text)
+    except IOError as exc:
+        raise McColeExc(str(exc))

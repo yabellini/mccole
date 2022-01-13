@@ -55,9 +55,12 @@ def _make_parser(class_name, tag, *fields):
 
 
 class Expression(SpanToken):
+    """Parse an `@x(...)` inline expression."""
+
     pattern = EXTENSIONS["@x"]["re"]
 
     def __init__(self, match):
+        """Fill in fields during construction."""
         self.expr = EXTENSIONS["@x"]["func"](match)[0]
 
 

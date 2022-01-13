@@ -2,14 +2,14 @@
 
 import argparse
 import logging
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from .config import DEFAULTS, get_config
 from .evaluate import create_env
 from .fileio import read_files, write_files
 from .gather import gather_data
-from .util import McColeExc, fail
+from .util import McColeExc
 
 
 def main(argv):

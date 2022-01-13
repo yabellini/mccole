@@ -399,6 +399,7 @@ def test_enumerate_fig_defs_multiple_files(a_md, b_md):
         "fourth": (2, 2),
     }
 
+
 def test_enumerate_fig_defs_duplicate_label(a_md):
     a_md["doc"] = md_to_doc("@fig{label:a:b:c} @fig{label:d:e:f}")
     with pytest.raises(McColeExc):
@@ -453,6 +454,7 @@ def test_enumerate_tbl_defs_multiple_files(a_md, b_md):
         "third": (2, 1),
         "fourth": (2, 2),
     }
+
 
 def test_enumerate_tbl_defs_duplicate_label(a_md):
     a_md["doc"] = md_to_doc("@tbl{label:a:b:c} @tbl{label:d:e:f}")

@@ -1,10 +1,31 @@
 from textwrap import dedent
+from types import SimpleNamespace as SN
 
 import pytest
 
 from mccole.convert import md_to_html
 from mccole.evaluate import create_env
 from mccole.util import McColeExc
+
+
+def test_create_env_empty():
+    assert create_env({}) == {"site": SN(), "page": SN()}
+
+
+def test_create_env_structured():
+    original = {
+        "site": {
+            "logical": True,
+            "multi": [5, 7, 9],
+            "text": "text",
+            "nested": {"key": "value"},
+        }
+    }
+    expected = SN(logical=True, multi=[5, 7, 9], text="text", nested=SN(key="value"))
+    assert create_env(original) == {"site": expected, "page": SN()}
+
+
+# ----------------------------------------------------------------------
 
 
 def test_expr_constant_num_correct():
@@ -23,7 +44,9 @@ def test_expr_arithmetic_correct():
 
 
 def test_expr_site_variable_correct():
-    html = md_to_html("@x{site.domain}", create_env({"site": {"domain": "example.org"}}))
+    html = md_to_html(
+        "@x{site.domain}", create_env({"site": {"domain": "example.org"}})
+    )
     assert html.strip() == "<p>example.org</p>"
 
 
@@ -39,10 +62,9 @@ def test_expr_multiple_variables_correct():
         Found at @x{site.domain}.
         """
     )
-    html = md_to_html(md, create_env({
-        "site": {"domain": "example.org"},
-        "page": {"title": "TITLE"}
-    }))
+    html = md_to_html(
+        md, create_env({"site": {"domain": "example.org"}, "page": {"title": "TITLE"}})
+    )
     assert "<h1>TITLE</h1>" in html
     assert "<p>Found at example.org.</p>" in html
 

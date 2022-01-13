@@ -5,6 +5,7 @@ import pytest
 from mistletoe import Document
 
 from mccole.config import DEFAULTS, McColeExc
+from mccole.convert import md_to_doc
 from mccole.fileio import read_files, write_files
 
 from .util import create_files, dict_has_all
@@ -129,34 +130,55 @@ def test_unreadable_file_to_convert(fs):
 # ----------------------------------------------------------------------
 
 
-def test_copy_single_file(fs):
-    fs.create_file("a.txt")
+def test_write_fails_with_unknown_action():
+    with pytest.raises(McColeExc):
+        write_files(DEFAULTS, [{"action": "unknown"}])
+
+
+# ----------------------------------------------------------------------
+
+
+def test_copy_single_file_successful(fs):
+    fs.create_file("a.txt", contents="contents")
     fs.create_dir(DEFAULTS["dst"])
-    files = [{
-        "action": "copy",
-        "from": Path("a.txt"),
-        "to": Path(DEFAULTS["dst"]) / "a.txt"
-    }]
+    dst = Path(DEFAULTS["dst"]) / "a.txt"
+    files = [{"action": "copy", "from": Path("a.txt"), "to": dst}]
     write_files(DEFAULTS, files)
+    assert dst.is_file()
+    assert dst.read_text() == "contents"
 
 
-def test_copy_single_file_fails_if_no_file(fs):
+def test_copy_single_file_fails_if_no_src_file(fs):
     fs.create_dir(DEFAULTS["dst"])
-    files = [{
-        "action": "copy",
-        "from": Path("a.txt"),
-        "to": Path(DEFAULTS["dst"]) / "a.txt"
-    }]
+    files = [
+        {"action": "copy", "from": Path("a.txt"), "to": Path(DEFAULTS["dst"]) / "a.txt"}
+    ]
     with pytest.raises(McColeExc):
         write_files(DEFAULTS, files)
 
 
-def test_copy_single_file_fails_if_no_dir(fs):
+def test_copy_single_file_fails_if_no_dst_dir(fs):
     fs.create_file("a.txt")
-    files = [{
-        "action": "copy",
-        "from": Path("a.txt"),
-        "to": Path(DEFAULTS["dst"]) / "a.txt"
-    }]
+    files = [
+        {"action": "copy", "from": Path("a.txt"), "to": Path(DEFAULTS["dst"]) / "a.txt"}
+    ]
+    with pytest.raises(McColeExc):
+        write_files(DEFAULTS, files)
+
+
+# ----------------------------------------------------------------------
+
+
+def test_write_single_file_successful(fs):
+    fs.create_dir(DEFAULTS["dst"])
+    dst = DEFAULTS["dst"] / "a.html"
+    files = [{"action": "transform", "to": dst, "doc": md_to_doc("# Title")}]
+    write_files(DEFAULTS, files)
+    assert dst.read_text().rstrip() == "<h1>Title</h1>"
+
+
+def test_write_single_file_fails_if_no_dst_dir(fs):
+    dst = DEFAULTS["dst"] / "a.txt"
+    files = [{"action": "transform", "to": dst, "doc": md_to_doc("# Title")}]
     with pytest.raises(McColeExc):
         write_files(DEFAULTS, files)
