@@ -2,12 +2,12 @@
 
 import sys
 
-from .mccole import main
+from .mccole import mccole
 from .util import McColeExc
 
 if __name__ == "__main__":
     try:
-        main(sys.argv[1:])
+        mccole(sys.argv[1:])
     except McColeExc as exc:
         print(exc.msg, file=sys.stderr)
         sys.exit(1)

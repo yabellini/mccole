@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -15,7 +16,10 @@ from .util import McColeExc
 def mccole(args):
     """Main driver."""
     options = _parse_args(args)
+    if options.chdir is not None:
+        os.chdir(options.chdir)
     _configure_logging(options)
+
     config = get_config(options.config)
 
     files = read_files(config, config["src"])
@@ -34,16 +38,20 @@ def _parse_args(args):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
-        "--dst", type=Path, default=DEFAULTS["dst"], help="Destination directory."
+        "-d", "--dst", type=Path, default=DEFAULTS["dst"], help="Destination directory."
     )
     parser.add_argument(
-        "--config", type=Path, default=DEFAULTS["config"], help="Configuration file."
+        "-C", "--chdir", type=Path, default=None, help="Change directory before running."
     )
     parser.add_argument(
-        "--src", type=Path, default=DEFAULTS["src"], help="Source directory."
+        "-F", "--config", type=Path, default=DEFAULTS["config"], help="Configuration file."
+    )
+    parser.add_argument(
+        "-s", "--src", type=Path, default=DEFAULTS["src"], help="Source directory."
     )
     logging_choices = "debug info warning error critical".split()
     parser.add_argument(
+        "-L",
         "--logging",
         type=str,
         choices=logging_choices,
