@@ -9,13 +9,6 @@ from .patch import patch_divs
 from .util import McColeExc
 
 
-def doc_to_html(doc, config=None):
-    """Convert Document to HTML using information in `config` (if any)."""
-    with McColeHtml(config) as renderer:
-        patch_divs(doc)
-        return renderer.render(doc)
-
-
 def md_to_html(text, config=None):
     """Convert Markdown to HTML using information in `config` (if any)."""
     with McColeHtml(config) as renderer:

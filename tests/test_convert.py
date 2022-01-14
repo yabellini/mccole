@@ -262,6 +262,14 @@ def test_sec_ref_with_forward_key_in_doc(a_md):
     assert '<a href="#fwd">Section&nbsp;1.1</a>' in html
 
 
+def test_sec_ref_with_missing_key(a_md):
+    text = "para @s{fwd}\n\n## Section @sec{something}"
+    a_md["doc"] = md_to_doc(text)
+    overall = gather_data(DEFAULTS, [a_md])
+    with pytest.raises(McColeExc):
+        html = md_to_html(text, overall)
+
+
 # ----------------------------------------------------------------------
 
 

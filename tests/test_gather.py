@@ -43,6 +43,12 @@ def test_label_no_headings(a_md):
     assert overall["headings"] == {}
 
 
+def test_label_badly_formatted(a_md):
+    a_md["doc"] = md_to_doc("# Title @sec{}")
+    with pytest.raises(McColeExc):
+        overall = gather_data(DEFAULTS, [a_md])
+
+
 def test_label_single_heading(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
