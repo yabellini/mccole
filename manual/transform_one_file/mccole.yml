@@ -1,5 +1,0 @@
-src: "src"
-dst: "actual"
-exclude:
-- "actual/*"
-- "expected/*"

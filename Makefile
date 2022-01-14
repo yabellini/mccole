@@ -13,6 +13,12 @@ help:
 test:
 	@pytest tests
 
+
+## manual: run on-disk tests
+.PHONY: manual
+manual:
+	@for dir in manual/*; do python -m mccole -C $$dir -g html.yml; done
+
 ## install: build package and install locally
 .PHONY: install
 install:
@@ -50,4 +56,4 @@ clean:
 	@rm -rf $$(find . -name __pycache__ -print)
 	@find . -name .DS_Store -exec rm {} \;
 	@rm -rf htmlcov
-	@rm -rf manual/*/actual
+	@rm -rf manual/*/tmp

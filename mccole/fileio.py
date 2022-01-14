@@ -14,7 +14,7 @@ from .util import McColeExc
 def read_files(config, root):
     """Find files to transform and files to copy."""
     files = []
-    for name in glob.glob("**/*", recursive=True):
+    for name in glob.glob(f"{config['src']}/**/*", recursive=True):
         p = Path(name)
 
         # Not a file.
