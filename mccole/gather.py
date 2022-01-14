@@ -18,7 +18,7 @@ def gather_data(config, files):
         _label_headings(overall, major, info)
         _run_collectors(overall, info)
         _run_enumerators(overall, major, info)
-    return overall
+    return config | overall
 
 
 # ----------------------------------------------------------------------

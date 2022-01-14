@@ -9,14 +9,14 @@ from .config import DEFAULT_CONFIG_PATH, DEFAULTS, get_config
 from .evaluate import create_env
 from .fileio import read_files, write_files
 from .gather import gather_data
-from .html import doc_to_html
-from .latex import doc_to_latex
+from .html import md_to_html
+from .latex import md_to_latex
 
 
 LOGGING_CHOICES = "debug info warning error critical".split()
 CONVERTERS = {
-    'html': doc_to_html,
-    'latex': doc_to_latex
+    'html': md_to_html,
+    'latex': md_to_latex
 }
 FORMAT_CHOICES = CONVERTERS.keys()
 
@@ -36,7 +36,7 @@ def mccole(args):
     logging.info(f"found {len(files)} files")
     logging.debug(", ".join([str(info["from"]) for info in files]))
 
-    gather_data(config, files)
+    config = gather_data(config, files)
     logging.debug(f"config with gathered data is {config}")
 
     _create_output(config, files, CONVERTERS[options.format])
@@ -97,6 +97,4 @@ def _create_output(config, files, converter):
     """Create output file content."""
     for info in files:
         if info["action"] == "transform":
-            info["html"] = converter(info["doc"], config)
-
-
+            info["html"] = converter(info["raw"], config)
