@@ -2,9 +2,10 @@ from textwrap import dedent
 
 import pytest
 
+from mccole.config import DEFAULTS, McColeExc
 from mccole.convert import md_to_doc
-from mccole.html import doc_to_html, md_to_html
-from mccole.util import McColeExc
+from mccole.gather import gather_data
+from mccole.html import md_to_html
 
 
 def test_empty_doc_produces_no_html():
@@ -245,6 +246,25 @@ def test_fig_ref_multiple_keys():
 # ----------------------------------------------------------------------
 
 
+def test_sec_ref_with_key_in_doc(a_md):
+    text = "# Title @sec{t}\n\npara @s{t}"
+    a_md["doc"] = md_to_doc(text)
+    overall = gather_data(DEFAULTS, [a_md])
+    html = md_to_html(text, overall)
+    assert '<a href="#t">Chapter&nbsp;1</a>' in html
+
+
+def test_sec_ref_with_forward_key_in_doc(a_md):
+    text = "# Title\n\npara @s{fwd}\n\n## Section @sec{fwd}"
+    a_md["doc"] = md_to_doc(text)
+    overall = gather_data(DEFAULTS, [a_md])
+    html = md_to_html(text, overall)
+    assert '<a href="#fwd">Section&nbsp;1.1</a>' in html
+
+
+# ----------------------------------------------------------------------
+
+
 def test_tbl_def_correctly_formatted():
     html = md_to_html("@tbl{label:file:cap}")
     assert all(
@@ -312,12 +332,3 @@ def test_tbl_ref_missing_key():
 def test_tbl_ref_multiple_keys():
     with pytest.raises(McColeExc):
         md_to_html("@t{one:two}", {"tbl_defs": {"key": (2, 3)}})
-
-
-# ----------------------------------------------------------------------
-
-
-def test_two_stage_conversion():
-    doc = md_to_doc("# Title")
-    html = doc_to_html(doc)
-    assert html.rstrip() == "<h1>Title</h1>"

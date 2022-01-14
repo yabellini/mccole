@@ -1,38 +1,12 @@
 from textwrap import dedent
 
 import pytest
-from mistletoe import Document
 
 from mccole.config import DEFAULTS, McColeExc
 from mccole.convert import md_to_doc
 from mccole.gather import gather_data
 
 from .util import dict_has_all
-
-
-@pytest.fixture
-def a_md():
-    return {
-        "action": "transform",
-        "from": "a.md",
-        "raw": "",
-        "header": {},
-        "doc": Document([]),
-    }
-
-
-@pytest.fixture
-def b_md():
-    return {
-        "action": "transform",
-        "from": "b.md",
-        "raw": "",
-        "header": {},
-        "doc": Document([]),
-    }
-
-
-# ----------------------------------------------------------------------
 
 
 def test_gather_order_no_files():
@@ -66,59 +40,57 @@ def test_label_no_headings(a_md):
         )
     )
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["labels"] == {"a.md": {}}
+    assert overall["headings"] == {}
 
 
 def test_label_single_heading(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title
+        # Title @sec{title}
         """
         )
     )
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["labels"] == {"a.md": {(1,): "Title"}}
+    assert overall["headings"] == {"title": (1,)}
 
 
 def test_label_sub_heading(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title
-        ## Section
+        # Title @sec{title}
+        ## Section @sec{section}
         """
         )
     )
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["labels"] == {"a.md": {(1,): "Title", (1, 1): "Section"}}
+    assert overall["headings"] == {"title": (1,), "section": (1, 1)}
 
 
 def test_label_multiple_headings(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title
-        ## Section A
-        ### Section A.1
-        ### Section A.2
-        ## Section B
-        ## Section C
-        ### Section C.1
+        # Title @sec{t}
+        ## Section A @sec{a}
+        ### Section A.1 @sec{a1}
+        ### Section A.2 @sec{a2}
+        ## Section B @sec{b}
+        ## Section C @sec{c}
+        ### Section C.1 @sec{c1}
         """
         )
     )
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["labels"] == {
-        "a.md": {
-            (1,): "Title",
-            (1, 1): "Section A",
-            (1, 1, 1): "Section A.1",
-            (1, 1, 2): "Section A.2",
-            (1, 2): "Section B",
-            (1, 3): "Section C",
-            (1, 3, 1): "Section C.1",
-        }
+    assert overall["headings"] == {
+        "t": (1,),
+        "a": (1, 1),
+        "a1": (1, 1, 1),
+        "a2": (1, 1, 2),
+        "b": (1, 2),
+        "c": (1, 3),
+        "c1": (1, 3, 1),
     }
 
 
@@ -126,19 +98,19 @@ def test_label_headings_with_filler(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title
+        # Title @sec{t}
 
         para
 
-        ## Section A
+        ## Section A @sec{a}
 
         para
 
-        ### Section A.1
+        ### Section A.1 @sec{a1}
 
         para
 
-        ## Section B
+        ## Section B @sec{b}
 
         para
 
@@ -146,13 +118,11 @@ def test_label_headings_with_filler(a_md):
         )
     )
     overall = gather_data(DEFAULTS, [a_md])
-    assert overall["labels"] == {
-        "a.md": {
-            (1,): "Title",
-            (1, 1): "Section A",
-            (1, 1, 1): "Section A.1",
-            (1, 2): "Section B",
-        }
+    assert overall["headings"] == {
+        "t": (1,),
+        "a": (1, 1),
+        "a1": (1, 1, 1),
+        "b": (1, 2),
     }
 
 
@@ -160,33 +130,29 @@ def test_label_headings_multiple_docs(a_md, b_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title A
-        ## Section B
-        ## Section C
+        # Title A @sec{a-t}
+        ## Section B @sec{a-1}
+        ## Section C @sec{a-2}
         """
         )
     )
     b_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title X
-        ## Section Y
-        ## Section Z
+        # Title X @sec{b-t}
+        ## Section Y @sec{b-1}
+        ## Section Z @sec{b-2}
         """
         )
     )
     overall = gather_data(DEFAULTS, [a_md, b_md])
-    assert overall["labels"] == {
-        "a.md": {
-            (1,): "Title A",
-            (1, 1): "Section B",
-            (1, 2): "Section C",
-        },
-        "b.md": {
-            (2,): "Title X",
-            (2, 1): "Section Y",
-            (2, 2): "Section Z",
-        },
+    assert overall["headings"] == {
+        "a-t": (1,),
+        "a-1": (1, 1),
+        "a-2": (1, 2),
+        "b-t": (2,),
+        "b-1": (2, 1),
+        "b-2": (2, 2),
     }
 
 

@@ -41,29 +41,37 @@ EXTENSIONS = {
         "re": re.compile(r"@b\{(.*?)\}"),
         "func": _make_extractor("citation", "b", "*"),
     },
+    "@f": {
+        "re": re.compile(r"@f\{(.*?)\}"),
+        "func": _make_extractor("figure reference", "f", 1),
+    },
+    "@fig": {
+        "re": re.compile(r"@fig\{(.*?)\}"),
+        "func": _make_extractor("figure definition", "fig", 4),
+    },
     "@g": {
         "re": re.compile(r"@g\{(.*?)\}"),
         "func": _make_extractor("glossary reference", "g", 2),
-    },
-    "@i": {
-        "re": re.compile(r"@i\{(.*?)\}"),
-        "func": _make_extractor("index reference", "i", 2),
     },
     "@gi": {
         "re": re.compile(r"@gi\{(.*?)\}"),
         "func": _make_extractor("glossary/index reference", "gi", 3),
     },
-    "@f": {
-        "re": re.compile(r"@f\{(.*?)\}"),
-        "func": _make_extractor("figure reference", "f", 1),
+    "@i": {
+        "re": re.compile(r"@i\{(.*?)\}"),
+        "func": _make_extractor("index reference", "i", 2),
+    },
+    "@s": {
+        "re": re.compile(r"@s\{(.*?)\}"),
+        "func": _make_extractor("section reference", "s", 1),
+    },
+    "@sec": {
+        "re": re.compile(r"@sec\{(.*?)\}"),
+        "func": _make_extractor("section label", "sec", 1),
     },
     "@t": {
         "re": re.compile(r"@t\{(.*?)\}"),
         "func": _make_extractor("table reference", "t", 1),
-    },
-    "@fig": {
-        "re": re.compile(r"@fig\{(.*?)\}"),
-        "func": _make_extractor("figure definition", "fig", 4),
     },
     "@tbl": {
         "re": re.compile(r"@tbl\{(.*?)\}"),

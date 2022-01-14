@@ -33,16 +33,22 @@ class McColeHtml(HTMLRenderer):
         self.config = config
         self.render_map["Div"] = self.render_div
 
+    def render_bib_cite(self, token):
+        """Render bibliographic citations."""
+        cites = [f'<a href="bib.html#{c}">{c}</a>' for c in token.cites]
+        return f"[{','.join(cites)}]"
+
     def render_div(self, token):
         """Render a <div>."""
         template = "<div{}>\n{}\n</div>"
         attrs = "".join(f' {k}="{v}"' for (k, v) in token.attributes.items())
         return template.format(attrs, self.render_inner(token))
 
-    def render_bib_cite(self, token):
-        """Render bibliographic citations."""
-        cites = [f'<a href="bib.html#{c}">{c}</a>' for c in token.cites]
-        return f"[{','.join(cites)}]"
+    def render_expression(self, token):
+        """Render embedded expression."""
+        expr = token.expr.strip()
+        value = evaluate(self.config, expr)
+        return value
 
     def render_fig_def(self, token):
         """Render figure definition."""
@@ -65,12 +71,6 @@ class McColeHtml(HTMLRenderer):
         key = token.key.strip()
         return f'<a href="gloss.html#{key}">{text}</a>'
 
-    def render_index_ref(self, token):
-        """Render index references."""
-        text = token.text.strip()
-        key = token.key.strip()
-        return f'<a href="index.html#{key}">{text}</a>'
-
     def render_gloss_index_ref(self, token):
         """Render combined glossary/index references."""
         text = token.text.strip()
@@ -78,13 +78,20 @@ class McColeHtml(HTMLRenderer):
         index_ref = f'index="index.html#{token.index_key.strip()}'
         return f'<a {gloss_ref} {index_ref}">{text}</a>'
 
-    def render_tbl_ref(self, token):
-        """Render table references."""
+    def render_index_ref(self, token):
+        """Render index references."""
+        text = token.text.strip()
+        key = token.key.strip()
+        return f'<a href="index.html#{key}">{text}</a>'
+
+    def render_sec_ref(self, token):
+        """Render section references."""
         label = token.label.strip()
-        if label not in self.config["tbl_defs"]:
-            raise McColeExc(f"Reference to unknown table label {label}")
-        major, minor = self.config["tbl_defs"][label]
-        return f'<a href="#{label}">Table&nbsp;{major}.{minor}</a>'
+        if label not in self.config["headings"]:
+            raise McColeExc(f"Reference to unknown section label {label}")
+        parts = [str(i) for i in self.config["headings"][label]]
+        kind = "Chapter" if len(parts) == 1 else "Section"
+        return f'<a href="#{label}">{kind}&nbsp;{".".join(parts)}</a>'
 
     def render_tbl_def(self, token):
         """Render table definition."""
@@ -93,8 +100,10 @@ class McColeHtml(HTMLRenderer):
         file = token.file.strip()
         return f'<table id="{label}">\n{file}\n{caption}\n</table>'
 
-    def render_expression(self, token):
-        """Render embedded expression."""
-        expr = token.expr.strip()
-        value = evaluate(self.config, expr)
-        return value
+    def render_tbl_ref(self, token):
+        """Render table references."""
+        label = token.label.strip()
+        if label not in self.config["tbl_defs"]:
+            raise McColeExc(f"Reference to unknown table label {label}")
+        major, minor = self.config["tbl_defs"][label]
+        return f'<a href="#{label}">Table&nbsp;{major}.{minor}</a>'

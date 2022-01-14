@@ -9,7 +9,7 @@ from .util import EXTENSIONS, McColeExc, visit
 def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
     subset = [info for info in files if info["action"] == "transform"]
-    overall = {"order": {}, "labels": {}}
+    overall = {"order": {}, "headings": {}}
     for (i, info) in enumerate(subset):
         assert info["action"] == "transform"
         assert set(info.keys()).issuperset({"from", "raw", "header", "doc"})
@@ -28,18 +28,14 @@ def _label_headings(overall, major, info):
     """Collect all heading labels, numbering along the way."""
     path = info["from"]
     stack = [major - 1]
-    accum = {}
-    visit(path, info["doc"], _label_single_heading, stack, accum)
-    overall["labels"][path] = accum
+    visit(path, info["doc"], _label_single_heading, stack, overall["headings"])
 
 
 def _label_single_heading(path, node, stack, labels):
     """Add numbering information to headings."""
     if isinstance(node, Heading):
-        _ensure_attr(node, "attr", {})
-        label = _update_heading_stack(node.level, stack)
-        node.attr["label"] = label
-        labels[label] = _get_heading_text(node)
+        label = _get_heading_label(node)
+        labels[label] = _update_heading_stack(node.level, stack)
 
 
 def _update_heading_stack(level, stack):
@@ -58,12 +54,18 @@ def _update_heading_stack(level, stack):
     return tuple(stack)
 
 
-def _get_heading_text(node):
-    """Get the text of a heading node."""
+def _get_heading_label(node):
+    """Get the label of a heading node or None."""
     assert isinstance(node, Heading)
     assert len(node.children) == 1
     assert isinstance(node.children[0], RawText)
-    return node.children[0].content.strip()
+    text = node.children[0].content
+    matches = EXTENSIONS["@sec"]["re"].findall(text)
+    if len(matches) != 1:
+        return None
+    if not matches[0]:
+        raise McColeExc(f"Badly-formatted section label definition {text}")
+    return matches[0]
 
 
 # ----------------------------------------------------------------------
@@ -94,14 +96,6 @@ def _get_gloss_keys(path, node, accum):
             _add_to_set(accum, key, path)
 
 
-def _get_index_keys(path, node, accum):
-    """Collect index keys."""
-    if isinstance(node, RawText):
-        for match in EXTENSIONS["@i"]["re"].finditer(node.content):
-            _, key = EXTENSIONS["@i"]["func"](match)
-            _add_to_set(accum, key, path)
-
-
 def _get_gloss_index_keys(path, node, gloss_accum, index_accum):
     """Collect combined glossary + index keys."""
     if isinstance(node, RawText):
@@ -111,12 +105,20 @@ def _get_gloss_index_keys(path, node, gloss_accum, index_accum):
             _add_to_set(index_accum, index_key, path)
 
 
+def _get_index_keys(path, node, accum):
+    """Collect index keys."""
+    if isinstance(node, RawText):
+        for match in EXTENSIONS["@i"]["re"].finditer(node.content):
+            _, key = EXTENSIONS["@i"]["func"](match)
+            _add_to_set(accum, key, path)
+
+
 # Collector functions and their overall keys.
 COLLECTORS = (
     [_get_bib_keys, ["bib_keys"]],
+    [_get_gloss_index_keys, ["gloss_keys", "index_keys"]],
     [_get_gloss_keys, ["gloss_keys"]],
     [_get_index_keys, ["index_keys"]],
-    [_get_gloss_index_keys, ["gloss_keys", "index_keys"]],
 )
 
 # ----------------------------------------------------------------------
@@ -175,8 +177,3 @@ def _add_to_set(accum, key, value):
     if key not in accum:
         accum[key] = set()
     accum[key].add(value)
-
-
-def _ensure_attr(obj, field, value):
-    if not hasattr(obj, field):
-        setattr(obj, field, value)

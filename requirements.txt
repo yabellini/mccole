@@ -6,6 +6,7 @@ mistletoe>=0.8.1
 mkdocs>=1.2.3
 mkdocstrings>=0.17.0
 pycodestyle>=2.8.0
+pydocstyle>=6.1.1
 pyfakefs>=4.5.3
 pytest-cov>=3.0.0
 pytest>=6.2.5

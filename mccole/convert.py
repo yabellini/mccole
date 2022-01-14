@@ -48,12 +48,13 @@ class Expression(SpanToken):
 
 PARSERS = [
     _make_parser("BibCite", "@b", "*cites"),
+    _make_parser("FigDef", "@fig", "label", "file", "alt", "cap"),
     _make_parser("FigRef", "@f", "label"),
+    _make_parser("GlossIndexRef", "@gi", "text", "gloss_key", "index_key"),
     _make_parser("GlossRef", "@g", "text", "key"),
     _make_parser("IndexRef", "@i", "text", "key"),
-    _make_parser("GlossIndexRef", "@gi", "text", "gloss_key", "index_key"),
-    _make_parser("TblRef", "@t", "label"),
-    _make_parser("FigDef", "@fig", "label", "file", "alt", "cap"),
+    _make_parser("SecRef", "@s", "label"),
     _make_parser("TblDef", "@tbl", "label", "file", "cap"),
+    _make_parser("TblRef", "@t", "label"),
     Expression,
 ]
