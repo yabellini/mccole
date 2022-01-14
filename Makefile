@@ -17,7 +17,7 @@ test:
 ## manual: run on-disk tests
 .PHONY: manual
 manual:
-	@for dir in manual/*; do python -m mccole -C $$dir -g html.yml; done
+	@for dir in manual/*; do echo $$dir; python -m mccole -C $$dir -g html.yml; done
 
 ## install: build package and install locally
 .PHONY: install
