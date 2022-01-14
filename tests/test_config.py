@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from mccole.config import DEFAULTS, SCALAR_KEYS, MULTI_KEYS, get_config
+from mccole.config import DEFAULTS, MULTI_KEYS, SCALAR_KEYS, get_config
 from mccole.util import McColeExc
 
 

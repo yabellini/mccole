@@ -1,13 +1,13 @@
 """Find files."""
 
 import glob
-from fnmatch import fnmatch
 import logging
+from fnmatch import fnmatch
 from pathlib import Path
 
 import frontmatter
 
-from .convert import doc_to_html, md_to_doc
+from .convert import md_to_doc
 from .util import McColeExc
 
 
@@ -56,8 +56,7 @@ def write_files(config, files):
         if info["action"] == "copy":
             _copy_file(info["from"], info["to"])
         elif info["action"] == "transform":
-            text = doc_to_html(info["doc"], config)
-            _write_file(info["from"], info["to"], text)
+            _write_file(info["from"], info["to"], info["html"])
         else:
             raise McColeExc(f"Unknown action {info['action']}")
 

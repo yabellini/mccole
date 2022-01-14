@@ -3,14 +3,13 @@
 import argparse
 import logging
 import os
-import sys
 from pathlib import Path
 
-from .config import DEFAULTS, DEFAULT_CONFIG_PATH, get_config
-from .evaluate import create_env
+from .config import DEFAULT_CONFIG_PATH, DEFAULTS, get_config
+from .convert import create_output
 from .fileio import read_files, write_files
 from .gather import gather_data
-from .util import McColeExc
+from .html import doc_to_html
 
 
 def mccole(args):
@@ -31,7 +30,7 @@ def mccole(args):
     gather_data(config, files)
     logging.debug(f"config with gathered data is {config}")
 
-    create_env(config)
+    create_output(config, files, doc_to_html)
     write_files(config, files)
 
 
@@ -44,10 +43,18 @@ def _parse_args(args):
         "-d", "--dst", type=Path, default=DEFAULTS["dst"], help="Destination directory."
     )
     parser.add_argument(
-        "-C", "--chdir", type=Path, default=None, help="Change directory before running."
+        "-C",
+        "--chdir",
+        type=Path,
+        default=None,
+        help="Change directory before running.",
     )
     parser.add_argument(
-        "-F", "--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Configuration file."
+        "-F",
+        "--config",
+        type=Path,
+        default=DEFAULT_CONFIG_PATH,
+        help="Configuration file.",
     )
     parser.add_argument(
         "-s", "--src", type=Path, default=DEFAULTS["src"], help="Source directory."

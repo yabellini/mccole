@@ -3,7 +3,7 @@ from textwrap import dedent
 
 import pytest
 
-from mccole.convert import md_to_html
+from mccole.html import md_to_html
 from mccole.util import McColeExc
 
 

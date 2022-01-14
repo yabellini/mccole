@@ -10,7 +10,7 @@ def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
     subset = [info for info in files if info["action"] == "transform"]
     overall = {"order": {}, "labels": {}}
-    for (i, info) in enumerate(files):
+    for (i, info) in enumerate(subset):
         assert info["action"] == "transform"
         assert set(info.keys()).issuperset({"from", "raw", "header", "doc"})
         major = i + 1

@@ -5,7 +5,6 @@ import pytest
 from mistletoe import Document
 
 from mccole.config import DEFAULTS, McColeExc
-from mccole.convert import md_to_doc
 from mccole.fileio import read_files, write_files
 
 from .util import create_files, dict_has_all
@@ -163,6 +162,8 @@ def test_copy_single_file_fails_if_no_src_file(fs):
 def test_write_single_file_successful(fs):
     fs.create_dir(DEFAULTS["dst"])
     dst = Path(DEFAULTS["dst"]) / "a.html"
-    files = [{"action": "transform", "from": "a.md", "to": dst, "doc": md_to_doc("# Title")}]
+    files = [
+        {"action": "transform", "from": "a.md", "to": dst, "html": "<h1>Title</h1>"}
+    ]
     write_files(DEFAULTS, files)
     assert dst.read_text().rstrip() == "<h1>Title</h1>"

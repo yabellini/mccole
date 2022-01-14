@@ -3,8 +3,8 @@ from types import SimpleNamespace as SN
 
 import pytest
 
-from mccole.convert import md_to_html
 from mccole.evaluate import create_env
+from mccole.html import md_to_html
 from mccole.util import McColeExc
 
 
