@@ -4,16 +4,7 @@ from mistletoe import Document
 from mistletoe.ast_renderer import ASTRenderer
 from mistletoe.span_token import SpanToken
 
-from .evaluate import create_env
 from .util import EXTENSIONS
-
-
-def create_output(config, files, converter):
-    """Create output file content."""
-    create_env(config)
-    for info in files:
-        if info["action"] == "transform":
-            info["html"] = converter(info["doc"], config)
 
 
 def md_to_doc(md):
