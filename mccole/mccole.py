@@ -95,7 +95,6 @@ def _configure_logging(options):
 
 def _create_output(config, files, converter):
     """Create output file content."""
-    create_env(config)
     for info in files:
         if info["action"] == "transform":
             info["html"] = converter(info["doc"], config)
