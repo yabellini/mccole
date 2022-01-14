@@ -8,6 +8,7 @@ from .util import EXTENSIONS, McColeExc, visit
 
 def gather_data(config, files):
     """Collect cross-reference data from ASTs."""
+    subset = [info for info in files if info["action"] == "transform"]
     overall = {"order": {}, "labels": {}}
     for (i, info) in enumerate(files):
         assert info["action"] == "transform"

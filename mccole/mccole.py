@@ -28,8 +28,7 @@ def mccole(args):
     logging.info(f"found {len(files)} files")
     logging.debug(", ".join([str(info["from"]) for info in files]))
 
-    subset = [info for info in files if info["action"] == "transform"]
-    gather_data(config, subset)
+    gather_data(config, files)
     logging.debug(f"config with gathered data is {config}")
 
     create_env(config)
