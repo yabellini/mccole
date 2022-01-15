@@ -125,7 +125,7 @@ def _reorder_files(config, files):
         else:
             back.append(info)
     if toplevel:
-        toplevel = ", ".join(sorted(toplevel))
+        toplevel = ", ".join(sorted(str(toplevel)))
         raise McColeExc(f"Failed to find expected files {toplevel}")
     result = [front[name] for name in _generate_toplevel(config)]
     result.extend(back)
