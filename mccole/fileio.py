@@ -9,6 +9,7 @@ import frontmatter
 
 from .convert import md_to_doc
 from .util import McColeExc
+from .html import md_to_html
 
 
 def read_files(config, root):
@@ -56,7 +57,8 @@ def write_files(config, files):
         if info["action"] == "copy":
             _copy_file(info["from"], info["to"])
         elif info["action"] == "transform":
-            _write_file(info["from"], info["to"], info["html"])
+            html = md_to_html(info["raw"], config)
+            _write_file(info["from"], info["to"], html)
         else:
             raise McColeExc(f"Unknown action {info['action']}")
 

@@ -8,12 +8,8 @@ from pathlib import Path
 from .config import DEFAULT_CONFIG_PATH, DEFAULTS, get_config
 from .fileio import read_files, write_files
 from .gather import gather_data
-from .html import md_to_html
-from .latex import md_to_latex
 
 LOGGING_CHOICES = "debug info warning error critical".split()
-CONVERTERS = {"html": md_to_html, "latex": md_to_latex}
-FORMAT_CHOICES = CONVERTERS.keys()
 
 
 def mccole(args):
@@ -34,7 +30,6 @@ def mccole(args):
     config = gather_data(config, files)
     logging.debug(f"config with gathered data is {config}")
 
-    _create_output(config, files, CONVERTERS[options.format])
     write_files(config, files)
 
 
@@ -52,13 +47,6 @@ def _parse_args(args):
         type=Path,
         default=None,
         help="Change directory before running.",
-    )
-    parser.add_argument(
-        "-f",
-        "--format",
-        choices=FORMAT_CHOICES,
-        default="html",
-        help="Output format.",
     )
     parser.add_argument(
         "-g",
@@ -87,10 +75,3 @@ def _configure_logging(options):
     logging.basicConfig(
         level=logging._nameToLevel[level_name], format="%(levelname)s: %(message)s"
     )
-
-
-def _create_output(config, files, converter):
-    """Create output file content."""
-    for info in files:
-        if info["action"] == "transform":
-            info["html"] = converter(info["raw"], config)

@@ -161,7 +161,7 @@ def test_write_single_file_successful(fs):
     fs.create_dir(DEFAULTS["dst"])
     dst = Path(DEFAULTS["dst"]) / "a.html"
     files = [
-        {"action": "transform", "from": "a.md", "to": dst, "html": "<h1>Title</h1>"}
+        {"action": "transform", "from": "a.md", "to": dst, "raw": "# Title"}
     ]
     write_files(DEFAULTS, files)
     assert dst.read_text().rstrip() == "<h1>Title</h1>"
@@ -174,7 +174,7 @@ def test_write_fails_with_forbidden_directory(fs):
             "action": "transform",
             "from": "a.md",
             "to": Path("dst/a.html"),
-            "html": "<h1>Title</h1>",
+            "raw": "content",
         }
     ]
     with pytest.raises(McColeExc):
