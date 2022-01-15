@@ -3,7 +3,7 @@
 from mistletoe import Document
 from mistletoe.html_renderer import HTMLRenderer
 
-from .convert import PARSERS
+from .parse import PARSERS
 from .evaluate import evaluate
 from .patch import patch_divs
 from .util import McColeExc
@@ -100,3 +100,24 @@ class McColeHtml(HTMLRenderer):
             raise McColeExc(f"Reference to unknown table label {label}")
         major, minor = self.config["tbl_defs"][label]
         return f'<a href="#{label}">Table&nbsp;{major}.{minor}</a>'
+
+    def render_toc(self, token):
+        """Render table of contents."""
+        spec = token.label.strip()
+        if not spec:
+            raise McColeExc(f"Badly-formatted ToC specified {spec}")
+        try:
+            levels = [int(x) for x in spec.split(":")]
+        except ValueError:
+            raise McColeExc(f"Cannot convert all levels to numbers: {spec}")
+        if len(levels) > 2:
+            raise McColeExc(f"Too many levels specified for ToC {spec}")
+        links = []
+        for key in sorted(self.config.toc.keys()):
+            if len(key) < levels[0]:
+                pass
+            elif (len(levels) == 2) and (len(key) > levels[1]):
+                pass
+            else:
+                links.append(self.config.toc[key])
+        return "<ul>\n{links}\n</ul>\n"

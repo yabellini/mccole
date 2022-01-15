@@ -1,3 +1,5 @@
+"""File I/O, including Markdown-to-Document conversion."""
+
 from pathlib import Path
 from textwrap import dedent
 
@@ -160,9 +162,7 @@ def test_copy_single_file_fails_if_no_src_file(fs):
 def test_write_single_file_successful(fs):
     fs.create_dir(DEFAULTS["dst"])
     dst = Path(DEFAULTS["dst"]) / "a.html"
-    files = [
-        {"action": "transform", "from": "a.md", "to": dst, "raw": "# Title"}
-    ]
+    files = [{"action": "transform", "from": "a.md", "to": dst, "raw": "# Title"}]
     write_files(DEFAULTS, files)
     assert dst.read_text().rstrip() == "<h1>Title</h1>"
 

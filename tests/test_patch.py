@@ -1,3 +1,5 @@
+"""Patching the document."""
+
 import re
 from textwrap import dedent
 

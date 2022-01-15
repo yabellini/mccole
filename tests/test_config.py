@@ -1,3 +1,5 @@
+"""Program configuration."""
+
 from textwrap import dedent
 
 import pytest

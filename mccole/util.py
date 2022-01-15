@@ -77,6 +77,10 @@ EXTENSIONS = {
         "re": re.compile(r"@tbl\{(.*?)\}"),
         "func": _make_extractor("table definition", "tbl", 3),
     },
+    "@toc": {
+        "re": re.compile(r"@toc\{(.*?)\}"),
+        "func": _make_extractor("table of contents", "toc", "*"),
+    },
     "@x": {
         "re": re.compile(r"@x\{(.*?)\}"),
         "func": _make_extractor("expression", "x", 1),

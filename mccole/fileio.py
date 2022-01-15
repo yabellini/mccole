@@ -1,4 +1,4 @@
-"""Find files."""
+"""Read and write files."""
 
 import glob
 import logging
@@ -6,10 +6,11 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 import frontmatter
+from mistletoe import Document
+from mistletoe.ast_renderer import ASTRenderer
 
-from .convert import md_to_doc
-from .util import McColeExc
 from .html import md_to_html
+from .util import McColeExc
 
 
 def read_files(config, root):
@@ -61,6 +62,18 @@ def write_files(config, files):
             _write_file(info["from"], info["to"], html)
         else:
             raise McColeExc(f"Unknown action {info['action']}")
+
+
+def md_to_doc(md):
+    """Convert Markdown to plain mistletoe Document.
+
+    Need the plain Document in order to find uses of special tags.
+    """
+    with ASTRenderer() as renderer:  # noqa F841
+        return Document(md)
+
+
+# ----------------------------------------------------------------------
 
 
 def _change_path(config, original, suffix=None):

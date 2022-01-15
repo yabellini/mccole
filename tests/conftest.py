@@ -1,3 +1,5 @@
+"""Testing fixtures."""
+
 import pytest
 from mistletoe import Document
 

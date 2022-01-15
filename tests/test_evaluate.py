@@ -1,3 +1,5 @@
+"""Expression evaluation."""
+
 from textwrap import dedent
 from types import SimpleNamespace as SN
 
@@ -23,9 +25,6 @@ def test_create_env_structured():
     }
     expected = SN(logical=True, multi=[5, 7, 9], text="text", nested=SN(key="value"))
     assert create_env(original) == {"site": expected, "page": SN()}
-
-
-# ----------------------------------------------------------------------
 
 
 def test_expr_constant_num_correct():

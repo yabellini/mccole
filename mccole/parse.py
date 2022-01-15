@@ -1,19 +1,8 @@
 """Convert Markdown to other formats."""
 
-from mistletoe import Document
-from mistletoe.ast_renderer import ASTRenderer
 from mistletoe.span_token import SpanToken
 
 from .util import EXTENSIONS
-
-
-def md_to_doc(md):
-    """Convert Markdown to plain mistletoe Document.
-
-    Need the plain Document in order to find uses of special tags.
-    """
-    with ASTRenderer() as renderer:  # noqa F841
-        return Document(md)
 
 
 def _make_parser(class_name, tag, *fields):
@@ -56,5 +45,6 @@ PARSERS = [
     _make_parser("SecRef", "@s", "label"),
     _make_parser("TblDef", "@tbl", "label", "file", "cap"),
     _make_parser("TblRef", "@t", "label"),
+    _make_parser("ToC", "@toc", "*levels"),
     Expression,
 ]

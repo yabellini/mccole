@@ -1,3 +1,5 @@
+"""Main program."""
+
 import pytest
 import yaml
 
