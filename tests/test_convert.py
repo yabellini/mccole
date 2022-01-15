@@ -267,7 +267,7 @@ def test_sec_ref_with_missing_key(a_md):
     a_md["doc"] = md_to_doc(text)
     overall = gather_data(DEFAULTS, [a_md])
     with pytest.raises(McColeExc):
-        html = md_to_html(text, overall)
+        md_to_html(text, overall)
 
 
 # ----------------------------------------------------------------------
