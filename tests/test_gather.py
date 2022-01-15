@@ -44,7 +44,7 @@ def test_label_no_headings(a_md):
 
 
 def test_label_badly_formatted(a_md):
-    a_md["doc"] = md_to_doc("# Title @sec{}")
+    a_md["doc"] = md_to_doc("# @sec{Title}")
     with pytest.raises(McColeExc):
         gather_data(DEFAULTS, [a_md])
 
@@ -53,7 +53,7 @@ def test_label_single_heading(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title @sec{title}
+        # @sec{title:Title}
         """
         )
     )
@@ -65,8 +65,8 @@ def test_label_sub_heading(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title @sec{title}
-        ## Section @sec{section}
+        # @sec{title:Title}
+        ## @sec{section:Section}
         """
         )
     )
@@ -78,13 +78,13 @@ def test_label_multiple_headings(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title @sec{t}
-        ## Section A @sec{a}
-        ### Section A.1 @sec{a1}
-        ### Section A.2 @sec{a2}
-        ## Section B @sec{b}
-        ## Section C @sec{c}
-        ### Section C.1 @sec{c1}
+        # @sec{t:Title}
+        ## @sec{a:Section A}
+        ### @sec{a1:Section A.1}
+        ### @sec{a2:Section A.2}
+        ## @sec{b:Section B}
+        ## @sec{c:Section C}
+        ### @sec{c1:Section C.1}
         """
         )
     )
@@ -104,19 +104,19 @@ def test_label_headings_with_filler(a_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title @sec{t}
+        # @sec{t:Title}
 
         para
 
-        ## Section A @sec{a}
+        ## @sec{a:Section A}
 
         para
 
-        ### Section A.1 @sec{a1}
+        ### @sec{a1:Section A.1}
 
         para
 
-        ## Section B @sec{b}
+        ## @sec{b:Section B}
 
         para
 
@@ -136,18 +136,18 @@ def test_label_headings_multiple_docs(a_md, b_md):
     a_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title A @sec{a-t}
-        ## Section B @sec{a-1}
-        ## Section C @sec{a-2}
+        # @sec{a-t:Title A}
+        ## @sec{a-1:Section B}
+        ## @sec{a-2:Section C}
         """
         )
     )
     b_md["doc"] = md_to_doc(
         dedent(
             """\
-        # Title X @sec{b-t}
-        ## Section Y @sec{b-1}
-        ## Section Z @sec{b-2}
+        # @sec{b-t:Title X}
+        ## @sec{b-1:Section Y}
+        ## @sec{b-2:Section Z}
         """
         )
     )

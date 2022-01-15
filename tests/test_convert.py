@@ -247,7 +247,7 @@ def test_fig_ref_multiple_keys():
 
 
 def test_sec_ref_with_key_in_doc(a_md):
-    text = "# Title @sec{t}\n\npara @s{t}"
+    text = "# @sec{t:Title}\n\npara @s{t}"
     a_md["doc"] = md_to_doc(text)
     overall = gather_data(DEFAULTS, [a_md])
     html = md_to_html(text, overall)
@@ -255,7 +255,7 @@ def test_sec_ref_with_key_in_doc(a_md):
 
 
 def test_sec_ref_with_forward_key_in_doc(a_md):
-    text = "# Title\n\npara @s{fwd}\n\n## Section @sec{fwd}"
+    text = "# Title\n\npara @s{fwd}\n\n## @sec{fwd:Section}"
     a_md["doc"] = md_to_doc(text)
     overall = gather_data(DEFAULTS, [a_md])
     html = md_to_html(text, overall)
@@ -263,7 +263,7 @@ def test_sec_ref_with_forward_key_in_doc(a_md):
 
 
 def test_sec_ref_with_missing_key(a_md):
-    text = "para @s{fwd}\n\n## Section @sec{something}"
+    text = "para @s{fwd}\n\n## @sec{something:Section}"
     a_md["doc"] = md_to_doc(text)
     overall = gather_data(DEFAULTS, [a_md])
     with pytest.raises(McColeExc):

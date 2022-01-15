@@ -34,8 +34,10 @@ def _label_headings(overall, major, info):
 def _label_single_heading(path, node, stack, labels):
     """Add numbering information to headings."""
     if isinstance(node, Heading):
+        number = _update_heading_stack(node.level, stack)
         label = _get_heading_label(node)
-        labels[label] = _update_heading_stack(node.level, stack)
+        if label is not None:
+            labels[label] = number
 
 
 def _update_heading_stack(level, stack):
@@ -60,12 +62,11 @@ def _get_heading_label(node):
     assert len(node.children) == 1
     assert isinstance(node.children[0], RawText)
     text = node.children[0].content
-    matches = EXTENSIONS["@sec"]["re"].findall(text)
-    if len(matches) != 1:
+    match = EXTENSIONS["@sec"]["re"].search(text)
+    if match is None:
         return None
-    if not matches[0]:
-        raise McColeExc(f"Badly-formatted section label definition {text}")
-    return matches[0]
+    label, _ = EXTENSIONS["@sec"]["func"](match)
+    return label
 
 
 # ----------------------------------------------------------------------

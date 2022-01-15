@@ -67,7 +67,7 @@ EXTENSIONS = {
     },
     "@sec": {
         "re": re.compile(r"@sec\{(.*?)\}"),
-        "func": _make_extractor("section label", "sec", 1),
+        "func": _make_extractor("section label", "sec", 2),
     },
     "@t": {
         "re": re.compile(r"@t\{(.*?)\}"),
