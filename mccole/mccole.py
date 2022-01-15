@@ -15,10 +15,7 @@ LOGGING_CHOICES = "debug info warning error critical".split()
 def mccole(args):
     """Main driver."""
     options = _parse_args(args)
-    _configure_logging(options)
-    if options.chdir is not None:
-        logging.info(f"changing working directory to {options.chdir}")
-        os.chdir(options.chdir)
+    _setup(options)
 
     config = get_config(options.config)
     logging.debug(f"config is {config}")
@@ -69,9 +66,15 @@ def _parse_args(args):
     return parser.parse_args(args)
 
 
-def _configure_logging(options):
-    """Set up logging."""
+def _setup(options):
+    """Do initial setup."""
+    # Logging.
     level_name = options.logging.upper()
     logging.basicConfig(
         level=logging._nameToLevel[level_name], format="%(levelname)s: %(message)s"
     )
+
+    # Working directory.
+    if options.chdir is not None:
+        logging.info(f"changing working directory to {options.chdir}")
+        os.chdir(options.chdir)
