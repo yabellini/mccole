@@ -27,6 +27,9 @@ SCALAR_KEYS = {"dst", "src"}
 # Multi-valued keys.
 MULTI_KEYS = {"exclude", "transform"}
 
+# Name of main file for each chapter or appendix.
+MAIN_NAME = "index.md"
+
 
 def get_config(filename):
     """Load configuration file."""

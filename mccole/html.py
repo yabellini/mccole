@@ -3,8 +3,8 @@
 from mistletoe import Document
 from mistletoe.html_renderer import HTMLRenderer
 
-from .parse import PARSERS
 from .evaluate import evaluate
+from .parse import PARSERS
 from .patch import patch_divs
 from .util import McColeExc
 
@@ -119,10 +119,16 @@ class McColeHtml(HTMLRenderer):
             assert key in seq_to_sec_title
             if (len(levels) == 1) and (len(key) > levels[0]):
                 pass
-            elif (len(levels) == 2) and ((len(key) < levels[0]) or (levels[1] < len(key))):
+            elif (len(levels) == 2) and (
+                (len(key) < levels[0]) or (levels[1] < len(key))
+            ):
                 pass
             else:
-                links.append({"lbl": seq_to_sec_lbl[key], "title": seq_to_sec_title[key]})
-        links = [f'<li><a href="#{link["lbl"]}">{link["title"]}</a></li>' for link in links]
+                links.append(
+                    {"lbl": seq_to_sec_lbl[key], "title": seq_to_sec_title[key]}
+                )
+        links = [
+            f'<li><a href="#{link["lbl"]}">{link["title"]}</a></li>' for link in links
+        ]
         links = "\n".join(links)
         return f'<ul class="toc">\n{links}\n</ul>\n'

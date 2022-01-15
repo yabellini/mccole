@@ -1,11 +1,12 @@
 """Flat enumerations within chapters."""
 
-import pytest
 from textwrap import dedent
 
+import pytest
+
+from mccole.config import DEFAULTS, McColeExc
 from mccole.fileio import md_to_doc
 from mccole.gather import gather_data
-from mccole.config import DEFAULTS, McColeExc
 
 
 def test_enumerate_fig_defs_no_figures(a_md):
@@ -59,7 +60,6 @@ def test_enumerate_fig_defs_duplicate_label(a_md):
     a_md["doc"] = md_to_doc("@fig{label:a:b:c} @fig{label:d:e:f}")
     with pytest.raises(McColeExc):
         gather_data(DEFAULTS, [a_md])
-
 
 
 def test_enumerate_tbl_defs_no_tables(a_md):

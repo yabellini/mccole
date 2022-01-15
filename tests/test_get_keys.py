@@ -5,7 +5,6 @@ from textwrap import dedent
 from mccole.config import DEFAULTS
 from mccole.fileio import md_to_doc
 from mccole.gather import gather_data
-from mccole.util import McColeExc
 
 
 def test_get_bib_keys_none_in_document(a_md):

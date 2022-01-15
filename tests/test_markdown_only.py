@@ -2,8 +2,6 @@
 
 from textwrap import dedent
 
-import pytest
-
 from mccole.config import DEFAULTS
 from mccole.html import md_to_html
 

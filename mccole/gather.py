@@ -9,8 +9,12 @@ from .util import EXTENSIONS, McColeExc, visit
 def gather_data(config, files):
     """Collect cross-reference data."""
     subset = [info for info in files if info["action"] == "transform"]
-    xref = {"order": {}, "sec_lbl_to_seq": {}, "seq_to_sec_lbl": {},
-            "seq_to_sec_title": {}}
+    xref = {
+        "order": {},
+        "sec_lbl_to_seq": {},
+        "seq_to_sec_lbl": {},
+        "seq_to_sec_title": {},
+    }
     for (i, info) in enumerate(subset):
         major = i + 1
         xref["order"][info["from"]] = major
@@ -27,12 +31,20 @@ def _label_headings(xref, major, info):
     """Collect all heading labels, numbering along the way."""
     path = info["from"]
     stack = [major - 1]
-    visit(path, info["doc"], _label_single_heading, stack,
-          xref["sec_lbl_to_seq"], xref["seq_to_sec_lbl"],
-          xref["seq_to_sec_title"])
+    visit(
+        path,
+        info["doc"],
+        _label_single_heading,
+        stack,
+        xref["sec_lbl_to_seq"],
+        xref["seq_to_sec_lbl"],
+        xref["seq_to_sec_title"],
+    )
 
 
-def _label_single_heading(path, node, stack, sec_lbl_to_seq, seq_to_sec_lbl, seq_to_sec_title):
+def _label_single_heading(
+    path, node, stack, sec_lbl_to_seq, seq_to_sec_lbl, seq_to_sec_title
+):
     """Add numbering information to headings."""
     if isinstance(node, Heading):
         seq = _update_heading_stack(node.level, stack)

@@ -2,8 +2,8 @@
 
 import pytest
 
-from mccole.html import md_to_html
 from mccole.config import DEFAULTS, McColeExc
+from mccole.html import md_to_html
 
 
 def test_gloss_index_ref_correctly_formatted():

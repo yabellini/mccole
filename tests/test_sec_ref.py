@@ -2,10 +2,10 @@
 
 import pytest
 
+from mccole.config import DEFAULTS, McColeExc
 from mccole.fileio import md_to_doc
 from mccole.gather import gather_data
 from mccole.html import md_to_html
-from mccole.config import DEFAULTS, McColeExc
 
 
 def test_sec_ref_with_key_in_doc(a_md):

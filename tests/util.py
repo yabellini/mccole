@@ -1,5 +1,6 @@
 """Testing utilities."""
 
+
 def create_files(fs, *names):
     """Create a bunch of files."""
     for name in names:

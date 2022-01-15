@@ -1,6 +1,5 @@
 """Expression evaluation."""
 
-from textwrap import dedent
 from types import SimpleNamespace as SN
 
 import pytest

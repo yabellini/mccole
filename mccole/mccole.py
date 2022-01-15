@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 from .config import DEFAULT_CONFIG_PATH, DEFAULTS, get_config
-from .fileio import read_files, write_files
+from .fileio import find_files, write_files
 from .gather import gather_data
 
 LOGGING_CHOICES = "debug info warning error critical".split()
@@ -20,9 +20,8 @@ def mccole(args):
     config = get_config(options.config)
     logging.debug(f"config is {config}")
 
-    files = read_files(config, config["src"])
+    files = find_files(config, config["src"])
     logging.info(f"found {len(files)} files")
-    logging.debug(", ".join([str(info["from"]) for info in files]))
 
     xref = gather_data(config, files)
     logging.debug(f"xref with gathered data is {xref}")

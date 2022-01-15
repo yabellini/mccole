@@ -1,7 +1,5 @@
 """Gathering data across files."""
 
-import pytest
-
 from mccole.config import DEFAULTS
 from mccole.gather import gather_data
 

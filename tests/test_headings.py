@@ -1,7 +1,8 @@
 """Heading enumeration."""
 
-import pytest
 from textwrap import dedent
+
+import pytest
 
 from mccole.config import DEFAULTS
 from mccole.fileio import md_to_doc
