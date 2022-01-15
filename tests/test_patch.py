@@ -5,6 +5,7 @@ from textwrap import dedent
 
 import pytest
 
+from mccole.config import DEFAULTS
 from mccole.html import md_to_html
 from mccole.util import McColeExc
 
@@ -17,7 +18,7 @@ def test_div_with_no_content():
         </div>
         """
     )
-    html = md_to_html(md)
+    html = md_to_html(DEFAULTS, {}, md)
     assert "<div>" in html
     assert "</div>" in html
 
@@ -30,7 +31,7 @@ def test_div_with_attributes():
         </div>
         """
     )
-    html = md_to_html(md)
+    html = md_to_html(DEFAULTS, {}, md)
     assert re.match(r'<div\s+class="blue"\s+size="large"\s*>', html)
 
 
@@ -44,7 +45,7 @@ def test_div_with_paragraph():
         </div>
         """
     )
-    html = md_to_html(md)
+    html = md_to_html(DEFAULTS, {}, md)
     assert re.match(r"^\s*<div>\s*<p>paragraph</p>\s*</div>$", html, re.DOTALL)
 
 
@@ -62,7 +63,7 @@ def test_div_with_nested_div():
         </div>
         """
     )
-    html = md_to_html(md)
+    html = md_to_html(DEFAULTS, {}, md)
     assert re.match(
         r"^\s*<div>\s*<div>\s*<p>paragraph</p>\s*</div>\s*</div>$", html, re.DOTALL
     )
@@ -77,7 +78,7 @@ def test_opening_div_with_no_closing_div():
         """
     )
     with pytest.raises(McColeExc):
-        md_to_html(md)
+        md_to_html(DEFAULTS, {}, md)
 
 
 def test_closing_div_with_no_opening_div():
@@ -93,4 +94,4 @@ def test_closing_div_with_no_opening_div():
         """
     )
     with pytest.raises(McColeExc):
-        md_to_html(md)
+        md_to_html(DEFAULTS, {}, md)

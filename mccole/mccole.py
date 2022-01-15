@@ -27,10 +27,10 @@ def mccole(args):
     logging.info(f"found {len(files)} files")
     logging.debug(", ".join([str(info["from"]) for info in files]))
 
-    config = gather_data(config, files)
-    logging.debug(f"config with gathered data is {config}")
+    xref = gather_data(config, files)
+    logging.debug(f"xref with gathered data is {xref}")
 
-    write_files(config, files)
+    write_files(config, xref, files)
 
 
 def _parse_args(args):

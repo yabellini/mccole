@@ -7,37 +7,40 @@ from .util import EXTENSIONS, McColeExc, visit
 
 
 def gather_data(config, files):
-    """Collect cross-reference data from ASTs."""
+    """Collect cross-reference data."""
     subset = [info for info in files if info["action"] == "transform"]
-    overall = {"order": {}, "headings": {}}
+    xref = {"order": {}, "sec_lbl_to_seq": {}, "seq_to_sec_lbl": {},
+            "seq_to_sec_title": {}}
     for (i, info) in enumerate(subset):
-        assert info["action"] == "transform"
-        assert set(info.keys()).issuperset({"from", "raw", "header", "doc"})
         major = i + 1
-        overall["order"][info["from"]] = major
-        _label_headings(overall, major, info)
-        _run_collectors(overall, info)
-        _run_enumerators(overall, major, info)
-    return config | overall
+        xref["order"][info["from"]] = major
+        _label_headings(xref, major, info)
+        _run_collectors(xref, info)
+        _run_enumerators(xref, major, info)
+    return xref
 
 
 # ----------------------------------------------------------------------
 
 
-def _label_headings(overall, major, info):
+def _label_headings(xref, major, info):
     """Collect all heading labels, numbering along the way."""
     path = info["from"]
     stack = [major - 1]
-    visit(path, info["doc"], _label_single_heading, stack, overall["headings"])
+    visit(path, info["doc"], _label_single_heading, stack,
+          xref["sec_lbl_to_seq"], xref["seq_to_sec_lbl"],
+          xref["seq_to_sec_title"])
 
 
-def _label_single_heading(path, node, stack, labels):
+def _label_single_heading(path, node, stack, sec_lbl_to_seq, seq_to_sec_lbl, seq_to_sec_title):
     """Add numbering information to headings."""
     if isinstance(node, Heading):
-        number = _update_heading_stack(node.level, stack)
-        label = _get_heading_label(node)
+        seq = _update_heading_stack(node.level, stack)
+        label, title = _get_heading_label_and_title(node)
         if label is not None:
-            labels[label] = number
+            sec_lbl_to_seq[label] = seq
+            seq_to_sec_lbl[seq] = label
+            seq_to_sec_title[seq] = title
 
 
 def _update_heading_stack(level, stack):
@@ -56,29 +59,29 @@ def _update_heading_stack(level, stack):
     return tuple(stack)
 
 
-def _get_heading_label(node):
+def _get_heading_label_and_title(node):
     """Get the label of a heading node or None."""
     assert isinstance(node, Heading)
     assert len(node.children) == 1
     assert isinstance(node.children[0], RawText)
     text = node.children[0].content
     match = EXTENSIONS["@sec"]["re"].search(text)
-    if match is None:
-        return None
-    label, _ = EXTENSIONS["@sec"]["func"](match)
-    return label
+    if not match:
+        return None, None
+    label, title = EXTENSIONS["@sec"]["func"](match)
+    return label, title
 
 
 # ----------------------------------------------------------------------
 
 
-def _run_collectors(overall, info):
+def _run_collectors(xref, info):
     """Get simple embedded references like `@b(...)`."""
     for (func, keys) in COLLECTORS:
         for k in keys:
-            if k not in overall:
-                overall[k] = {}
-        visit(info["from"], info["doc"], func, *[overall[k] for k in keys])
+            if k not in xref:
+                xref[k] = {}
+        visit(info["from"], info["doc"], func, *[xref[k] for k in keys])
 
 
 def _get_bib_keys(path, node, accum):
@@ -114,7 +117,7 @@ def _get_index_keys(path, node, accum):
             _add_to_set(accum, key, path)
 
 
-# Collector functions and their overall keys.
+# Collector functions and their xref keys.
 COLLECTORS = (
     [_get_bib_keys, ["bib_keys"]],
     [_get_gloss_index_keys, ["gloss_keys", "index_keys"]],
@@ -125,13 +128,13 @@ COLLECTORS = (
 # ----------------------------------------------------------------------
 
 
-def _run_enumerators(overall, major, info):
+def _run_enumerators(xref, major, info):
     """Get enumerated items `@fig(...)`."""
     for (func, key) in ENUMERATORS:
-        if key not in overall:
-            overall[key] = {}
+        if key not in xref:
+            xref[key] = {}
         enumerator = [major, 0]
-        visit(info["from"], info["doc"], func, overall[key], enumerator)
+        visit(info["from"], info["doc"], func, xref[key], enumerator)
 
 
 def _enumerate_fig_defs(path, node, fig_def_accum, enumerator):
@@ -157,10 +160,10 @@ def _update_enumerator(enumerator):
     return tuple(enumerator)
 
 
-# Enumerator functions and their overall keys.
+# Enumerator functions and their xref keys.
 ENUMERATORS = (
-    [_enumerate_fig_defs, "fig_defs"],
-    [_enumerate_tbl_defs, "tbl_defs"],
+    [_enumerate_fig_defs, "fig_keys"],
+    [_enumerate_tbl_defs, "tbl_keys"],
 )
 
 # ----------------------------------------------------------------------

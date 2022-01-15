@@ -2,12 +2,12 @@
 
 import pytest
 
-from mccole.config import McColeExc
+from mccole.config import DEFAULTS, McColeExc
 from mccole.html import md_to_html
 
 
 def test_fig_def_correctly_formatted():
-    html = md_to_html("@fig{label:file:alt:cap}")
+    html = md_to_html(DEFAULTS, {}, "@fig{label:file:alt:cap}")
     assert html.strip() == "".join(
         [
             "<p>",
@@ -21,7 +21,7 @@ def test_fig_def_correctly_formatted():
 
 
 def test_fig_def_with_spaces():
-    html = md_to_html("@fig{ label : file : \t alt \t : cap  }")
+    html = md_to_html(DEFAULTS, {}, "@fig{ label : file : \t alt \t : cap  }")
     assert all(
         x in html
         for x in [
@@ -35,24 +35,24 @@ def test_fig_def_with_spaces():
 
 def test_fig_def_missing_label():
     with pytest.raises(McColeExc):
-        md_to_html("@fig{:file:alt:cap}")
+        md_to_html(DEFAULTS, {}, "@fig{:file:alt:cap}")
 
 
 def test_fig_def_missing_file():
     with pytest.raises(McColeExc):
-        md_to_html("@fig{label::alt:cap}")
+        md_to_html(DEFAULTS, {}, "@fig{label::alt:cap}")
 
 
 def test_fig_def_missing_alt():
     with pytest.raises(McColeExc):
-        md_to_html("@fig{label:file::cap}")
+        md_to_html(DEFAULTS, {}, "@fig{label:file::cap}")
 
 
 def test_fig_def_missing_cap():
     with pytest.raises(McColeExc):
-        md_to_html("@fig{label:file:alt:}")
+        md_to_html(DEFAULTS, {}, "@fig{label:file:alt:}")
 
 
 def test_fig_def_too_many_fields():
     with pytest.raises(McColeExc):
-        md_to_html("@fig{label:file:alt:cap:something}")
+        md_to_html(DEFAULTS, {}, "@fig{label:file:alt:cap:something}")

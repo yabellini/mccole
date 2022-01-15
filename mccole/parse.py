@@ -45,6 +45,6 @@ PARSERS = [
     _make_parser("SecRef", "@s", "label"),
     _make_parser("TblDef", "@tbl", "label", "file", "cap"),
     _make_parser("TblRef", "@t", "label"),
-    _make_parser("ToC", "@toc", "*levels"),
+    _make_parser("Toc", "@toc", "*levels"),
     Expression,
 ]

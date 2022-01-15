@@ -52,13 +52,13 @@ def read_files(config, root):
     return files
 
 
-def write_files(config, files):
+def write_files(config, xref, files):
     """Save all files in a fileset."""
     for info in files:
         if info["action"] == "copy":
             _copy_file(info["from"], info["to"])
         elif info["action"] == "transform":
-            html = md_to_html(info["raw"], config)
+            html = md_to_html(config, xref, info["raw"])
             _write_file(info["from"], info["to"], html)
         else:
             raise McColeExc(f"Unknown action {info['action']}")

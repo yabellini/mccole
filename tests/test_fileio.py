@@ -130,14 +130,14 @@ def test_unreadable_file_to_convert(fs):
 
 def test_output_fails_with_unknown_action():
     with pytest.raises(McColeExc):
-        write_files(DEFAULTS, [{"action": "unknown"}])
+        write_files(DEFAULTS, {}, [{"action": "unknown"}])
 
 
 def test_copy_fails_with_forbidden_directory(fs):
     fs.create_dir("dst", perm_bits=0o000)
     files = [{"action": "copy", "from": Path("a.txt"), "to": Path("dst/a.txt")}]
     with pytest.raises(McColeExc):
-        write_files(DEFAULTS, files)
+        write_files(DEFAULTS, {}, files)
 
 
 def test_copy_single_file_successful(fs):
@@ -145,7 +145,7 @@ def test_copy_single_file_successful(fs):
     fs.create_dir(DEFAULTS["dst"])
     dst = Path(DEFAULTS["dst"]) / "a.txt"
     files = [{"action": "copy", "from": Path("a.txt"), "to": dst}]
-    write_files(DEFAULTS, files)
+    write_files(DEFAULTS, {}, files)
     assert dst.is_file()
     assert dst.read_text() == "contents"
 
@@ -156,14 +156,14 @@ def test_copy_single_file_fails_if_no_src_file(fs):
         {"action": "copy", "from": Path("a.txt"), "to": Path(DEFAULTS["dst"]) / "a.txt"}
     ]
     with pytest.raises(McColeExc):
-        write_files(DEFAULTS, files)
+        write_files(DEFAULTS, {}, files)
 
 
 def test_write_single_file_successful(fs):
     fs.create_dir(DEFAULTS["dst"])
     dst = Path(DEFAULTS["dst"]) / "a.html"
     files = [{"action": "transform", "from": "a.md", "to": dst, "raw": "# Title"}]
-    write_files(DEFAULTS, files)
+    write_files(DEFAULTS, {}, files)
     assert dst.read_text().rstrip() == "<h1>Title</h1>"
 
 
@@ -178,4 +178,4 @@ def test_write_fails_with_forbidden_directory(fs):
         }
     ]
     with pytest.raises(McColeExc):
-        write_files(DEFAULTS, files)
+        write_files(DEFAULTS, {}, files)

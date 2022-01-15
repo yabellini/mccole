@@ -17,8 +17,8 @@ def test_label_no_headings(a_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md])
-    assert overall["headings"] == {}
+    xref = gather_data(DEFAULTS, [a_md])
+    assert xref["sec_lbl_to_seq"] == {}
 
 
 def test_label_badly_formatted(a_md):
@@ -35,8 +35,8 @@ def test_label_single_heading(a_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md])
-    assert overall["headings"] == {"title": (1,)}
+    xref = gather_data(DEFAULTS, [a_md])
+    assert xref["sec_lbl_to_seq"] == {"title": (1,)}
 
 
 def test_label_sub_heading(a_md):
@@ -48,8 +48,8 @@ def test_label_sub_heading(a_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md])
-    assert overall["headings"] == {"title": (1,), "section": (1, 1)}
+    xref = gather_data(DEFAULTS, [a_md])
+    assert xref["sec_lbl_to_seq"] == {"title": (1,), "section": (1, 1)}
 
 
 def test_label_multiple_headings(a_md):
@@ -66,8 +66,8 @@ def test_label_multiple_headings(a_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md])
-    assert overall["headings"] == {
+    xref = gather_data(DEFAULTS, [a_md])
+    assert xref["sec_lbl_to_seq"] == {
         "t": (1,),
         "a": (1, 1),
         "a1": (1, 1, 1),
@@ -101,8 +101,8 @@ def test_label_headings_with_filler(a_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md])
-    assert overall["headings"] == {
+    xref = gather_data(DEFAULTS, [a_md])
+    assert xref["sec_lbl_to_seq"] == {
         "t": (1,),
         "a": (1, 1),
         "a1": (1, 1, 1),
@@ -129,8 +129,8 @@ def test_label_headings_multiple_docs(a_md, b_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md, b_md])
-    assert overall["headings"] == {
+    xref = gather_data(DEFAULTS, [a_md, b_md])
+    assert xref["sec_lbl_to_seq"] == {
         "a-t": (1,),
         "a-1": (1, 1),
         "a-2": (1, 2),

@@ -18,8 +18,8 @@ def test_get_bib_keys_none_in_document(a_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md])
-    assert overall["bib_keys"] == {}
+    xref = gather_data(DEFAULTS, [a_md])
+    assert xref["bib_keys"] == {}
 
 
 def test_get_bib_keys_in_one_document(a_md):
@@ -34,8 +34,8 @@ def test_get_bib_keys_in_one_document(a_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md])
-    assert overall["bib_keys"] == {"key1": {"a.md"}, "key2": {"a.md"}, "key3": {"a.md"}}
+    xref = gather_data(DEFAULTS, [a_md])
+    assert xref["bib_keys"] == {"key1": {"a.md"}, "key2": {"a.md"}, "key3": {"a.md"}}
 
 
 def test_get_bib_keys_in_multiple_documents(a_md, b_md):
@@ -57,8 +57,8 @@ def test_get_bib_keys_in_multiple_documents(a_md, b_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md, b_md])
-    assert overall["bib_keys"] == {
+    xref = gather_data(DEFAULTS, [a_md, b_md])
+    assert xref["bib_keys"] == {
         "key1": {"a.md"},
         "key2": {"a.md"},
         "key3": {"a.md", "b.md"},
@@ -85,8 +85,8 @@ def test_get_gloss_keys_in_multiple_documents(a_md, b_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md, b_md])
-    assert overall["gloss_keys"] == {
+    xref = gather_data(DEFAULTS, [a_md, b_md])
+    assert xref["gloss_keys"] == {
         "key1": {"a.md", "b.md"},
         "key2": {"a.md"},
         "key3": {"b.md"},
@@ -112,8 +112,8 @@ def test_get_index_keys_in_multiple_documents(a_md, b_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md, b_md])
-    assert overall["index_keys"] == {
+    xref = gather_data(DEFAULTS, [a_md, b_md])
+    assert xref["index_keys"] == {
         "key1": {"a.md", "b.md"},
         "key2": {"a.md"},
         "key3": {"b.md"},
@@ -139,13 +139,13 @@ def test_get_gloss_index_keys_in_multiple_documents(a_md, b_md):
         """
         )
     )
-    overall = gather_data(DEFAULTS, [a_md, b_md])
-    assert overall["gloss_keys"] == {
+    xref = gather_data(DEFAULTS, [a_md, b_md])
+    assert xref["gloss_keys"] == {
         "gloss1": {"a.md", "b.md"},
         "gloss2": {"a.md"},
         "gloss3": {"b.md"},
     }
-    assert overall["index_keys"] == {
+    assert xref["index_keys"] == {
         "index1": {"a.md", "b.md"},
         "index2": {"a.md"},
         "index3": {"b.md"},
