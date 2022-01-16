@@ -9,6 +9,16 @@ from mccole.html import md_to_html
 from mccole.util import McColeExc
 
 
+@pytest.fixture
+def basic_env():
+    return create_env(
+        {
+            "site": {"domain": "example.org"},
+            "page": {"title": "TITLE"}
+        }
+    )
+
+
 def test_create_env_empty():
     assert create_env({}) == {"site": SN(), "page": SN()}
 
@@ -41,36 +51,33 @@ def test_expr_arithmetic_correct():
     assert html.strip() == "<p>5</p>"
 
 
-def test_expr_site_variable_correct():
-    env = create_env({"site": {"domain": "example.org"}})
-    html = md_to_html(env, {}, "@x{site.domain}")
+def test_expr_site_variable_correct(basic_env):
+    html = md_to_html(basic_env, {}, "@x{site.domain}")
     assert html.strip() == "<p>example.org</p>"
 
 
-def test_expr_page_variable_correct():
-    env = create_env({"page": {"title": "TITLE"}})
-    html = md_to_html(env, {}, "@x{page.title}")
+def test_expr_page_variable_correct(basic_env):
+    html = md_to_html(basic_env, {}, "@x{page.title}")
     assert html.strip() == "<p>TITLE</p>"
 
 
-def test_expr_multiple_variables_correct():
+def test_expr_multiple_variables_correct(basic_env):
     md = "# @x{page.title}\nFound at @x{site.domain}."
-    env = create_env({"site": {"domain": "example.org"}, "page": {"title": "TITLE"}})
-    html = md_to_html(env, {}, md)
+    html = md_to_html(basic_env, {}, md)
     assert "<h1>TITLE</h1>" in html
     assert "<p>Found at example.org.</p>" in html
 
 
-def test_expr_global_variable_not_found():
+def test_expr_global_variable_not_found(basic_env):
     with pytest.raises(McColeExc):
-        md_to_html({}, create_env({}), "@x{missing}")
+        md_to_html({}, basic_env, "@x{missing}")
 
 
-def test_expr_site_variable_not_found():
+def test_expr_site_variable_not_found(basic_env):
     with pytest.raises(McColeExc):
-        md_to_html({}, create_env({}), "@x{site.missing}")
+        md_to_html({}, basic_env, "@x{site.missing}")
 
 
-def test_expr_page_variable_not_found():
+def test_expr_page_variable_not_found(basic_env):
     with pytest.raises(McColeExc):
-        md_to_html({}, create_env({}), "@x{page.missing}")
+        md_to_html({}, basic_env, "@x{page.missing}")

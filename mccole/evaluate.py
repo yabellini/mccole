@@ -5,14 +5,17 @@ from types import SimpleNamespace
 
 from .util import McColeExc
 
+ENV_VARS = ("site", "page")
+
 
 def create_env(config):
     """Create evaluation environment from configuration data."""
-    return {key: _json_to_ns(config.get(key, {})) for key in ["site", "page"]}
+    return {key: _json_to_ns(config.get(key, {})) for key in ENV_VARS}
 
 
-def evaluate(env, expr):
+def evaluate(config, expr):
     """Evaluate an expression in a context."""
+    env = create_env(config)
     try:
         return str(eval(expr, {"__builtins__": {}}, env))
     except NameError as exc:

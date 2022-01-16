@@ -114,3 +114,36 @@ def test_toc_depth_2_3():
     )
     for (lbl, title) in not_expected:
         assert f'<a href="#{lbl}">{title}</a>' not in html
+
+
+def test_toc_depth_1_2():
+    xref = {
+        "seq_to_sec_lbl": {
+            (1,): "a-title",
+            (1, 1): "a-section",
+            (1, 1, 1): "a-subsection",
+            (1, 1, 1, 1): "a-subsubsection",
+        },
+        "seq_to_sec_title": {
+            (1,): "A Title",
+            (1, 1): "A Section",
+            (1, 1, 1): "A Subsection",
+            (1, 1, 1, 1): "A Subsubsection",
+        }
+    }
+    html = md_to_html(DEFAULTS, xref, "@toc{1:2}")
+
+    expected = (
+        ("a-title", "A Title"),
+        ("a-section", "A Section"),
+    )
+    for (lbl, title) in expected:
+        line = f'<a href="#{lbl}">{title}</a>'
+        assert line in html
+
+    not_expected = (
+        ("a-subsection", "A Subsection"),
+        ("a-subsubsection", "B Subsubsection"),
+    )
+    for (lbl, title) in not_expected:
+        assert f'<a href="#{lbl}">{title}</a>' not in html

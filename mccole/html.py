@@ -104,8 +104,7 @@ class McColeHtml(HTMLRenderer):
 
     def render_toc(self, token):
         """Render table of contents."""
-        if not token.levels:
-            raise McColeExc(f"Badly-formatted ToC specified {token.levels}")
+        assert token.levels
         try:
             levels = [int(x) for x in token.levels]
         except ValueError:
