@@ -10,27 +10,68 @@ def gather_data(config, files):
     """Collect cross-reference data."""
     subset = [info for info in files if info["action"] == "transform"]
     xref = {
-        "order": {},
         "sec_lbl_to_seq": {},
         "seq_to_sec_lbl": {},
         "seq_to_sec_title": {},
     }
+
     for (i, info) in enumerate(subset):
-        major = i + 1
-        xref["order"][info["from"]] = major
+        major = _get_major_index(config, info, i)
         _label_headings(xref, major, info)
         _run_collectors(xref, info)
         _run_enumerators(xref, major, info)
+
     return xref
+
+
+def _get_major_index(config, info, i):
+    """Get the major index for this entry."""
+    # Nothing is an appendix.
+    if "appendix" not in config:
+        print("NOTHING")
+        return i + 1
+
+    # Not being enumerated.
+    entries = config["entries"]
+    if i >= len(entries):
+        print("NOT ENUM")
+        return i + 1
+
+    try:
+        print("ENTRIES", entries, "APPENDIX", config["appendix"])
+        start = entries.index(config["appendix"])
+        print("START", start)
+        # Numbered chapter.
+        if i < start:
+            print("RETURNING NUM")
+            return i + 1
+        print("RETURNING LETTER")
+        return chr(ord('A') + i - start)
+
+    except ValueError:
+        raise McColeExc(f"Unknown appendix start marker {config['appendix']}")
 
 
 # ----------------------------------------------------------------------
 
 
+def _get_heading_label_and_title(node):
+    """Get the label of a heading node or None."""
+    assert isinstance(node, Heading)
+    assert len(node.children) == 1
+    assert isinstance(node.children[0], RawText)
+    text = node.children[0].content
+    match = EXTENSIONS["@sec"]["re"].search(text)
+    if not match:
+        return None, None
+    label, title = EXTENSIONS["@sec"]["func"](match)
+    return label, title
+
+
 def _label_headings(xref, major, info):
     """Collect all heading labels, numbering along the way."""
     path = info["from"]
-    stack = [major - 1]
+    stack = [_heading_prev(major)]
     visit(
         path,
         info["doc"],
@@ -67,21 +108,22 @@ def _update_heading_stack(level, stack):
         # Use `pop` rather than slicing to modify stack in place.
         while level < len(stack):
             stack.pop()
-    stack[-1] += 1
+    stack[-1] = _heading_next(stack[-1])
     return tuple(stack)
 
 
-def _get_heading_label_and_title(node):
-    """Get the label of a heading node or None."""
-    assert isinstance(node, Heading)
-    assert len(node.children) == 1
-    assert isinstance(node.children[0], RawText)
-    text = node.children[0].content
-    match = EXTENSIONS["@sec"]["re"].search(text)
-    if not match:
-        return None, None
-    label, title = EXTENSIONS["@sec"]["func"](match)
-    return label, title
+def _heading_next(val):
+    """Get the next number or letter in the sequence."""
+    if isinstance(val, int):
+        return val + 1
+    return chr(ord(val) + 1)
+
+
+def _heading_prev(val):
+    """Get the previous number or letter in the sequence."""
+    if isinstance(val, int):
+        return val - 1
+    return chr(ord(val) - 1)
 
 
 # ----------------------------------------------------------------------
@@ -177,6 +219,7 @@ ENUMERATORS = (
     [_enumerate_fig_defs, "fig_keys"],
     [_enumerate_tbl_defs, "tbl_keys"],
 )
+
 
 # ----------------------------------------------------------------------
 

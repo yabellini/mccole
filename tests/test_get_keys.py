@@ -34,7 +34,7 @@ def test_get_bib_keys_in_one_document(a_md):
         )
     )
     xref = gather_data(DEFAULTS, [a_md])
-    assert xref["bib_keys"] == {"key1": {"a.md"}, "key2": {"a.md"}, "key3": {"a.md"}}
+    assert xref["bib_keys"] == {"key1": {"a/index.md"}, "key2": {"a/index.md"}, "key3": {"a/index.md"}}
 
 
 def test_get_bib_keys_in_multiple_documents(a_md, b_md):
@@ -58,10 +58,10 @@ def test_get_bib_keys_in_multiple_documents(a_md, b_md):
     )
     xref = gather_data(DEFAULTS, [a_md, b_md])
     assert xref["bib_keys"] == {
-        "key1": {"a.md"},
-        "key2": {"a.md"},
-        "key3": {"a.md", "b.md"},
-        "key4": {"b.md"},
+        "key1": {"a/index.md"},
+        "key2": {"a/index.md"},
+        "key3": {"a/index.md", "b/index.md"},
+        "key4": {"b/index.md"},
     }
 
 
@@ -86,9 +86,9 @@ def test_get_gloss_keys_in_multiple_documents(a_md, b_md):
     )
     xref = gather_data(DEFAULTS, [a_md, b_md])
     assert xref["gloss_keys"] == {
-        "key1": {"a.md", "b.md"},
-        "key2": {"a.md"},
-        "key3": {"b.md"},
+        "key1": {"a/index.md", "b/index.md"},
+        "key2": {"a/index.md"},
+        "key3": {"b/index.md"},
     }
 
 
@@ -113,9 +113,9 @@ def test_get_index_keys_in_multiple_documents(a_md, b_md):
     )
     xref = gather_data(DEFAULTS, [a_md, b_md])
     assert xref["index_keys"] == {
-        "key1": {"a.md", "b.md"},
-        "key2": {"a.md"},
-        "key3": {"b.md"},
+        "key1": {"a/index.md", "b/index.md"},
+        "key2": {"a/index.md"},
+        "key3": {"b/index.md"},
     }
 
 
@@ -140,12 +140,12 @@ def test_get_gloss_index_keys_in_multiple_documents(a_md, b_md):
     )
     xref = gather_data(DEFAULTS, [a_md, b_md])
     assert xref["gloss_keys"] == {
-        "gloss1": {"a.md", "b.md"},
-        "gloss2": {"a.md"},
-        "gloss3": {"b.md"},
+        "gloss1": {"a/index.md", "b/index.md"},
+        "gloss2": {"a/index.md"},
+        "gloss3": {"b/index.md"},
     }
     assert xref["index_keys"] == {
-        "index1": {"a.md", "b.md"},
-        "index2": {"a.md"},
-        "index3": {"b.md"},
+        "index1": {"a/index.md", "b/index.md"},
+        "index2": {"a/index.md"},
+        "index3": {"b/index.md"},
     }

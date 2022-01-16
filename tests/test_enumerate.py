@@ -10,14 +10,7 @@ from mccole.gather import gather_data
 
 
 def test_enumerate_fig_defs_no_figures(a_md):
-    a_md["doc"] = md_to_doc(
-        dedent(
-            """\
-        # Title
-        paragraph
-        """
-        )
-    )
+    a_md["doc"] = md_to_doc("""# Title\nparagraph""")
     xref = gather_data(DEFAULTS, [a_md])
     assert xref["fig_keys"] == {}
 
@@ -47,12 +40,13 @@ def test_enumerate_fig_defs_multiple_files(a_md, b_md):
         """
         )
     )
-    xref = gather_data(DEFAULTS, [a_md, b_md])
+    config = DEFAULTS | {"appendix": "b", "entries": ["a", "b"]}
+    xref = gather_data(config, [a_md, b_md])
     assert xref["fig_keys"] == {
         "first": (1, 1),
         "second": (1, 2),
-        "third": (2, 1),
-        "fourth": (2, 2),
+        "third": ("A", 1),
+        "fourth": ("A", 2),
     }
 
 

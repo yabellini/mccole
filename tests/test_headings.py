@@ -152,3 +152,31 @@ def test_label_headings_fails_out_of_order(a_md):
     )
     with pytest.raises(McColeExc):
         gather_data(DEFAULTS, [a_md])
+
+
+def test_label_headings_with_appendix(a_md, b_md):
+    a_md["doc"] = md_to_doc(
+        dedent(
+            """\
+            # @sec{a:Title A}
+            ## @sec{a-s:Section A1}
+            """
+        )
+    )
+    b_md["doc"] = md_to_doc(
+        dedent(
+            """\
+            # @sec{b:Title B}
+            ## @sec{b-s:Section B1}
+            """
+        )
+    )
+    config = DEFAULTS | {"appendix": "b", "entries": ["a", "b"]}
+    xref = gather_data(config, [a_md, b_md])
+    print("XREF", xref["sec_lbl_to_seq"])
+    assert xref["sec_lbl_to_seq"] == {
+        "a": (1,),
+        "a-s": (1,1),
+        "b": ("A",),
+        "b-s": ("A",1),
+    }

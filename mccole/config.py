@@ -1,6 +1,7 @@
 """Configuration."""
 
 import os
+from pathlib import Path
 
 import yaml
 
@@ -49,3 +50,11 @@ def get_config(filename):
         return config
     except OSError as exc:
         raise McColeExc(str(exc))
+
+
+def toplevel_filenames(config):
+    """Generate expected top-level filenames."""
+    if "entries" not in config:
+        return []
+    src = Path(config["src"])
+    return [(src / slug / MAIN_NAME) for slug in config["entries"]]

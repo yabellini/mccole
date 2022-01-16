@@ -8,7 +8,7 @@ from mistletoe import Document
 def a_md():
     return {
         "action": "transform",
-        "from": "a.md",
+        "from": "a/index.md",
         "raw": "",
         "header": {},
         "doc": Document([]),
@@ -19,7 +19,7 @@ def a_md():
 def b_md():
     return {
         "action": "transform",
-        "from": "b.md",
+        "from": "b/index.md",
         "raw": "",
         "header": {},
         "doc": Document([]),

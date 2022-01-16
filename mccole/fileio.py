@@ -9,7 +9,7 @@ import frontmatter
 from mistletoe import Document
 from mistletoe.ast_renderer import ASTRenderer
 
-from .config import MAIN_NAME
+from .config import toplevel_filenames
 from .html import md_to_html
 from .util import McColeExc
 
@@ -105,17 +105,9 @@ def _copy_file(from_path, to_path):
         raise McColeExc(str(exc))
 
 
-def _generate_toplevel(config):
-    """Generate expected top-level filenames."""
-    if "entries" not in config:
-        return []
-    src = Path(config["src"])
-    return [(src / slug / MAIN_NAME) for slug in config["entries"]]
-
-
 def _reorder_files(config, files):
     """Put chapters and appendices at front and in order."""
-    toplevel = set(_generate_toplevel(config))
+    toplevel = set(toplevel_filenames(config))
     front = {}
     back = []
     for info in files:
@@ -127,7 +119,7 @@ def _reorder_files(config, files):
     if toplevel:
         toplevel = ", ".join(sorted(str(toplevel)))
         raise McColeExc(f"Failed to find expected files {toplevel}")
-    result = [front[name] for name in _generate_toplevel(config)]
+    result = [front[name] for name in toplevel_filenames(config)]
     result.extend(back)
     return result
 
