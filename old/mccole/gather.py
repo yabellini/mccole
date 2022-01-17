@@ -46,7 +46,7 @@ def _get_major_index(config, info, i):
             print("RETURNING NUM")
             return i + 1
         print("RETURNING LETTER")
-        return chr(ord('A') + i - start)
+        return chr(ord("A") + i - start)
 
     except ValueError:
         raise McColeExc(f"Unknown appendix start marker {config['appendix']}")

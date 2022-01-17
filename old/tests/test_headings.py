@@ -176,7 +176,7 @@ def test_label_headings_with_appendix(a_md, b_md):
     print("XREF", xref["sec_lbl_to_seq"])
     assert xref["sec_lbl_to_seq"] == {
         "a": (1,),
-        "a-s": (1,1),
+        "a-s": (1, 1),
         "b": ("A",),
-        "b-s": ("A",1),
+        "b-s": ("A", 1),
     }

@@ -129,7 +129,7 @@ def test_toc_depth_1_2():
             (1, 1): "A Section",
             (1, 1, 1): "A Subsection",
             (1, 1, 1, 1): "A Subsubsection",
-        }
+        },
     }
     html = md_to_html(DEFAULTS, xref, "@toc{1:2}")
 

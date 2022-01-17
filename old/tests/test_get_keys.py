@@ -34,7 +34,11 @@ def test_get_bib_keys_in_one_document(a_md):
         )
     )
     xref = gather_data(DEFAULTS, [a_md])
-    assert xref["bib_keys"] == {"key1": {"a/index.md"}, "key2": {"a/index.md"}, "key3": {"a/index.md"}}
+    assert xref["bib_keys"] == {
+        "key1": {"a/index.md"},
+        "key2": {"a/index.md"},
+        "key3": {"a/index.md"},
+    }
 
 
 def test_get_bib_keys_in_multiple_documents(a_md, b_md):

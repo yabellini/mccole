@@ -1,0 +1,8 @@
+src: .
+dst: _site
+chapters:
+- slug: "file-backup"
+- slug: "unit-test"
+- slug: "pattern-matching"
+- slug: "glossary"
+  appendix: true

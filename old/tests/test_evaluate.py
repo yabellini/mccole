@@ -11,12 +11,7 @@ from mccole.util import McColeExc
 
 @pytest.fixture
 def basic_env():
-    return create_env(
-        {
-            "site": {"domain": "example.org"},
-            "page": {"title": "TITLE"}
-        }
-    )
+    return create_env({"site": {"domain": "example.org"}, "page": {"title": "TITLE"}})
 
 
 def test_create_env_empty():
