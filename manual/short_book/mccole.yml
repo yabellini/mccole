@@ -1,0 +1,13 @@
+src: .
+dst: _site
+transform:
+- ""*.md"
+exclude:
+- mccole.yml
+- "*~"
+entries:
+- "file-backup"
+- "unit-test"
+- "pattern-matching"
+- "glossary"
+appendix: "glossary"
