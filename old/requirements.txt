@@ -1,0 +1,14 @@
+black>=21.12b0
+coverage>=6.2
+flake8 >=4.0.1
+isort>=5.10.1
+markdown-it-py>=2.0.0
+mdit-py-plugins>=0.3.0
+mkdocs>=1.2.3
+mkdocstrings>=0.17.0
+pycodestyle>=2.8.0
+pydocstyle>=6.1.1
+pyfakefs>=4.5.3
+pytest-cov>=3.0.0
+pytest>=6.2.5
+python-frontmatter>=1.0.0

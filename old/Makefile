@@ -13,6 +13,7 @@ help:
 test:
 	@pytest tests
 
+
 ## manual: run on-disk tests
 .PHONY: manual
 manual:

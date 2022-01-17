@@ -1,0 +1,9 @@
+site_name: "McCole"
+repo_url: https://github.com/gvwilson/mccole/
+
+theme:
+  name: "readthedocs"
+
+plugins:
+- search
+- mkdocstrings

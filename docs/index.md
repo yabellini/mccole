@@ -1,3 +1,0 @@
-# McCole
-
-::: mccole
