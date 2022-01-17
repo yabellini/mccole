@@ -8,9 +8,9 @@ import sys
 from .collect import collect_chapters
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config
 from .crossref import cross_reference
+from .fill import fill_in
 from .generate import generate
-from .parse import tokenize
-from .transform import transform
+from .translate import tokenize
 from .util import McColeExc
 
 # ----------------------------------------------------------------------
@@ -25,13 +25,13 @@ def main(args):
         options = _parse_args(args)
         _setup(options)
         config = get_config(options.config)
-        logging.debug(f"configuration is {config}")
+        logging.info(f"configuration is {config}")
 
         chapters = collect_chapters(config)
-        logging.debug(f"chapters are {chapters}")
+        logging.info(f"chapters are {chapters}")
 
+        tokenize(chapters)
         xref = cross_reference(config, chapters)
-        transform(config, xref, chapters)
         generate(config, xref, chapters)
 
     except McColeExc as exc:

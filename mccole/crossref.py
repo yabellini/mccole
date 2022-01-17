@@ -13,7 +13,7 @@ def cross_reference(config, chapters):
         "table_label_to_index": {},
     }
     figure_refs = set()
-    table_defs = set()
+    table_refs = set()
 
     for info in chapters:
         for token in info["tokens"]:
