@@ -77,16 +77,18 @@ def _headings(config, xref, chapters):
                 continue
 
             if token.type != "inline":
-                raise McColeExc(f"Expected inline token for heading at line {token.map[1]}.")
+                raise McColeExc(f"Unexpected token type {token.type} for heading{_line(token)}.")
 
             label, title = _heading_info(token)
             if not label:
+                previous = token
                 continue
+
             level = _heading_level(previous)
             index = _heading_index(token, label_stack, level)
 
-            if (label in lbl_to_index) or (lbl in lbl_to_title):
-                raise McColeExc(f"Duplicate label {label} at line {token.map[1]}.")
+            if (label in lbl_to_index) or (label in lbl_to_title):
+                raise McColeExc(f"Duplicate label {label}{_line(token)}.")
             
             lbl_to_index[label] = index
             lbl_to_title[label] = title
@@ -103,7 +105,7 @@ def _heading_index(token, stack, level):
 
     # Moving up too quickly?
     if level > len(stack) + 1:
-        raise McColeExc(f"Heading {level} immediately under {len(stack)} at line {token.map[1]}.")
+        raise McColeExc(f"Heading {level} immediately under {len(stack)}{_line(token)}.")
 
     # Next level up?
     elif level == len(stack) + 1:
@@ -112,7 +114,7 @@ def _heading_index(token, stack, level):
     # Same level?
     elif level == len(stack):
         if len(stack) == 1:
-            raise McColeExc(f"Can only have one title per chapter at line {token.map[1]}.")
+            raise McColeExc(f"Can only have one title per chapter{_line(token)}.")
         stack[-1] += 1
 
     # Going down?
@@ -138,11 +140,17 @@ def _heading_info(token):
 
 def _heading_level(token):
     """Return the number level of a heading level."""
-    print(f"TOKEN TAG IS '{token.tag}'", "of type", type(token.tag))
     try:
         level = int(token.tag[1])
     except ValueError:
-        raise McColeExc(f"Cannot convert {tag} to heading level at line {token.map[1]}.")
+        raise McColeExc(f"Cannot convert {tag} to heading level{_line(token)}.")
     if (level < 1) or (level > 5):
-        raise McColeExc(f"Heading level {level} out of range at line {token.map[1]}.")
+        raise McColeExc(f"Heading level {level} out of range{_line(token)}.")
     return level
+
+
+def _line(token):
+    """Return line number message or empty string."""
+    if (token is None) or (token.map is None):
+        return f" ({str(token)})"
+    return f" (line {token.map[1]})"

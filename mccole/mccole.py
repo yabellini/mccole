@@ -11,7 +11,7 @@ from .crossref import cross_reference
 from .fill import fill_in
 from .generate import generate
 from .translate import tokenize
-from .util import LOGGER_NAME, McColeExc
+from .util import LOGGER_NAME, McColeExc, pretty
 
 # ----------------------------------------------------------------------
 
@@ -25,14 +25,14 @@ def main(args):
         options = _parse_args(args)
         logger = _setup(options)
         config = get_config(options.config)
-        logger.info(f"configuration is {config}")
+        logger.info(f"configuration is {pretty(config)}")
 
         chapters = collect_chapters(config)
-        logger.info(f"chapters are {chapters}")
+        logger.info(f"chapters are {pretty(chapters)}")
 
         tokenize(chapters)
         xref = cross_reference(config, chapters)
-        logger.info(f"xref is {xref}")
+        logger.info(f"xref is {pretty(xref)}")
 
         generate(config, xref, chapters)
 

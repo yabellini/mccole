@@ -1,6 +1,8 @@
 ---
 ---
 
+# <span id="pattern-matching">Pattern Matching</span>
+
 We have been globbing to match filenames against patterns since <span x="systems-programming"/>.
 This lesson will explore how that works
 by building a simple version of the <span g="regular_expression" i="regular expression">regular expressions</span>
@@ -13,7 +15,7 @@ such as <span g="query_selector" i="query selector (for HTML)">query selectors</
 They are easier to understand and implement than patterns for matching text,
 so we will start by looking at them.
 
-## How can we match query selectors?
+## <span id="pattern-matching-query">How can we match query selectors?</span>
 
 Programs stores HTML pages in memory using a <span g="dom" i="DOM; Document Object Model">document object model</span> or DOM.
 Each element in the page,
@@ -117,7 +119,7 @@ we find it helps prevent <span g="scope_creep" i="scope creep!when writing lesso
 
 </div>
 
-## How can we implement a simple regular expression matcher?
+## <span id="pattern-matching-basicre">How can we implement a simple regular expression matcher?</span>
 
 Matching regular expressions against text relies on the same recursive strategy
 as matching query selectors against nodes in an HTML page.
@@ -165,7 +167,7 @@ Our design is also hard to extend:
 handling parentheses in patterns like `/a(bc)*d/` will require major changes.
 We need to explore a different approach.
 
-## How can we implement an extensible matcher?
+## <span id="pattern-matching-extre">How can we implement an extensible matcher?</span>
 
 Instead of packing all of our code into one long function,
 we can implement each kind of match as separate function.

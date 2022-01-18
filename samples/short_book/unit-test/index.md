@@ -122,7 +122,7 @@ This simple "framework" does what it's supposed to, but:
     but we should make sure those assertions are failing when they're supposed to,
     just as we should test our smoke detectors every once in a while.
 
-## <span id="unit-test-structure">How should we structure test registration?</span>
+## <span id="unit-test-registration">How should we structure test registration?</span>
 
 The next version of our testing tool solves the first two problems in the original
 by putting the testing machinery in a class.
