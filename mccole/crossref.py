@@ -6,11 +6,14 @@ import re
 from .util import LOGGER_NAME, McColeExc
 
 
+# Patterns for HTML-ish elements.
 HEADING_INFO_PAT = re.compile(r'<span\s+id="(.+?)"\s*>(.+?)</span>')
 FIGURE_REF_PAT = re.compile(r'<span\s+f="(.+?)"\s*/>')
 TABLE_REF_PAT = re.compile(r'<span\s+t="(.+?)"\s*/>')
 
+# Where to report.
 LOGGER = logging.getLogger(LOGGER_NAME)
+
 
 def cross_reference(config, chapters):
     """Create cross-reference tables for all chapters."""
