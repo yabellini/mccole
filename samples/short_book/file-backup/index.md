@@ -30,11 +30,10 @@ but a quicker way is to use a <span g="hash_function" i="hash function">hash fun
 that turns arbitrary data into a fixed-length string of bits
 (<span f="file-backup-hash-function"/>).
 
-{% include figure
-   id='file-backup-hash-function'
-   img='figures/hash-function.svg'
-   alt='Hash functions'
-   cap='How hash functions speed up lookup.' %}
+<figure id="file-backup-hash-function">
+  <img src="figures/hash-function.svg" alt="Hash functions" />
+  <figcaption>How hash functions speed up lookup.</figcaption>
+</figure>
 
 A hash function always produces the same <span g="hash_code" i="hash code">hash code</span> for a given input.
 A <span g="cryptographic_hash_function" i="cryptographic hash function; hash function!cryptographic">cryptographic hash function</span>
@@ -117,11 +116,10 @@ the main program ends before the task handling the end of data is scheduled and 
 Most programs also provide a handler for "data" events to do something with each block of data as it comes in;
 the `hash` object in our program does that for us.
 
-{% include figure
-   id='file-backup-streaming'
-   img='figures/streaming.svg'
-   alt='Streaming file operations'
-   cap='Processing files as streams of chunks.' %}
+<figure id="file-backup-streaming">
+  <img src="figures/streaming.svg" alt="Streaming file operations" />
+  <figcaption>Processing files as streams of chunks.</figcaption>
+</figure>
 
 ## How can we back up files?
 
@@ -138,11 +136,10 @@ To restore a particular snapshot,
 all we have to do is copy the saved `.bck` files back to where they were
 (<span f="file-backup-storage"/>).
 
-{% include figure
-   id='file-backup-storage'
-   img='figures/storage.svg'
-   alt='Backup file storage'
-   cap='Organization of backup file storage.' %}
+<figure id="file-backup-storage">
+  <img src="figures/storage.svg" alt="Backup file storage" />
+  <figcaption>Organization of backup file storage.</figcaption>
+</figure>
 
 We can build the tools we need to do this uses promises (<span x="async-programming"/>).
 The main function creates a promise that uses the asynchronous version of `glob` to find files
@@ -273,11 +270,10 @@ This prevents our tests from accidentally disturbing the filesystem,
 and also makes tests much faster
 (since in-memory operations are thousands of times faster than operations that touch the disk).
 
-{% include figure
-   id='file-backup-mock-fs'
-   img='figures/mock-fs.svg'
-   alt='Mock filesystem'
-   cap='Using a mock filesystem to simplify testing.' %}
+<figure id="file-backup-mock-fs">
+  <img src="figures/mock-fs.svg" alt="Mock filesystem" />
+  <figcaption>Using a mock filesystem to simplify testing.</figcaption>
+</figure>
 
 We can create a mock filesystem by giving the library a JSON description of
 the files and what they should contain:

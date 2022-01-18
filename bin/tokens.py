@@ -21,7 +21,7 @@ print("-" * 40)
 for token in md.parse(text):
     if token.nesting < 0:
         depth += token.nesting
-    print(f"{'  ' * depth}{token.type}")
+    print(f"{'  ' * depth}{token.type} / {token.tag}: {token.content if token.content else '--empty--'}")
     if token.nesting > 0:
         depth += token.nesting
 

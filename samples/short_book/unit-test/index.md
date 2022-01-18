@@ -1,6 +1,8 @@
 ---
 ---
 
+# <span id="unit-test">Unit Testing</span>
+
 We have written many small programs in the previous two chapters,
 but haven't really tested any of them.
 That's OK for <span g="exploratory_programming" i="exploratory programming">exploratory programming</span>,
@@ -20,7 +22,7 @@ Our design is inspired by tools like <span i="Mocha">[Mocha][mocha]</span> and <
 which were in turn inspired by tools built for other languages
 from the 1980s onward <cite>Meszaros2007,Tudose2020</cite>.
 
-## How should we structure unit testing?
+## <span id="unit-test-structure">How should we structure unit testing?</span>
 
 As in other unit testing frameworks,
 each test will be a function of zero arguments
@@ -52,13 +54,12 @@ one of the assertions we put in the test as a check
 (<span f="unit-test-mental-model"/>).
 Any other kind of assertion indicates that the test itself contains an error.
 
-{% include figure
-   id='unit-test-mental-model'
-   img='figures/mental-model.svg'
-   alt='Mental model of unit testing'
-   cap='Running tests that can pass, fail, or contain errors.' %}
+<figure id="unit-test-mental-model">
+  <img src="figures/mental-model.svg" alt="Mental model of unit testing" />
+  <figcaption>Running tests that can pass, fail, or contain errors.</figcaption>
+</figure>
 
-## How can we separate registration, execution, and reporting?
+## <span id="unit-test-manage">How can we separate registration, execution, and reporting?</span>
 
 To start,
 let's use a handful of <span g="global_variable">global variables</span> to record tests and their results:
@@ -121,7 +122,7 @@ This simple "framework" does what it's supposed to, but:
     but we should make sure those assertions are failing when they're supposed to,
     just as we should test our smoke detectors every once in a while.
 
-## How should we structure test registration?
+## <span id="unit-test-structure">How should we structure test registration?</span>
 
 The next version of our testing tool solves the first two problems in the original
 by putting the testing machinery in a class.
@@ -152,11 +153,10 @@ it can call `Hope.test` to record a test for later execution
 and `Hope.run` to execute all of the tests registered up until that point
 (<span f="unit-test-hope-structure"/>).
 
-{% include figure
-   id='unit-test-hope-structure'
-   img='figures/hope-structure.svg'
-   alt='Recording and running tests'
-   cap='Creating a singleton, recording tests, and running them.' %}
+<figure id="unit-test-hope-structure">
+  <img src="figures/hope-structure.svg" alt="Recording and running tests" />
+  <figcaption>Creating a singleton, recording tests, and running them.</figcaption>
+</figure>
 
 Finally,
 our `Hope` class can report results as both a terse one-line summary and as a detailed listing.
@@ -184,7 +184,7 @@ when the failure is actually in `test_that`.
 
 </div>
 
-## How can we build a command-line interface for testing?
+## <span id="unit-test-cmdline">How can we build a command-line interface for testing?</span>
 
 Most programmers don't enjoy writing tests,
 so if we want them to do it,
@@ -299,8 +299,7 @@ when a pair of files `test-add.js` and `test-sub.js` are loaded by our framework
 10.  `pray` can now ask the unique instance of `Hope` to run all of the tests,
      then get a report from the `Hope` singleton and display it.
 
-{% include figure
-   id='unit-test-lifecycle'
-   img='figures/lifecycle.svg'
-   alt='Unit testing lifecycle'
-   cap='Lifecycle of dynamically-discovered unit tests.' %}
+<figure id="unit-test-lifecycle">
+  <img src="figures/lifecycle.svg" alt="Unit testing lifecycle" />
+  <figcaption>Lifecycle of dynamically-discovered unit tests.</figcaption>
+</figure>

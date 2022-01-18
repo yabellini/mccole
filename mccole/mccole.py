@@ -11,7 +11,7 @@ from .crossref import cross_reference
 from .fill import fill_in
 from .generate import generate
 from .translate import tokenize
-from .util import McColeExc
+from .util import LOGGER_NAME, McColeExc
 
 # ----------------------------------------------------------------------
 
@@ -23,19 +23,21 @@ def main(args):
     """Parse arguments and execute."""
     try:
         options = _parse_args(args)
-        _setup(options)
+        logger = _setup(options)
         config = get_config(options.config)
-        logging.info(f"configuration is {config}")
+        logger.info(f"configuration is {config}")
 
         chapters = collect_chapters(config)
-        logging.info(f"chapters are {chapters}")
+        logger.info(f"chapters are {chapters}")
 
         tokenize(chapters)
         xref = cross_reference(config, chapters)
+        logger.info(f"xref is {xref}")
+
         generate(config, xref, chapters)
 
     except McColeExc as exc:
-        print(f"McCole failed: {exc.msg}", file=sys.stderr)
+        logger.error(f"McCole failed: {exc.msg}")
         sys.exit(1)
 
 
@@ -82,11 +84,13 @@ def _setup(options):
     """Do initial setup."""
     # Logging.
     level_name = options.logging.upper()
-    logging.basicConfig(
-        level=logging._nameToLevel[level_name], format="%(levelname)s: %(message)s"
-    )
+    logging.basicConfig(format="%(levelname)s: %(message)s")
+    logger = logging.getLogger(LOGGER_NAME)
+    logger.setLevel(logging._nameToLevel[level_name])
 
     # Working directory.
     if options.chdir is not None:
         logging.info(f"changing working directory to {options.chdir}")
         os.chdir(options.chdir)
+
+    return logger

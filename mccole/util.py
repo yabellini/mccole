@@ -1,6 +1,10 @@
 """Utilities."""
 
 
+# Identify this module's logger.
+LOGGER_NAME = "mccole"
+
+
 class McColeExc(Exception):
     """Problems we expect."""
 

@@ -22,11 +22,10 @@ is a <span g="node">nodes</span>;
 the <span g="child_tree">children</span> of a node are the elements it contains
 (<span f="pattern-matching-dom-tree"/>).
 
-{% include figure
-   id='pattern-matching-dom-tree'
-   img='figures/dom-tree.svg'
-   alt='The Document Object Model'
-   cap='Representing an HTML document as a tree.' %}
+<figure id="pattern-matching-dom-tree">
+  <img src="figures/dom-tree.svg" alt="The Document Object Model" />
+  <figcaption>Representing an HTML document as a tree.</figcaption>
+</figure>
 
 The first step is to define the patterns we want to support
 (<span t="pattern-matching-supported"/>).
@@ -44,11 +43,10 @@ and uses `firstMatch` to search recursively down the document tree
 until all the selectors in the query string have matched or no matches have been found
 (<span f="pattern-matching-query-selectors"/>).
 
-{% include figure
-   id='pattern-matching-query-selectors'
-   img='figures/query-selectors.svg'
-   alt='Matching query selectors'
-   cap='Matching a simple set of query selectors.' %}
+<figure id="pattern-matching-query-selectors">
+  <img src="figures/query-selectors.svg" alt="Matching query selectors" />
+  <figcaption>Matching a simple set of query selectors.</figcaption>
+</figure>
 
 {% include erase file='simple-selectors.js' key='skip' %}
 
@@ -188,11 +186,10 @@ or `undefined` indicating that matching failed.
 We can then combine these objects to match complex patterns
 (<span f="pattern-matching-regex-objects"/>).
 
-{% include figure
-   id='pattern-matching-regex-objects'
-   img='figures/regex-objects.svg'
-   alt='Implementing regex with objects'
-   cap='Using nested objects to match regular expressions.' %}
+<figure id="pattern-matching-regex-objects">
+  <img src="figures/regex-objects.svg" alt="Implementing regex with objects" />
+  <figcaption>Using nested objects to match regular expressions.</figcaption>
+</figure>
 
 The first step in implementing this is is to write test cases,
 which forces us to define the syntax we are going to support:
@@ -268,11 +265,10 @@ As a result,
 (<span f="pattern-matching-greedy-failure"/>).
 Our current implementation doesn't give us a way to try other possible matches when this happens.
 
-{% include figure
-   id='pattern-matching-greedy-failure'
-   img='figures/greedy-failure.svg'
-   alt='Overly-greedy matching fails'
-   cap="Why overly-greedy matching doesn't work." %}
+<figure id="pattern-matching-greedy-failure">
+  <img src="figures/greedy-failure.svg" alt="Overly-greedy matching fails" />
+  <figcaption>Why overly-greedy matching doesn't work.</figcaption>
+</figure>
 
 Let's re-think our design
 and have each matcher take its own arguments and a `rest` parameter containing the rest of the matchers
@@ -281,11 +277,10 @@ and have each matcher take its own arguments and a `rest` parameter containing t
 so we don't have to type `null` over and over again.)
 Each matcher will try each of its possibilities and then see if the rest will also match.
 
-{% include figure
-   id='pattern-matching-rest'
-   img='figures/rest.svg'
-   alt='Matching the rest of the pattern'
-   cap='Using "rest" to match the remainder of a pattern.' %}
+<figure id="pattern-matching-rest">
+  <img src="figures/rest.svg" alt="Matching the rest of the pattern" />
+  <figcaption>Using "rest" to match the remainder of a pattern.</figcaption>
+</figure>
 
 This design means we can get rid of `RegexSeq`,
 but it does make our tests a little harder to read:
