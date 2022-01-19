@@ -2,6 +2,9 @@
 
 import json
 
+from markdown_it.token import Token
+
+
 # Identify this module's logger.
 LOGGER_NAME = "mccole"
 
@@ -27,5 +30,7 @@ def _pretty_keys(obj):
         return {_pretty_keys(k): _pretty_keys(obj[k]) for k in obj}
     elif isinstance(obj, list):
         return [_pretty_keys(x) for x in obj]
+    elif isinstance(obj, Token):
+        return obj.type
     else:
         return obj

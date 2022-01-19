@@ -30,7 +30,7 @@ We can't rely on names because files can be renamed or moved over time;
 we could compare the files byte by byte,
 but a quicker way is to use a <span g="hash_function" i="hash function">hash function</span>
 that turns arbitrary data into a fixed-length string of bits
-(<span f="file-backup-hash-function"/>).
+(<a figref="file-backup-hash-function"/>).
 
 <figure id="file-backup-hash-function">
   <img src="figures/hash-function.svg" alt="Hash functions" />
@@ -109,7 +109,7 @@ so that programs don't have to read entire (possibly large) files into memory.
 To start,
 this program asks the `fs` library to create a reading stream for a file
 and to <span g="pipe">pipe</span> the data from that stream to the hashing object
-(<span f="file-backup-streaming"/>).
+(<a figref="file-backup-streaming"/>).
 It then tells the hashing object what to do when there is no more data
 by providing a <span g="handler" i="event handler!streaming API; streaming API!event handler">handler</span> for the "finish" event.
 This is called asynchronously:
@@ -136,14 +136,14 @@ while the filenames tell us what each file's contents were called when the snaps
 (since files can be moved or renamed).
 To restore a particular snapshot,
 all we have to do is copy the saved `.bck` files back to where they were
-(<span f="file-backup-storage"/>).
+(<a figref="file-backup-storage"/>).
 
 <figure id="file-backup-storage">
   <img src="figures/storage.svg" alt="Backup file storage" />
   <figcaption>Organization of backup file storage.</figcaption>
 </figure>
 
-We can build the tools we need to do this uses promises (<span x="async-programming"/>).
+We can build the tools we need to do this uses promises (<a secref="async-programming"/>).
 The main function creates a promise that uses the asynchronous version of `glob` to find files
 and then:
 
@@ -267,7 +267,7 @@ A mock object has the same interface as the function, object, class, or library 
 but is designed to be used solely for testing.
 Node's [`mock-fs`][node-mock-fs] library provides the same functions as the `fs` library,
 but stores everything in memory
-(<span f="file-backup-mock-fs"/>).
+(<a figref="file-backup-mock-fs"/>).
 This prevents our tests from accidentally disturbing the filesystem,
 and also makes tests much faster
 (since in-memory operations are thousands of times faster than operations that touch the disk).

@@ -3,7 +3,7 @@
 
 # Pattern Matching {#pattern-matching}
 
-We have been globbing to match filenames against patterns since <span x="systems-programming"/>.
+We have been globbing to match filenames against patterns since <a secref="systems-programming"/>.
 This lesson will explore how that works
 by building a simple version of the <span g="regular_expression" i="regular expression">regular expressions</span>
 used to match text in everything from editor and shell commands to web scrapers.
@@ -22,7 +22,7 @@ Each element in the page,
 such as a heading and or paragraph,
 is a <span g="node">nodes</span>;
 the <span g="child_tree">children</span> of a node are the elements it contains
-(<span f="pattern-matching-dom-tree"/>).
+(<a figref="pattern-matching-dom-tree"/>).
 
 <figure id="pattern-matching-dom-tree">
   <img src="figures/dom-tree.svg" alt="The Document Object Model" />
@@ -43,7 +43,7 @@ To find elements in a page that match it,
 our `select` function breaks the query into pieces
 and uses `firstMatch` to search recursively down the document tree
 until all the selectors in the query string have matched or no matches have been found
-(<span f="pattern-matching-query-selectors"/>).
+(<a figref="pattern-matching-query-selectors"/>).
 
 <figure id="pattern-matching-query-selectors">
   <img src="figures/query-selectors.svg" alt="Matching query selectors" />
@@ -186,7 +186,7 @@ Each matching object has a method that takes the target string and the index to 
 Its output is the index to continue matching at
 or `undefined` indicating that matching failed.
 We can then combine these objects to match complex patterns
-(<span f="pattern-matching-regex-objects"/>).
+(<a figref="pattern-matching-regex-objects"/>).
 
 <figure id="pattern-matching-regex-objects">
   <img src="figures/regex-objects.svg" alt="Implementing regex with objects" />
@@ -264,7 +264,7 @@ The `/*/` is <span g="greedy_algorithm" i="greedy algorithm; algorithm!greedy">g
 (which is also called <span g="eager_matching" i="eager matching; matching!eager">eager matching</span>).
 As a result,
 `/a*/` will match the leading `"a"`, leaving nothing for the literal `/a/` to match
-(<span f="pattern-matching-greedy-failure"/>).
+(<a figref="pattern-matching-greedy-failure"/>).
 Our current implementation doesn't give us a way to try other possible matches when this happens.
 
 <figure id="pattern-matching-greedy-failure">
@@ -274,7 +274,7 @@ Our current implementation doesn't give us a way to try other possible matches w
 
 Let's re-think our design
 and have each matcher take its own arguments and a `rest` parameter containing the rest of the matchers
-(<span f="pattern-matching-rest"/>).
+(<a figref="pattern-matching-rest"/>).
 (We will provide a default of `null` in the creation function
 so we don't have to type `null` over and over again.)
 Each matcher will try each of its possibilities and then see if the rest will also match.
@@ -340,7 +340,7 @@ The <span g="open_closed_principle" i="Open-Closed Principle; software design!Op
 software should be open for extension but closed for modification,
 i.e., that it should be possible to extend functionality
 without having to rewrite existing code.
-As we said in <span x="async-programming"/>,
+As we said in <a secref="async-programming"/>,
 this allows old code to use new code,
 but only if our design permits the kinds of extensions people are going to want to make.
 Since we can't anticipate everything,

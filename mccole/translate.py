@@ -1,13 +1,13 @@
 """Parse Markdown files."""
 
-import re
-
 from markdown_it import MarkdownIt
 from markdown_it.presets import commonmark
 from markdown_it.renderer import RendererHTML
 from markdown_it.utils import OptionsDict
 from mdit_py_plugins.deflist import deflist_plugin
 from mdit_py_plugins.front_matter import front_matter_plugin
+
+from .patterns import FIG_REF, HEADING_KEY, SEC_REF
 
 
 def tokenize(config, chapters):
@@ -26,9 +26,26 @@ def tokenize(config, chapters):
             info["tokens"] = md.parse(text)
 
 
-HEADING_KEY = re.compile(r'\{\#(.+?)\}')
+def untokenize(config, xref, tokens):
+    """Turn token stream into HTML."""
+    options = OptionsDict(commonmark.make()["options"])
+    renderer = McColeRenderer(config, xref)
+    return renderer.render(tokens, options, {})
+
+
+# ----------------------------------------------------------------------
+
+
 class McColeRenderer(RendererHTML):
+    """Translate token stream to HTML."""
+    def __init__(self, config, xref):
+        """Remember settings and cross-reference information."""
+        super().__init__(self)
+        self.config = config
+        self.xref = xref
+
     def heading_open(self, tokens, idx, options, env):
+        """Add IDs to headings if requested."""
         inline = tokens[idx + 1]
         assert inline.type == "inline"
         for child in inline.children:
@@ -40,15 +57,37 @@ class McColeRenderer(RendererHTML):
                     tokens[idx].attrSet("id", heading_id)
         return RendererHTML.renderToken(self, tokens, idx, options, env)
 
+    def html_inline(self, tokens, idx, options, env):
+        """Fill in span elements with cross-references."""
+        match = FIG_REF.search(tokens[idx].content)
+        if match:
+            return self.figref(tokens, idx, options, env, match)
+        match = SEC_REF.search(tokens[idx].content)
+        if match:
+            return self.secref(tokens, idx, options, env, match)
+        return RendererHTML.renderToken(self, tokens, idx, options, env)
 
-def untokenize(config, xref, tokens):
-    """Turn token stream into HTML."""
-    options = OptionsDict(commonmark.make()["options"])
-    renderer = McColeRenderer()
-    return renderer.render(tokens, options, {})
+    def figref(self, tokens, idx, options, env, match):
+        """Fill in figure reference."""
+        key = match.group(1)
+        label = self.xref["fig_lbl_to_index"].get(key, None)
+        if label:
+            label = ".".join(str(i) for i in label)
+        else:
+            label = "MISSING"
+        return f'<a class="figref" href="{key}">Figure&nbsp;{label}</a>'
 
-
-# ----------------------------------------------------------------------
+    def secref(self, tokens, idx, options, env, match):
+        """Fill in figure reference."""
+        key = match.group(1)
+        label = self.xref["heading_lbl_to_index"].get(key, None)
+        if label:
+            word = "Chapter" if label[0].isdigit() else "Appendix"
+            label = ".".join(str(i) for i in label)
+            fill = "{word}&nbsp;{label}"
+        else:
+            fill = "MISSING"
+        return f'<a class="secref" href="{key}">{fill}</a>'
 
 
 def _make_links_table(config):

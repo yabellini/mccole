@@ -3,10 +3,10 @@
 import logging
 import re
 
+from .patterns import HEADING_KEY
 from .util import LOGGER_NAME, McColeExc
 
 # Patterns for HTML-ish elements.
-HEADING_INFO_PAT = re.compile(r'<span\s+id="(.+?)"\s*>(.+?)</span>')
 FIGURE_REF_PAT = re.compile(r'<span\s+f="(.+?)"\s*/>')
 TABLE_REF_PAT = re.compile(r'<span\s+t="(.+?)"\s*/>')
 
@@ -64,9 +64,9 @@ def _headings(config, xref, chapters):
     lbl_to_title = {}
     index_to_lbl = {}
     xref |= {
-        "heading_label_to_index": lbl_to_index,
-        "heading_label_to_title": lbl_to_title,
-        "heading_index_to_label": index_to_lbl,
+        "heading_lbl_to_index": lbl_to_index,
+        "heading_lbl_to_title": lbl_to_title,
+        "heading_index_to_lbl": index_to_lbl,
     }
 
     for info in chapters:
@@ -135,12 +135,10 @@ def _heading_index(token, stack, level):
 def _heading_info(token):
     """Get title and label (or None) from token."""
     assert token.type == "inline"
-    match = HEADING_INFO_PAT.search(token.content)
+    match = HEADING_KEY.search(token.content)
     if not match:
-        return None, None
-    label = match.group(1)
-    title = match.group(2)
-    return label, title
+        return None, token
+    return match.group(1), token
 
 
 def _heading_level(token):
