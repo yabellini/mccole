@@ -9,7 +9,7 @@ setuptools.setup(
     description="A simple publishing system",
     long_description=open("README.md").read(),
     packages=setuptools.find_packages(),
-    install_requires=[],
+    install_requires=["markdown-it-py>=2.0.0", "mdit-py-plugins>=0.3.0"],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",

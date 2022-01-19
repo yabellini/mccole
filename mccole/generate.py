@@ -4,8 +4,7 @@ import logging
 from pathlib import Path
 
 from .translate import untokenize
-from .util import LOGGER_NAME, McColeExc
-
+from .util import LOGGER_NAME
 
 # Directory permissions.
 DIR_PERMS = 0o755

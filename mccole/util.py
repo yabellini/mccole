@@ -2,7 +2,6 @@
 
 import json
 
-
 # Identify this module's logger.
 LOGGER_NAME = "mccole"
 
@@ -25,7 +24,7 @@ def _pretty_keys(obj):
     if isinstance(obj, tuple):
         return f"({', '.join(str(x) for x in obj)})"
     elif isinstance(obj, dict):
-        return {_pretty_keys(k):_pretty_keys(obj[k]) for k in obj}
+        return {_pretty_keys(k): _pretty_keys(obj[k]) for k in obj}
     elif isinstance(obj, list):
         return [_pretty_keys(x) for x in obj]
     else:

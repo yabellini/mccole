@@ -1,10 +1,10 @@
 """Manage program configuration."""
 
 import os
+
 import yaml
 
 from .util import McColeExc
-
 
 # Main filename for each chapter.
 MAIN_SRC_FILE = "index.md"

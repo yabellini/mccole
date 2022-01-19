@@ -8,7 +8,6 @@ import sys
 from .collect import collect_chapters
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config
 from .crossref import cross_reference
-from .fill import fill_in
 from .generate import generate
 from .translate import tokenize
 from .util import LOGGER_NAME, McColeExc, pretty

@@ -5,12 +5,17 @@
 import sys
 
 from markdown_it import MarkdownIt
-from mdit_py_plugins.front_matter import front_matter_plugin
 from mdit_py_plugins.deflist import deflist_plugin
+from mdit_py_plugins.front_matter import front_matter_plugin
 
 
 def make_parser():
-    return MarkdownIt("commonmark").enable("table").use(front_matter_plugin).use(deflist_plugin)
+    return (
+        MarkdownIt("commonmark")
+        .enable("table")
+        .use(front_matter_plugin)
+        .use(deflist_plugin)
+    )
 
 
 text = sys.stdin.read()
@@ -21,7 +26,8 @@ print("-" * 40)
 for token in md.parse(text):
     if token.nesting < 0:
         depth += token.nesting
-    print(f"{'  ' * depth}{token.type} / {token.tag}: {token.content if token.content else '--empty--'}")
+    content = token.content if token.content else "--empty--"
+    print(f"{'  ' * depth}{token.type} / {token.tag}: {content}")
     if token.nesting > 0:
         depth += token.nesting
 
@@ -29,4 +35,3 @@ print("-" * 40)
 for token in md.parse(text):
     if token.type == "html_block":
         print(token.content)
-

@@ -5,7 +5,6 @@ import re
 
 from .util import LOGGER_NAME, McColeExc
 
-
 # Patterns for HTML-ish elements.
 HEADING_INFO_PAT = re.compile(r'<span\s+id="(.+?)"\s*>(.+?)</span>')
 FIGURE_REF_PAT = re.compile(r'<span\s+f="(.+?)"\s*/>')
@@ -17,7 +16,6 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 
 def cross_reference(config, chapters):
     """Create cross-reference tables for all chapters."""
-
     xref = {}
     _headings(config, xref, chapters)
     _figures(config, xref, chapters)
@@ -32,7 +30,7 @@ def _figures(config, xref, chapters):
     def_pat = re.compile(r'<figure\s+id="(.+?)"\s*>\s*.+?</figure>', re.DOTALL)
     src_pat = re.compile(r'<img\b.+?src="(.+?)".+?>')
     alt_pat = re.compile(r'<img\b.+?src="(.+?)".+?>')
-    caption_pat = re.compile(r'<figcaption>(.+?)</figcaption>')
+    caption_pat = re.compile(r"<figcaption>(.+?)</figcaption>")
 
     lookup = {}
     xref |= {"fig_lbl_to_index": lookup}
@@ -69,7 +67,7 @@ def _headings(config, xref, chapters):
         "heading_label_to_index": lbl_to_index,
         "heading_label_to_title": lbl_to_title,
         "heading_index_to_label": index_to_lbl,
-    }    
+    }
 
     for info in chapters:
         label_stack = [info["major"]]
@@ -80,7 +78,9 @@ def _headings(config, xref, chapters):
                 continue
 
             if token.type != "inline":
-                raise McColeExc(f"Unexpected token type {token.type} for heading{_line(token)}.")
+                raise McColeExc(
+                    f"Unexpected token type {token.type} for heading{_line(token)}."
+                )
 
             label, title = _heading_info(token)
             if not label:
@@ -92,7 +92,7 @@ def _headings(config, xref, chapters):
 
             if (label in lbl_to_index) or (label in lbl_to_title):
                 raise McColeExc(f"Duplicate label {label}{_line(token)}.")
-            
+
             lbl_to_index[label] = index
             lbl_to_title[label] = title
             index_to_lbl[index] = label
@@ -108,7 +108,9 @@ def _heading_index(token, stack, level):
 
     # Moving up too quickly?
     if level > len(stack) + 1:
-        raise McColeExc(f"Heading {level} immediately under {len(stack)}{_line(token)}.")
+        raise McColeExc(
+            f"Heading {level} immediately under {len(stack)}{_line(token)}."
+        )
 
     # Next level up?
     elif level == len(stack) + 1:
@@ -143,8 +145,9 @@ def _heading_info(token):
 
 def _heading_level(token):
     """Return the number level of a heading level."""
+    tag = token.tag[1]
     try:
-        level = int(token.tag[1])
+        level = int(tag)
     except ValueError:
         raise McColeExc(f"Cannot convert {tag} to heading level{_line(token)}.")
     if (level < 1) or (level > 5):

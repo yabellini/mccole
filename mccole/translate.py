@@ -4,15 +4,18 @@ from markdown_it import MarkdownIt
 from markdown_it.presets import commonmark
 from markdown_it.renderer import RendererHTML
 from markdown_it.utils import OptionsDict
-from mdit_py_plugins.front_matter import front_matter_plugin
 from mdit_py_plugins.deflist import deflist_plugin
-
-from .util import pretty
+from mdit_py_plugins.front_matter import front_matter_plugin
 
 
 def tokenize(config, chapters):
     """Parse each file in turn."""
-    md = MarkdownIt("commonmark").enable("table").use(front_matter_plugin).use(deflist_plugin)
+    md = (
+        MarkdownIt("commonmark")
+        .enable("table")
+        .use(front_matter_plugin)
+        .use(deflist_plugin)
+    )
     links_table = _make_links_table(config)
     for info in chapters:
         with open(info["src"], "r") as reader:
