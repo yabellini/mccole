@@ -1,7 +1,7 @@
 ---
 ---
 
-# <span id="file-backup">File Backup</span>
+# File Backup {#file-backup}
 
 Now that we can test software we have something worth saving.
 A <span g="version_control_system" i="version control system">version control system</span>
@@ -22,7 +22,7 @@ in particular, it won't let us create and merge branches.
 If you would like to know how that works,
 please see <span i="Cook, Mary Rose">[Mary Rose Cook][cook-mary-rose]</span>'s excellent [Gitlet][gitlet] project.
 
-## <span id="file-backup-identify">How can we uniquely identify files?</span>
+## How can we uniquely identify files? {#file-backup-unique}
 
 To avoid storing redundant copies of files,
 we need a way to tell when two files contain the same data.
@@ -123,7 +123,7 @@ the `hash` object in our program does that for us.
   <figcaption>Processing files as streams of chunks.</figcaption>
 </figure>
 
-## <span id="file-backup-backup">How can we back up files?</span>
+## How can we back up files? {#file-backup-backup}
 
 Many files only change occasionally after they're created, or not at all.
 It would be wasteful for a version control system to make copies
@@ -192,7 +192,7 @@ let's run it for the same input files:
 
 {% include multi pat='run-hash-existing-async.*' fill='js sh slice.out' %}
 
-## <span id="file-backup-track">How can we track which files have already been backed up?</span>
+## How can we track which files have already been backed up? {#file-backup-track}
 
 The second part of our backup tool keeps track of which files have and haven't been backed up already.
 It stores backups in a directory that contains backup files like `abcd1234.bck`
@@ -251,7 +251,7 @@ and here is Mocha's report:
 
 {% include file file='test-check-filesystem.out' %}
 
-## <span id="file-backup-test">How can we test code that modifies files?</span>
+## How can we test code that modifies files? {#file-backup-test}
 
 The final thing our tool needs to do
 is copy the files that need copying and create a new index file.

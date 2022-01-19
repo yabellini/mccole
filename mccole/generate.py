@@ -19,14 +19,8 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 def generate(config, xref, chapters):
     """Generate output for each chapter in turn, filling in cross-references."""
     for info in chapters:
-        tokens = _transform(xref, info["tokens"])
-        html = untokenize(tokens)
+        html = untokenize(config, xref, info["tokens"])
         _write_file(info["dst"], html)
-
-
-def _transform(xref, tokens):
-    """Transform a token stream using cross-reference information."""
-    return tokens  # FIXME
 
 
 def _write_file(dst, html):

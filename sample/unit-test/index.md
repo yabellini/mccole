@@ -1,7 +1,7 @@
 ---
 ---
 
-# <span id="unit-test">Unit Testing</span>
+# Unit Testing {#unit-testing}
 
 We have written many small programs in the previous two chapters,
 but haven't really tested any of them.
@@ -22,7 +22,7 @@ Our design is inspired by tools like <span i="Mocha">[Mocha][mocha]</span> and <
 which were in turn inspired by tools built for other languages
 from the 1980s onward <cite>Meszaros2007,Tudose2020</cite>.
 
-## <span id="unit-test-structure">How should we structure unit testing?</span>
+## How should we structure unit testing? {#unit-test-structure}
 
 As in other unit testing frameworks,
 each test will be a function of zero arguments
@@ -59,7 +59,7 @@ Any other kind of assertion indicates that the test itself contains an error.
   <figcaption>Running tests that can pass, fail, or contain errors.</figcaption>
 </figure>
 
-## <span id="unit-test-manage">How can we separate registration, execution, and reporting?</span>
+## How can we separate registration, execution, and reporting? {#unit-test-design}
 
 To start,
 let's use a handful of <span g="global_variable">global variables</span> to record tests and their results:
@@ -122,7 +122,7 @@ This simple "framework" does what it's supposed to, but:
     but we should make sure those assertions are failing when they're supposed to,
     just as we should test our smoke detectors every once in a while.
 
-## <span id="unit-test-registration">How should we structure test registration?</span>
+## How should we structure test registration? {#unit-test-registration}
 
 The next version of our testing tool solves the first two problems in the original
 by putting the testing machinery in a class.
@@ -184,7 +184,7 @@ when the failure is actually in `test_that`.
 
 </div>
 
-## <span id="unit-test-cmdline">How can we build a command-line interface for testing?</span>
+## How can we build a command-line interface for testing? {#unit-test-cli}
 
 Most programmers don't enjoy writing tests,
 so if we want them to do it,
