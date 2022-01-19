@@ -1,9 +1,11 @@
 src: .
 dst: _site
 links: data/links.yml
+bib: data/bibliography.bib
 chapters:
 - slug: "file-backup"
 - slug: "unit-test"
 - slug: "pattern-matching"
-- slug: "glossary"
+- slug: "bib"
   appendix: true
+- slug: "glossary"

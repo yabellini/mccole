@@ -7,7 +7,8 @@ from markdown_it.utils import OptionsDict
 from mdit_py_plugins.deflist import deflist_plugin
 from mdit_py_plugins.front_matter import front_matter_plugin
 
-from .patterns import FIG_REF, HEADING_KEY, SEC_REF
+from .bib import bib_to_html
+from .patterns import *
 
 
 def tokenize(config, chapters):
@@ -57,17 +58,30 @@ class McColeRenderer(RendererHTML):
                     tokens[idx].attrSet("id", heading_id)
         return RendererHTML.renderToken(self, tokens, idx, options, env)
 
+    def html_block(self, tokens, idx, options, env):
+        """Look for special entries for bibliography, glossary, etc."""
+        match = BIBLIOGRAPHY.search(tokens[idx].content)
+        if match:
+            return self._bibliography(tokens, idx, options, env, match)
+        return RendererHTML.renderToken(self, tokens, idx, options, env)
+
     def html_inline(self, tokens, idx, options, env):
         """Fill in span elements with cross-references."""
         match = FIG_REF.search(tokens[idx].content)
         if match:
-            return self.figref(tokens, idx, options, env, match)
+            return self._figref(tokens, idx, options, env, match)
+
         match = SEC_REF.search(tokens[idx].content)
         if match:
-            return self.secref(tokens, idx, options, env, match)
+            return self._secref(tokens, idx, options, env, match)
+
         return RendererHTML.renderToken(self, tokens, idx, options, env)
 
-    def figref(self, tokens, idx, options, env, match):
+    def _bibliography(self, tokens, idx, options, env, match):
+        """Generate a bibliography."""
+        return bib_to_html(self.config["bib"])
+
+    def _figref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
         key = match.group(1)
         label = self.xref["fig_lbl_to_index"].get(key, None)
@@ -77,7 +91,7 @@ class McColeRenderer(RendererHTML):
             label = "MISSING"
         return f'<a class="figref" href="{key}">Figure&nbsp;{label}</a>'
 
-    def secref(self, tokens, idx, options, env, match):
+    def _secref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
         key = match.group(1)
         label = self.xref["heading_lbl_to_index"].get(key, None)
