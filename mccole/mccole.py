@@ -30,7 +30,7 @@ def main(args):
         chapters = collect_chapters(config)
         logger.info(f"chapters are {pretty(chapters)}")
 
-        tokenize(chapters)
+        tokenize(config, chapters)
         xref = cross_reference(config, chapters)
         logger.info(f"xref is {pretty(xref)}")
 

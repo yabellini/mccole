@@ -1,5 +1,6 @@
 src: .
 dst: _site
+links: data/links.yml
 chapters:
 - slug: "file-backup"
 - slug: "unit-test"

@@ -29,8 +29,17 @@ def get_config(filename):
     """Read configuration file."""
     try:
         with open(filename, "r") as reader:
-            loaded = yaml.safe_load(reader) or {}
-        return DEFAULTS | loaded
+            config = yaml.safe_load(reader) or {}
+            config = DEFAULTS | config
+            if "links" in config:
+                config["links"] = _read_links(config["links"])
+            return config
 
     except OSError as exc:
         raise McColeExc(str(exc))
+
+
+def _read_links(filename):
+    """Read YAML links file for later use."""
+    with open(filename, "r") as reader:
+        return yaml.safe_load(reader)
