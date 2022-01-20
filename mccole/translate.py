@@ -13,12 +13,7 @@ from .patterns import *
 
 def tokenize(config, chapters):
     """Parse each file in turn."""
-    md = (
-        MarkdownIt("commonmark")
-        .enable("table")
-        .use(deflist_plugin)
-        .use(front_matter_plugin)
-    )
+    md = _make_md()
     links_table = _make_links_table(config)
     for info in chapters:
         with open(info["src"], "r") as reader:
@@ -32,6 +27,10 @@ def untokenize(config, xref, tokens):
     options = OptionsDict(commonmark.make()["options"])
     renderer = McColeRenderer(config, xref)
     return renderer.render(tokens, options, {})
+
+
+def _make_md():
+    return MarkdownIt("commonmark").enable("table").use(deflist_plugin).use(front_matter_plugin)
 
 
 # ----------------------------------------------------------------------
@@ -60,21 +59,19 @@ class McColeRenderer(RendererHTML):
 
     def html_block(self, tokens, idx, options, env):
         """Look for special entries for bibliography, glossary, etc."""
-        match = BIBLIOGRAPHY.search(tokens[idx].content)
-        if match:
-            return self._bibliography(tokens, idx, options, env, match)
+        for (pat, method) in ((BIBLIOGRAPHY, self._bibliography),
+                              (TABLE_START, self._table)):
+            match = pat.search(tokens[idx].content)
+            if match:
+                return method(tokens, idx, options, env, match)
         return RendererHTML.renderToken(self, tokens, idx, options, env)
 
     def html_inline(self, tokens, idx, options, env):
         """Fill in span elements with cross-references."""
-        match = FIG_REF.search(tokens[idx].content)
-        if match:
-            return self._figref(tokens, idx, options, env, match)
-
-        match = SEC_REF.search(tokens[idx].content)
-        if match:
-            return self._secref(tokens, idx, options, env, match)
-
+        for (pat, method) in ((FIG_REF, self._figref), (SEC_REF, self._secref)):
+            match = pat.search(tokens[idx].content)
+            if match:
+                return method(tokens, idx, options, env, match)
         return RendererHTML.renderToken(self, tokens, idx, options, env)
 
     def _bibliography(self, tokens, idx, options, env, match):
@@ -102,6 +99,19 @@ class McColeRenderer(RendererHTML):
         else:
             fill = "MISSING"
         return f'<a class="secref" href="{key}">{fill}</a>'
+
+    def _table(self, tokens, idx, options, env, match):
+        """Parse a table nested inside a div."""
+        content = tokens[idx].content
+        lbl = TABLE_LBL.search(content).group(1)
+        cap = TABLE_CAP.search(content).group(1)
+        body = TABLE_BODY.search(content).group(1)
+        opening = f'<table id="{lbl}">'
+        closing = f'<caption>{cap}</caption>\n</table>'
+        md = _make_md()
+        html = md.render(body)
+        html = html.replace("<table>", opening).replace("</table>", closing)
+        return html
 
 
 def _make_links_table(config):

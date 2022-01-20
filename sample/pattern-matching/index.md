@@ -32,10 +32,14 @@ the <span g="child_tree">children</span> of a node are the elements it contains
 The first step is to define the patterns we want to support
 (<span t="pattern-matching-supported"/>).
 
-{% include table
-   id='pattern-matching-supported'
-   file='supported.tbl'
-   cap='Supported patterns.' %}
+<div class="table" id="pattern-matching-supported" cap="Supported patterns.">
+| Meaning | Selector |
+| ------- | -------- |
+| Element with tag `"elt"` | `elt`    |
+| Element with `class="cls"` | `.cls`   |
+| Element with `id="ident"` | `#ident`   |
+| `child` element inside a `parent` element | `parent child` |
+</div>
 
 According to this grammar,
 `blockquote#important p.highlight` is a highlighted paragraph inside the blockquote whose ID is `"important"`.
@@ -130,10 +134,15 @@ we see if the the pattern will match further along.
 Our matcher will initially handle just the five cases shown in
 <span t="pattern-matching-cases"/>.
 
-{% include table
-   id='pattern-matching-cases'
-   file='cases.tbl'
-   cap='Pattern matching cases.' %}
+<div class="table" id="pattern-matching-cases" cap="Pattern matching cases.">
+| Meaning | Character |
+| ------- | --------- |
+| Any literal character *c* | *c* |
+| Any single character | . |
+| Beginning of input | ^ |
+| End of input | $ |
+| Zero or more of the previous character | * |
+</div>
 
 {: .continue}
 These five cases are a small subset of what JavaScript provides,
