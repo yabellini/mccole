@@ -7,7 +7,7 @@ import sys
 
 from .bib import load_bib
 from .gloss import load_gloss
-from .fileio import collect_chapters, generate
+from .fileio import collect_chapters, copy_files, generate_pages
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config
 from .crossref import cross_reference
 from .translate import tokenize
@@ -37,7 +37,8 @@ def main(args):
         xref = cross_reference(config, chapters)
         logger.info(f"xref is {pretty(xref)}")
 
-        generate(config, xref, chapters)
+        generate_pages(config, xref, chapters)
+        copy_files(config)
 
     except McColeExc as exc:
         logger.error(f"McCole failed: {exc.msg}")

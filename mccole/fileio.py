@@ -2,6 +2,7 @@
 
 import logging
 import os
+from glob import glob
 from pathlib import Path
 
 from .config import MAIN_DST_FILE, MAIN_SRC_FILE
@@ -39,7 +40,16 @@ def collect_chapters(config):
     return result
 
 
-def generate(config, xref, chapters):
+def copy_files(config):
+    """Copy static files."""
+    for pattern in config["copy"]:
+        filenames = glob(os.path.join(config["src"], pattern))
+        filenames = [_pair_src_dst(config, f) for f in filenames]
+        for (src_path, dst_path) in filenames:
+            _copy_file(src_path, dst_path)
+
+
+def generate_pages(config, xref, chapters):
     """Generate output for each chapter in turn, filling in cross-references."""
     for info in chapters:
         html = untokenize(config, xref, info["tokens"])
@@ -47,6 +57,14 @@ def generate(config, xref, chapters):
 
 
 # ----------------------------------------------------------------------
+
+
+def _copy_file(src, dst):
+    """Copy a file without modification, making directories as needed."""
+    LOGGER.debug(f"Copying {dst}.")
+    dst = Path(dst)
+    dst.parent.mkdir(mode=DIR_PERMS, parents=True, exist_ok=True)
+    dst.write_bytes(Path(src).read_bytes())
 
 
 def _dst_path(config, entry):
@@ -67,6 +85,12 @@ def _next_major(entry, major):
     # Appendices are lettered.
     assert isinstance(major, str) and (len(major) == 1)
     return chr(ord(major) + 1)
+
+
+def _pair_src_dst(config, src_file):
+    """Construct a pair (src_file, dst_file)."""
+    dst_file = os.path.normpath(src_file.replace(config["src"], config["dst"], 1))
+    return (src_file, dst_file)
 
 
 def _src_path(config, entry):
