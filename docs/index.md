@@ -1,0 +1,3 @@
+# McCole
+
+Home page.

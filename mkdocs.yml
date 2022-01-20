@@ -1,9 +1,13 @@
 site_name: "McCole"
 repo_url: https://github.com/gvwilson/mccole/
 
-theme:
-  name: "readthedocs"
+nav:
+- Home: index.md
+- Code: mccole.md
 
 plugins:
 - search
 - mkdocstrings
+
+theme:
+  name: "material"
