@@ -12,6 +12,7 @@ def bib_to_html(bib):
 
 
 def load_bib(config):
+    """Read bibliography file if there is one."""
     if "bib" in config:
         with open(config["bib"], "r") as reader:
             config["bib"] = bibtexparser.load(reader).entries

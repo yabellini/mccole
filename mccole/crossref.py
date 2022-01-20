@@ -1,10 +1,18 @@
 """Create cross-reference lookup."""
 
 import logging
-import re
 
-from .patterns import FIGURE, FIGURE_ALT, FIGURE_CAP, FIGURE_SRC, HEADING_KEY, TABLE_START, TABLE_LBL, TABLE_CAP, TABLE_BODY
-from .util import LOGGER_NAME, McColeExc
+from .util import (
+    FIGURE,
+    FIGURE_ALT,
+    FIGURE_CAP,
+    FIGURE_SRC,
+    HEADING_KEY,
+    LOGGER_NAME,
+    TABLE_LBL,
+    TABLE_START,
+    McColeExc,
+)
 
 # Where to report.
 LOGGER = logging.getLogger(LOGGER_NAME)
@@ -24,7 +32,6 @@ def cross_reference(config, chapters):
 
 def _figures(config, xref, chapters):
     """Build cross-references for figures."""
-
     lookup = {}
     xref |= {"fig_lbl_to_index": lookup}
 
@@ -158,7 +165,6 @@ def _line(token):
 
 def _tables(config, xref, chapters):
     """Build cross-references for tables."""
-
     lookup = {}
     xref |= {"tbl_lbl_to_index": lookup}
 
@@ -174,8 +180,6 @@ def _tables(config, xref, chapters):
                 continue
 
             tbl_id = TABLE_LBL.search(token.content).group(1)
-            cap = TABLE_CAP.search(token.content).group(1)
-            body = TABLE_BODY.search(token.content).group(1)
 
             if tbl_id in lookup:
                 raise McColeExc(f"Duplicate table ID on line {token.map[1]}.")

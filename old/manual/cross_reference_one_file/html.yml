@@ -1,5 +1,0 @@
-src: "src"
-dst: "tmp"
-exclude:
-- "html/*"
-- "latex/*"

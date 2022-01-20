@@ -1,18 +1,17 @@
 """Parse Markdown files."""
 
-from markdown_it import MarkdownIt
 from markdown_it.presets import commonmark
 from markdown_it.renderer import RendererHTML
 from markdown_it.utils import OptionsDict
-from mdit_py_plugins.deflist import deflist_plugin
-from mdit_py_plugins.front_matter import front_matter_plugin
 
 from .bib import bib_to_html
-from .patterns import (
+from .gloss import gloss_to_html
+from .util import (
     BIBLIOGRAPHY,
     FIGURE_REF,
     GLOSS_DEF,
     GLOSS_INDEX_DEF,
+    GLOSSARY,
     HEADING_KEY,
     INDEX_DEF,
     SECTION_REF,
@@ -21,12 +20,13 @@ from .patterns import (
     TABLE_LBL,
     TABLE_REF,
     TABLE_START,
+    make_md,
 )
 
 
 def tokenize(config, chapters):
     """Parse each file in turn."""
-    md = _make_md()
+    md = make_md()
     links_table = _make_links_table(config)
     for info in chapters:
         with open(info["src"], "r") as reader:
@@ -40,15 +40,6 @@ def untokenize(config, xref, tokens):
     options = OptionsDict(commonmark.make()["options"])
     renderer = McColeRenderer(config, xref)
     return renderer.render(tokens, options, {})
-
-
-def _make_md():
-    return (
-        MarkdownIt("commonmark")
-        .enable("table")
-        .use(deflist_plugin)
-        .use(front_matter_plugin)
-    )
 
 
 # ----------------------------------------------------------------------
@@ -80,6 +71,7 @@ class McColeRenderer(RendererHTML):
         """Look for special entries for bibliography, glossary, etc."""
         for (pat, method) in (
             (BIBLIOGRAPHY, self._bibliography),
+            (GLOSSARY, self._glossary),
             (TABLE_START, self._table),
         ):
             match = pat.search(tokens[idx].content)
@@ -107,6 +99,10 @@ class McColeRenderer(RendererHTML):
     def _bibliography(self, tokens, idx, options, env, match):
         """Generate a bibliography."""
         return bib_to_html(self.config["bib"])
+
+    def _glossary(self, tokens, idx, options, env, match):
+        """Generate a glossary."""
+        return gloss_to_html(self.config["gloss"])
 
     def _figure_ref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
@@ -154,7 +150,7 @@ class McColeRenderer(RendererHTML):
         body = TABLE_BODY.search(content).group(1)
         opening = f'<table id="{lbl}">'
         closing = f"<caption>{cap}</caption>\n</table>"
-        md = _make_md()
+        md = make_md()
         html = md.render(body)
         html = html.replace("<table>", opening).replace("</table>", closing)
         return html

@@ -1,3 +1,0 @@
-# Should Not Be Translated
-
-This file should not be translated.

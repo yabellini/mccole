@@ -2,6 +2,7 @@ src: .
 dst: _site
 links: data/links.yml
 bib: data/bibliography.bib
+gloss: data/glossary.yml
 chapters:
 - slug: "short"
 - slug: "file-backup"
