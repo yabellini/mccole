@@ -29,7 +29,9 @@ for token in md.parse(text):
     content = token.content if token.content else "--empty--"
     children = None
     if token.children is not None:
-        children = ", ".join(f"{child.type}[{child.content}]" for child in token.children)
+        children = ", ".join(
+            f"{child.type}[{child.content}]" for child in token.children
+        )
     print(f"{'  ' * depth}{token.type}/{token.tag}: {content}: {children}")
     if token.nesting > 0:
         depth += token.nesting

@@ -8,7 +8,20 @@ from mdit_py_plugins.deflist import deflist_plugin
 from mdit_py_plugins.front_matter import front_matter_plugin
 
 from .bib import bib_to_html
-from .patterns import *
+from .patterns import (
+    BIBLIOGRAPHY,
+    FIGURE_REF,
+    GLOSS_DEF,
+    GLOSS_INDEX_DEF,
+    HEADING_KEY,
+    INDEX_DEF,
+    SECTION_REF,
+    TABLE_BODY,
+    TABLE_CAP,
+    TABLE_LBL,
+    TABLE_REF,
+    TABLE_START,
+)
 
 
 def tokenize(config, chapters):
@@ -30,7 +43,12 @@ def untokenize(config, xref, tokens):
 
 
 def _make_md():
-    return MarkdownIt("commonmark").enable("table").use(deflist_plugin).use(front_matter_plugin)
+    return (
+        MarkdownIt("commonmark")
+        .enable("table")
+        .use(deflist_plugin)
+        .use(front_matter_plugin)
+    )
 
 
 # ----------------------------------------------------------------------
@@ -38,6 +56,7 @@ def _make_md():
 
 class McColeRenderer(RendererHTML):
     """Translate token stream to HTML."""
+
     def __init__(self, config, xref):
         """Remember settings and cross-reference information."""
         super().__init__(self)
@@ -59,8 +78,10 @@ class McColeRenderer(RendererHTML):
 
     def html_block(self, tokens, idx, options, env):
         """Look for special entries for bibliography, glossary, etc."""
-        for (pat, method) in ((BIBLIOGRAPHY, self._bibliography),
-                              (TABLE_START, self._table)):
+        for (pat, method) in (
+            (BIBLIOGRAPHY, self._bibliography),
+            (TABLE_START, self._table),
+        ):
             match = pat.search(tokens[idx].content)
             if match:
                 return method(tokens, idx, options, env, match)
@@ -68,17 +89,26 @@ class McColeRenderer(RendererHTML):
 
     def html_inline(self, tokens, idx, options, env):
         """Fill in span elements with cross-references."""
-        for (pat, method) in ((FIG_REF, self._figref), (SEC_REF, self._secref)):
+        for (pat, method) in (
+            (FIGURE_REF, self._figure_ref),
+            (GLOSS_DEF, self._gloss_def),
+            (INDEX_DEF, self._index_def),
+            (GLOSS_INDEX_DEF, self._gloss_index_def),
+            (SECTION_REF, self._section_ref),
+            (TABLE_REF, self._table_ref),
+        ):
             match = pat.search(tokens[idx].content)
             if match:
                 return method(tokens, idx, options, env, match)
+        if tokens[idx].content == "</span>":
+            return "</span>"
         return RendererHTML.renderToken(self, tokens, idx, options, env)
 
     def _bibliography(self, tokens, idx, options, env, match):
         """Generate a bibliography."""
         return bib_to_html(self.config["bib"])
 
-    def _figref(self, tokens, idx, options, env, match):
+    def _figure_ref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
         key = match.group(1)
         label = self.xref["fig_lbl_to_index"].get(key, None)
@@ -88,7 +118,23 @@ class McColeRenderer(RendererHTML):
             label = "MISSING"
         return f'<a class="figref" href="{key}">Figure&nbsp;{label}</a>'
 
-    def _secref(self, tokens, idx, options, env, match):
+    def _gloss_def(self, tokens, idx, options, env, match):
+        """Fill in glossary definition."""
+        key = match.group(1)
+        return f'<span g="{key}">'
+
+    def _gloss_index_def(self, tokens, idx, options, env, match):
+        """Fill in glossary+index definition."""
+        gloss_key = match.group(1)
+        index_key = match.group(2)
+        return f'<span g="{gloss_key}" i="{index_key}">'
+
+    def _index_def(self, tokens, idx, options, env, match):
+        """Fill in index definition."""
+        key = match.group(1)
+        return f'<span i="{key}">'
+
+    def _section_ref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
         key = match.group(1)
         label = self.xref["heading_lbl_to_index"].get(key, None)
@@ -107,11 +153,21 @@ class McColeRenderer(RendererHTML):
         cap = TABLE_CAP.search(content).group(1)
         body = TABLE_BODY.search(content).group(1)
         opening = f'<table id="{lbl}">'
-        closing = f'<caption>{cap}</caption>\n</table>'
+        closing = f"<caption>{cap}</caption>\n</table>"
         md = _make_md()
         html = md.render(body)
         html = html.replace("<table>", opening).replace("</table>", closing)
         return html
+
+    def _table_ref(self, tokens, idx, options, env, match):
+        """Fill in table reference."""
+        key = match.group(1)
+        label = self.xref["tbl_lbl_to_index"].get(key, None)
+        if label:
+            label = ".".join(str(i) for i in label)
+        else:
+            label = "MISSING"
+        return f'<a class="tblref" href="{key}">Table&nbsp;{label}</a>'
 
 
 def _make_links_table(config):

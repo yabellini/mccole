@@ -4,7 +4,6 @@ import json
 
 from markdown_it.token import Token
 
-
 # Identify this module's logger.
 LOGGER_NAME = "mccole"
 

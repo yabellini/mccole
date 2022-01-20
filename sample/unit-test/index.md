@@ -51,7 +51,7 @@ to determine the class of an object.
 If a test <span g="throw_exception" i="exception!throw">throws an exception</span> whose class is `assert.AssertionError`,
 then we will assume the exception came from
 one of the assertions we put in the test as a check
-(<a figref="unit-test-mental-model"/>).
+(<a figure="unit-test-mental-model"/>).
 Any other kind of assertion indicates that the test itself contains an error.
 
 <figure id="unit-test-mental-model">
@@ -151,7 +151,7 @@ This strategy relies on two things:
 Once a program has imported `hope`,
 it can call `Hope.test` to record a test for later execution
 and `Hope.run` to execute all of the tests registered up until that point
-(<a figref="unit-test-hope-structure"/>).
+(<a figure="unit-test-hope-structure"/>).
 
 <figure id="unit-test-hope-structure">
   <img src="figures/hope-structure.svg" alt="Recording and running tests" />
@@ -283,7 +283,7 @@ is a common pattern in many programming languages.
 Control flow goes back and forth between the framework and the module being loaded
 as this happens
 so we must specify the <span g="lifecycle" i="lifecycle!of unit test; unit test!lifecycle">lifecycle</span> of the loaded modules quite carefully.
-<a figref="unit-test-lifecycle"/> illustrates what span
+<a figure="unit-test-lifecycle"/> illustrates what span
 when a pair of files `test-add.js` and `test-sub.js` are loaded by our framework:
 
 1.  `pray` loads `hope.js`.

@@ -1,17 +1,14 @@
 """Handle bibliography."""
 
-import bibtexparser
 import re
+
+import bibtexparser
 
 
 def bib_to_html(bib):
     """Create HTML version of bibliography data."""
     entries = [_make_html(e) for e in bib]
-    return "\n".join([
-        '<div class="bibliography">',
-        "\n".join(entries),
-        "</div>"
-    ])
+    return "\n".join(['<div class="bibliography">', "\n".join(entries), "</div>"])
 
 
 def load_bib(config):
@@ -33,10 +30,11 @@ def _make_html(entry):
     content = "".join(c for c in content if c is not None)
     return f'<p id="{key}" class="bib"><span class="bib">{key}</span>: {content}</p>'
 
+
 def _article(entry):
     return [
         _credits(entry),
-        ': ',
+        ": ",
         _title(entry, quote=True),
         " ",
         _journal(entry),
@@ -45,8 +43,9 @@ def _article(entry):
         _publisher(entry),
         _doi(entry, prefix=", "),
         _url(entry, prefix=", "),
-        "."
+        ".",
     ]
+
 
 def _book(entry):
     if "author" in entry:
@@ -63,8 +62,9 @@ def _book(entry):
         _date(entry),
         ", ",
         _isbn(entry),
-        "."
+        ".",
     ]
+
 
 def _incollection(entry):
     return [
@@ -80,8 +80,9 @@ def _incollection(entry):
         ", ",
         _date(entry),
         _isbn(entry, prefix=", "),
-        "."
+        ".",
     ]
+
 
 def _inproceedings(entry):
     return [
@@ -96,8 +97,9 @@ def _inproceedings(entry):
         ", ",
         _doi(entry),
         _url(entry, prefix=", "),
-        "."
+        ".",
     ]
+
 
 def _misc(entry):
     return [
@@ -108,16 +110,18 @@ def _misc(entry):
         _date(entry),
         ", ",
         _url(entry),
-        "."
+        ".",
     ]
 
-HANDLERS = {    
+
+HANDLERS = {
     "article": _article,
     "book": _book,
     "incollection": _incollection,
     "inproceedings": _inproceedings,
-    "misc": _misc
+    "misc": _misc,
 }
+
 
 def _booktitle(entry, quote=False, emph=False):
     if quote:
@@ -126,7 +130,10 @@ def _booktitle(entry, quote=False, emph=False):
         return f"<cite>{entry['booktitle']}</cite>"
     return entry["booktitle"]
 
-SPLIT_NAMES = re.compile(r'\band\b')
+
+SPLIT_NAMES = re.compile(r"\band\b")
+
+
 def _credits(entry, field="author"):
     names = [n.strip() for n in SPLIT_NAMES.split(entry[field])]
     if len(names) == 1:
@@ -134,6 +141,7 @@ def _credits(entry, field="author"):
     if len(names) == 2:
         return f"{names[0]} and {names[1]}"
     return ", ".join(names[:-1]) + f", and {names[-1]}"
+
 
 MONTH = {
     "1": "Jan",
@@ -147,8 +155,10 @@ MONTH = {
     "9": "Sep",
     "10": "Oct",
     "11": "Nov",
-    "12": "Dec"
+    "12": "Dec",
 }
+
+
 def _date(entry):
     if "year" not in entry:
         return None
@@ -156,17 +166,22 @@ def _date(entry):
         return entry["year"]
     return f"{MONTH[entry['month']]} {entry['year']}"
 
+
 def _doi(entry):
     return entry.get("doi", None)
+
 
 def _isbn(entry, prefix=None):
     return _with_prefix(entry, "isbn", prefix)
 
+
 def _journal(entry):
     return entry["journal"]
 
+
 def _publisher(entry, prefix=None):
     return _with_prefix(entry, "publisher", prefix)
+
 
 def _title(entry, quote=False, emph=False):
     if quote:
@@ -175,8 +190,10 @@ def _title(entry, quote=False, emph=False):
         return f"<cite>{entry['title']}</cite>"
     return entry["title"]
 
+
 def _url(entry, prefix=None):
     return _with_prefix(entry, "url", prefix)
+
 
 def _volnum(entry):
     if "volume" not in entry:
@@ -184,6 +201,7 @@ def _volnum(entry):
     if "number" not in entry:
         return entry["volume"]
     return f"{entry['volume']}({entry['number']})"
+
 
 def _with_prefix(entry, key, prefix):
     result = entry.get(key, None)

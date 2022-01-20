@@ -3,12 +3,8 @@
 import logging
 import re
 
-from .patterns import HEADING_KEY
+from .patterns import FIGURE, FIGURE_ALT, FIGURE_CAP, FIGURE_SRC, HEADING_KEY, TABLE_START, TABLE_LBL, TABLE_CAP, TABLE_BODY
 from .util import LOGGER_NAME, McColeExc
-
-# Patterns for HTML-ish elements.
-FIGURE_REF_PAT = re.compile(r'<span\s+f="(.+?)"\s*/>')
-TABLE_REF_PAT = re.compile(r'<span\s+t="(.+?)"\s*/>')
 
 # Where to report.
 LOGGER = logging.getLogger(LOGGER_NAME)
@@ -19,6 +15,7 @@ def cross_reference(config, chapters):
     xref = {}
     _headings(config, xref, chapters)
     _figures(config, xref, chapters)
+    _tables(config, xref, chapters)
     return xref
 
 
@@ -27,10 +24,6 @@ def cross_reference(config, chapters):
 
 def _figures(config, xref, chapters):
     """Build cross-references for figures."""
-    def_pat = re.compile(r'<figure\s+id="(.+?)"\s*>\s*.+?</figure>', re.DOTALL)
-    src_pat = re.compile(r'<img\b.+?src="(.+?)".+?>')
-    alt_pat = re.compile(r'<img\b.+?src="(.+?)".+?>')
-    caption_pat = re.compile(r"<figcaption>(.+?)</figcaption>")
 
     lookup = {}
     xref |= {"fig_lbl_to_index": lookup}
@@ -42,20 +35,23 @@ def _figures(config, xref, chapters):
             if token.type != "html_block":
                 continue
 
-            for match in def_pat.finditer(token.content):
-                fig_id = match.group(1)
-                src = src_pat.search(match.group(0))
-                alt = alt_pat.search(match.group(0))
-                caption = caption_pat.search(match.group(0))
-                if not all([fig_id, src, alt, caption]):
-                    raise McColeExc(f"Badly-formatted figure on line {token.map[1]}.")
+            match = FIGURE.search(token.content)
+            if not match:
+                continue
 
-                if fig_id in lookup:
-                    raise McColeExc(f"Duplicate figure ID on line {token.map[1]}.")
+            fig_id = match.group(1)
+            src = FIGURE_SRC.search(match.group(0))
+            alt = FIGURE_ALT.search(match.group(0))
+            caption = FIGURE_CAP.search(match.group(0))
+            if not all([fig_id, src, alt, caption]):
+                raise McColeExc(f"Badly-formatted figure on line {token.map[1]}.")
 
-                current[1] += 1
-                label = tuple(current)
-                lookup[fig_id] = label
+            if fig_id in lookup:
+                raise McColeExc(f"Duplicate figure ID on line {token.map[1]}.")
+
+            current[1] += 1
+            label = tuple(current)
+            lookup[fig_id] = label
 
 
 def _headings(config, xref, chapters):
@@ -158,3 +154,32 @@ def _line(token):
     if (token is None) or (token.map is None):
         return f" ({str(token)})"
     return f" (line {token.map[1]})"
+
+
+def _tables(config, xref, chapters):
+    """Build cross-references for tables."""
+
+    lookup = {}
+    xref |= {"tbl_lbl_to_index": lookup}
+
+    for info in chapters:
+        current = [info["major"], 0]
+
+        for token in info["tokens"]:
+            if token.type != "html_block":
+                continue
+
+            match = TABLE_START.search(token.content)
+            if not match:
+                continue
+
+            tbl_id = TABLE_LBL.search(token.content).group(1)
+            cap = TABLE_CAP.search(token.content).group(1)
+            body = TABLE_BODY.search(token.content).group(1)
+
+            if tbl_id in lookup:
+                raise McColeExc(f"Duplicate table ID on line {token.map[1]}.")
+
+            current[1] += 1
+            label = tuple(current)
+            lookup[tbl_id] = label

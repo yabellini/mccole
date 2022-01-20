@@ -1,67 +1,83 @@
 #!/usr/bin/env python
 
 import sys
+
 import yaml
 
 # ----------------------------------------------------------------------
 
+
 def booktitle(entry):
     result = f"booktitle = {{{entry['booktitle']}}}"
     return result
+
 
 def credits(entry, field="author"):
     names = entry[field]
     result = " and ".join(f"{n}" for n in names)
     return f"{field} = {{{result}}}"
 
+
 def doi(entry):
     if "doi" not in entry:
         return None
     return f"doi = {{{entry['doi']}}}"
 
+
 def isbn(entry):
     return f"isbn = {{{entry['isbn']}}}"
+
 
 def month(entry):
     if "month" not in entry:
         return None
     return f"month = {{{entry['month']}}}"
 
+
 def journal(entry):
     return f"journal = {{{entry['journal']}}}"
+
 
 def number(entry):
     if "number" not in entry:
         return None
     return f"number = {{{entry['number']}}}"
 
+
 def publisher(entry):
     if "publisher" not in entry:
         return None
     return f"publisher = {{{entry['publisher']}}}"
 
+
 def title(entry):
     return f"title = {{{entry['title']}}}"
+
 
 def url(entry):
     if "url" not in entry:
         return None
     return f"url = {{{entry['url']}}}"
 
+
 def volume(entry):
     if "volume" not in entry:
         return None
     return f"volume = {{{entry['volume']}}}"
 
+
 def year(entry):
     return f"year = {{{entry['year']}}}"
+
 
 def show(*args):
     joined = ",\n".join([a for a in args if a])
     print(f"{joined}")
     print()
 
+
 # ----------------------------------------------------------------------
+
 
 def article(entry):
     show(
@@ -76,8 +92,9 @@ def article(entry):
         publisher(entry),
         doi(entry),
         url(entry),
-        "}"
+        "}",
     )
+
 
 def book(entry):
     if "author" in entry:
@@ -91,8 +108,9 @@ def book(entry):
         publisher(entry),
         year(entry),
         isbn(entry),
-        "}"
+        "}",
     )
+
 
 def incollection(entry):
     show(
@@ -102,8 +120,9 @@ def incollection(entry):
         credits(entry, field="editor"),
         booktitle(entry),
         year(entry),
-        "}"
+        "}",
     )
+
 
 def inproceedings(entry):
     show(
@@ -116,8 +135,9 @@ def inproceedings(entry):
         publisher(entry),
         doi(entry),
         url(entry),
-        "}"
+        "}",
     )
+
 
 def link(entry):
     show(
@@ -126,18 +146,19 @@ def link(entry):
         title(entry),
         year(entry),
         url(entry),
-        "}"
+        "}",
     )
+
 
 # ----------------------------------------------------------------------
 
 if __name__ == "__main__":
-    handlers = {    
+    handlers = {
         "article": article,
         "book": book,
         "incollection": incollection,
         "inproceedings": inproceedings,
-        "link": link
+        "link": link,
     }
     for entry in yaml.safe_load(sys.stdin):
         try:

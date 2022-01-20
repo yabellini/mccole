@@ -3,7 +3,7 @@
 
 # Short {#short}
 
-Self-reference: <a secref="short"/>.
+Self-reference: <a section="short"/>.
 
 Glossary: <span g="gloss_key">text</span>
 
@@ -17,14 +17,14 @@ Citation: <cite>Oram2007</cite>.
 
 ## Section heading {#short-section}
 
-Figure reference: <a figref="short-figure"/>
+Figure reference: <a figure="short-figure"/>
 
 <figure id="short-figure">
   <img src="figures/short.svg" alt="Short caption" />
   <figcaption>Long version of short caption.</figcaption>
 </figure>
 
-Table reference: <span t="short-table"/>
+Table reference: <a table="short-table"/>
 
 <div class="table" id="short-table" cap="Short table caption.">
 | Meaning | Selector |
