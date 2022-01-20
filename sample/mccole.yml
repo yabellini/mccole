@@ -3,6 +3,7 @@ dst: _site
 links: data/links.yml
 bib: data/bibliography.bib
 chapters:
+- slug: "short"
 - slug: "file-backup"
 - slug: "unit-test"
 - slug: "pattern-matching"

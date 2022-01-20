@@ -88,7 +88,7 @@ def _headings(config, xref, chapters):
                 continue
 
             level = _heading_level(previous)
-            index = _heading_index(token, label_stack, level)
+            index = tuple(str(i) for i in _heading_index(token, label_stack, level))
 
             if (label in lbl_to_index) or (label in lbl_to_title):
                 raise McColeExc(f"Duplicate label {label}{_line(token)}.")

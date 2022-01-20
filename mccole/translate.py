@@ -95,7 +95,7 @@ class McColeRenderer(RendererHTML):
         if label:
             word = "Chapter" if label[0].isdigit() else "Appendix"
             label = ".".join(str(i) for i in label)
-            fill = "{word}&nbsp;{label}"
+            fill = f"{word}&nbsp;{label}"
         else:
             fill = "MISSING"
         return f'<a class="secref" href="{key}">{fill}</a>'
