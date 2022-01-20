@@ -71,8 +71,8 @@
   def: >
     A function that has not been assigned a name. Anonymous functions are
     usually quite short, and are usually defined where they are used, e.g., as
-    callbacks. In Python, these are called lambda functions and are
-    created through use of the lambda reserved word.
+    callbacks. These are also sometimes called "lambda functions" because of
+    the mathematical notation originally used to describe them.
 
 - key: abi
   term: Application Binary Interface
@@ -1167,6 +1167,11 @@
   def: >
     A human-readable name given to a particular location in memory when
     writing programs in [assembly code](#assembly_code).
+
+- key: lambda_function
+  term: lambda function
+  def: >
+    See [anonymous function](#anonymous_function).
 
 - key: layout_engine
   term: layout engine
