@@ -7,10 +7,9 @@ import sys
 
 from .bib import load_bib
 from .gloss import load_gloss
-from .collect import collect_chapters
+from .fileio import collect_chapters, generate
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config
 from .crossref import cross_reference
-from .generate import generate
 from .translate import tokenize
 from .util import LOGGER_NAME, McColeExc, pretty
 

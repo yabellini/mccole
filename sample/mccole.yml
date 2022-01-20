@@ -3,6 +3,9 @@ dst: _site
 links: data/links.yml
 bib: data/bibliography.bib
 gloss: data/glossary.yml
+copy:
+- "*/figures/*.svg"
+- "*/figures/*.pdf"
 chapters:
 - slug: "short"
 - slug: "file-backup"

@@ -1,8 +1,24 @@
-"""Gather files."""
+"""File collection, input, and output."""
 
+import logging
 import os
+from pathlib import Path
 
 from .config import MAIN_DST_FILE, MAIN_SRC_FILE
+from .translate import untokenize
+from .util import LOGGER_NAME
+
+# Directory permissions.
+DIR_PERMS = 0o755
+
+# Character encoding.
+ENCODING = "utf-8"
+
+# Where to report.
+LOGGER = logging.getLogger(LOGGER_NAME)
+
+
+# ----------------------------------------------------------------------
 
 
 def collect_chapters(config):
@@ -21,6 +37,13 @@ def collect_chapters(config):
             }
         )
     return result
+
+
+def generate(config, xref, chapters):
+    """Generate output for each chapter in turn, filling in cross-references."""
+    for info in chapters:
+        html = untokenize(config, xref, info["tokens"])
+        _write_file(info["dst"], html)
 
 
 # ----------------------------------------------------------------------
@@ -54,3 +77,11 @@ def _src_path(config, entry):
 
     # Default source file.
     return os.path.join(config["src"], entry["slug"], MAIN_SRC_FILE)
+
+
+def _write_file(dst, html):
+    """Write a file, making directories if needed."""
+    LOGGER.debug(f"Writing {dst}.")
+    dst = Path(dst)
+    dst.parent.mkdir(mode=DIR_PERMS, parents=True, exist_ok=True)
+    dst.write_text(html, encoding=ENCODING)
