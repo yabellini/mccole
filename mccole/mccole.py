@@ -6,6 +6,7 @@ import os
 import sys
 
 from .bib import load_bib
+from .gloss import load_gloss
 from .collect import collect_chapters
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config
 from .crossref import cross_reference
@@ -28,6 +29,8 @@ def main(args):
         logger.info(f"configuration is {pretty(config)}")
 
         load_bib(config)
+        load_gloss(config)
+
         chapters = collect_chapters(config)
         logger.info(f"chapters are {pretty(chapters)}")
 

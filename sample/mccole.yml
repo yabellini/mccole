@@ -8,6 +8,6 @@ chapters:
 - slug: "file-backup"
 - slug: "unit-test"
 - slug: "pattern-matching"
-- slug: "bib"
+- slug: "bibliography"
   appendix: true
 - slug: "glossary"

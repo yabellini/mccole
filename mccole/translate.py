@@ -98,11 +98,11 @@ class McColeRenderer(RendererHTML):
 
     def _bibliography(self, tokens, idx, options, env, match):
         """Generate a bibliography."""
-        return bib_to_html(self.config["bib"])
+        return bib_to_html(self.config)
 
     def _glossary(self, tokens, idx, options, env, match):
         """Generate a glossary."""
-        return gloss_to_html(self.config["gloss"])
+        return gloss_to_html(self.config)
 
     def _figure_ref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""

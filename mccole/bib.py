@@ -5,9 +5,9 @@ import re
 import bibtexparser
 
 
-def bib_to_html(bib):
+def bib_to_html(config):
     """Create HTML version of bibliography data."""
-    entries = [_make_html(e) for e in bib]
+    entries = [_bib_to_html(e) for e in config["bib_data"]]
     return "\n".join(['<div class="bibliography">', "\n".join(entries), "</div>"])
 
 
@@ -15,16 +15,16 @@ def load_bib(config):
     """Read bibliography file if there is one."""
     if "bib" in config:
         with open(config["bib"], "r") as reader:
-            config["bib"] = bibtexparser.load(reader).entries
+            config["bib_data"] = bibtexparser.load(reader).entries
     else:
-        config["bib"] = {}
+        config["bib_data"] = {}
 
 
 # ----------------------------------------------------------------------
 
 
-def _make_html(entry):
-    """Convert entry to HTML."""
+def _bib_to_html(entry):
+    """Convert bibliography entry to HTML."""
     kind = entry["ENTRYTYPE"]
     key = entry["ID"]
     content = HANDLERS[kind](entry)
