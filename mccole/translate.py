@@ -37,10 +37,10 @@ def tokenize(config, chapters):
             info["tokens"] = md.parse(text)
 
 
-def untokenize(config, xref, tokens):
+def untokenize(config, xref, seen, tokens):
     """Turn token stream into HTML."""
     options = OptionsDict(commonmark.make()["options"])
-    renderer = McColeRenderer(config, xref)
+    renderer = McColeRenderer(config, xref, seen)
     return renderer.render(tokens, options, {})
 
 
@@ -50,11 +50,12 @@ def untokenize(config, xref, tokens):
 class McColeRenderer(RendererHTML):
     """Translate token stream to HTML."""
 
-    def __init__(self, config, xref):
+    def __init__(self, config, xref, seen):
         """Remember settings and cross-reference information."""
         super().__init__(self)
         self.config = config
         self.xref = xref
+        self.seen = seen
 
     def heading_open(self, tokens, idx, options, env):
         """Add IDs to headings if requested."""
@@ -108,6 +109,7 @@ class McColeRenderer(RendererHTML):
         """Translate bibliographic citations."""
         assert tokens[idx + 1].type == "text"
         keys = [k.strip() for k in tokens[idx + 1].content.split(",")]
+        self.seen["cite"].update(keys)
         refs = [f'<a href="../bibliography/#{k}">{k}</a>' for k in keys]
         # Get rid of `<cite>`, text, `</cite>`
         del tokens[idx : idx + 3]  # noqa e203
@@ -124,6 +126,7 @@ class McColeRenderer(RendererHTML):
     def _figure_ref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
         key = match.group(1)
+        self.seen["figure_ref"].add(key)
         label = self.xref["fig_lbl_to_index"].get(key, None)
         if label:
             label = ".".join(str(i) for i in label)
@@ -134,12 +137,15 @@ class McColeRenderer(RendererHTML):
     def _gloss_def(self, tokens, idx, options, env, match):
         """Fill in glossary definition."""
         key = match.group(1)
+        self.seen["gloss_ref"].add(key)
         return f'<span g="{key}">'
 
     def _gloss_index_def(self, tokens, idx, options, env, match):
         """Fill in glossary+index definition."""
         gloss_key = match.group(1)
         index_key = match.group(2)
+        self.seen["gloss_ref"].add(gloss_key)
+        self.seen["index_ref"].add(index_key)
         return f'<span g="{gloss_key}" i="{index_key}">'
 
     def _index_def(self, tokens, idx, options, env, match):
@@ -175,6 +181,7 @@ class McColeRenderer(RendererHTML):
     def _table_ref(self, tokens, idx, options, env, match):
         """Fill in table reference."""
         key = match.group(1)
+        self.seen["table_ref"].add(key)
         label = self.xref["tbl_lbl_to_index"].get(key, None)
         if label:
             label = ".".join(str(i) for i in label)

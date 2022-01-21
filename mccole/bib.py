@@ -5,6 +5,13 @@ import re
 import bibtexparser
 
 
+def bib_keys(config):
+    """Return all citation keys."""
+    if "bib_data" not in config:
+        return set()
+    return {entry["ID"] for entry in config["bib_data"]}
+
+
 def bib_to_html(config):
     """Create HTML version of bibliography data."""
     entries = [_bib_to_html(e) for e in config["bib_data"]]

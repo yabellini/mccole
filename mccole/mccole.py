@@ -8,11 +8,11 @@ import shutil
 import socketserver
 import sys
 
-from .bib import load_bib
+from .bib import bib_keys, load_bib
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config
 from .crossref import cross_reference
 from .fileio import collect_chapters, copy_files, generate_pages
-from .gloss import load_gloss
+from .gloss import gloss_keys, load_gloss
 from .translate import tokenize
 from .util import LOGGER_NAME, McColeExc, pretty
 
@@ -43,8 +43,10 @@ def main(args):
         LOGGER.info(f"xref is {pretty(xref)}")
 
         _clean_output(options, config)
-        generate_pages(config, xref, chapters)
+        seen = generate_pages(config, xref, chapters)
         copy_files(config)
+
+        _warn_unused(options, config, xref, seen)
 
         _run_server(options, config["dst"])
 
@@ -106,6 +108,7 @@ def _parse_args(args):
     parser.add_argument(
         "-s", "--src", type=str, default=DEFAULTS["src"], help="Source directory."
     )
+    parser.add_argument("-u", "--unused", action="store_true", help="Warn about unreferenced items.")
     return parser.parse_args(args)
 
 
@@ -139,3 +142,28 @@ def _setup(options):
     if options.chdir is not None:
         logging.info(f"changing working directory to {options.chdir}")
         os.chdir(options.chdir)
+
+
+def _warn_unused(options, config, xref, seen):
+    """Warn about unused labels if asked to."""
+    if not options.unused:
+        return
+
+    _warn_unused_title("citation", bib_keys(config) - seen["cite"])
+    _warn_unused_title("glossary", gloss_keys(config) - seen["gloss_ref"])
+
+    for (title, defined_key, used_key) in (
+            ("figure", "fig_lbl_to_index", "figure_ref"),
+            ("table", "tbl_lbl_to_index", "table_ref"),
+    ):
+        defined = set(xref[defined_key].keys())
+        used = seen[used_key]
+        _warn_unused_title(title, defined - used)
+
+
+def _warn_unused_title(title, items):
+    """Warn about a single set of missing items (if any)."""
+    if not items:
+        return
+    unused = '\n- '.join(sorted(items))
+    print(f"Unreferenced {title}:\n- {unused}")

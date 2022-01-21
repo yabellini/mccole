@@ -54,11 +54,19 @@ def copy_files(config):
 
 def generate_pages(config, xref, chapters):
     """Generate output for each chapter in turn, filling in cross-references."""
+    seen = {
+        "cite": set(),
+        "figure_ref": set(),
+        "gloss_ref": set(),
+        "index_ref": set(),
+        "table_ref": set()
+    }
     for info in chapters:
-        html = untokenize(config, xref, info["tokens"])
+        html = untokenize(config, xref, seen, info["tokens"])
         if "page_template" in config:
             html = _fill_template(config, html)
         _write_file(info["dst"], html)
+    return seen
 
 
 # ----------------------------------------------------------------------

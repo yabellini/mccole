@@ -9,6 +9,11 @@ from .util import make_md
 MULTISPACE = re.compile(r"\s+", re.DOTALL)
 
 
+def gloss_keys(config):
+    """Return all glossary entry keys."""
+    return {entry["key"] for entry in config["gloss_data"]}
+
+
 def gloss_to_html(config):
     """Convert glossary data to HTML."""
     internal = {entry["key"]: entry["term"] for entry in config["gloss_data"]}
