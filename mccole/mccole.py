@@ -1,15 +1,17 @@
 """Main entry point."""
 
 import argparse
+import http.server
 import logging
 import os
+import socketserver
 import sys
 
 from .bib import load_bib
-from .gloss import load_gloss
-from .fileio import collect_chapters, copy_files, generate_pages
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config
 from .crossref import cross_reference
+from .fileio import collect_chapters, copy_files, generate_pages
+from .gloss import load_gloss
 from .translate import tokenize
 from .util import LOGGER_NAME, McColeExc, pretty
 
@@ -39,6 +41,8 @@ def main(args):
 
         generate_pages(config, xref, chapters)
         copy_files(config)
+
+        _run_server(options, config["dst"])
 
     except McColeExc as exc:
         logger.error(f"McCole failed: {exc.msg}")
@@ -78,10 +82,24 @@ def _parse_args(args):
         default="error",
         help="Logging level.",
     )
+    parser.add_argument("-r", "--run", type=int, help="Run server on specified port.")
     parser.add_argument(
         "-s", "--src", type=str, default=DEFAULTS["src"], help="Source directory."
     )
     return parser.parse_args(args)
+
+
+def _run_server(options, root_dir):
+    """Run web server on specified port."""
+    if not options.run:
+        return
+
+    class handler(http.server.SimpleHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, directory=root_dir, **kwargs)
+
+    with socketserver.TCPServer(("", options.run), handler) as httpd:
+        httpd.serve_forever()
 
 
 def _setup(options):

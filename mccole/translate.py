@@ -106,10 +106,11 @@ class McColeRenderer(RendererHTML):
 
     def _cite(self, tokens, idx, options, env, match):
         """Translate bibliographic citations."""
-        assert tokens[idx+1].type == "text"
-        keys = [k.strip() for k in tokens[idx+1].content.split(',')]
+        assert tokens[idx + 1].type == "text"
+        keys = [k.strip() for k in tokens[idx + 1].content.split(",")]
         refs = [f'<a href="../bibliography/#{k}">{k}</a>' for k in keys]
-        del tokens[idx:idx+3]  # Get rid of text and closing </cite>
+        # Get rid of `<cite>`, text, `</cite>`
+        del tokens[idx : idx + 3]  # noqa e203
         return f"[{', '.join(refs)}]"
 
     def _figure(self, tokens, idx, options, env, match):

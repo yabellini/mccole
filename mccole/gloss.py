@@ -1,16 +1,17 @@
 """Generate a glossary."""
 
 import re
+
 import yaml
 
 from .util import make_md
 
-MULTISPACE = re.compile(r'\s+', re.DOTALL)
+MULTISPACE = re.compile(r"\s+", re.DOTALL)
 
 
 def gloss_to_html(config):
     """Convert glossary data to HTML."""
-    internal = {entry["key"]:entry["term"] for entry in config["gloss_data"]}
+    internal = {entry["key"]: entry["term"] for entry in config["gloss_data"]}
     entries = [_gloss_to_markdown(e, internal) for e in config["gloss_data"]]
     text = "\n\n".join(entries)
     md = make_md()
@@ -37,10 +38,10 @@ def _gloss_to_markdown(entry, internal):
     if "acronym" in entry:
         first += f" ({entry['acronym']})"
 
-    body = MULTISPACE.sub(entry["def"], ' ')
+    body = MULTISPACE.sub(entry["def"], " ")
 
     if "ref" in entry:
-        refs = [f'[{internal[key]}](#{key})' for key in entry["ref"]]
+        refs = [f"[{internal[key]}](#{key})" for key in entry["ref"]]
         body += f"<br/>See also: {', '.join(refs)}."
 
     result = f"{first}\n:   {body}"
