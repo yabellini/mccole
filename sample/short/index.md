@@ -3,6 +3,15 @@
 
 # Short {#short}
 
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+
 Self-reference: <a section="short"/>.
 
 Glossary: <span g="gloss_key">text</span>
@@ -14,6 +23,11 @@ Glossary plus index: <span g="gloss_key" i="index term">text</span>
 Index wrapping link: <span i="index term">[name][acorn]</span>
 
 Citation: <cite>Oram2007</cite>.
+
+```python
+for word in code:
+    print f"{word} is formatted"
+```
 
 ## Section heading {#short-section}
 

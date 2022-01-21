@@ -1,4 +1,39 @@
+@font-face {
+  font-family: "Crimson";
+  src: url("/static/crimson-roman.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Crimson";
+  src: url("/static/crimson-italic.woff") format("woff");
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Crimson";
+  src: url("/static/crimson-bold.woff") format("woff");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Crimson";
+  src: url("/static/crimson-bolditalic.woff") format("woff");
+  font-style: italic;
+  font-weight: bold;
+}
+
+:root {
+    /* Colors */
+    --text-color: #202020;
+
+    /* Dimensions */
+    --page-width: 70rem;
+    --text-size: 12pt;
+    --line-spacing: 18pt;
+}
+
 body {
-    width: 70rem;
-    background-color: lightgray;
+    width: var(--page-width);
+    color: var(--text-color);
+    font: normal var(--text-size)/var(--line-spacing) "Crimson";
 }
