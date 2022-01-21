@@ -1,5 +1,6 @@
 """File collection, input, and output."""
 
+from datetime import datetime
 import logging
 import os
 from glob import glob
@@ -53,6 +54,8 @@ def generate_pages(config, xref, chapters):
     """Generate output for each chapter in turn, filling in cross-references."""
     for info in chapters:
         html = untokenize(config, xref, info["tokens"])
+        if "page_template" in config:
+            html = _fill_template(config, html)
         _write_file(info["dst"], html)
 
 
@@ -70,6 +73,18 @@ def _copy_file(src, dst):
 def _dst_path(config, entry):
     """Construct output path for entry."""
     return os.path.join(config["dst"], entry["slug"], MAIN_DST_FILE)
+
+
+def _fill_template(config, body):
+    """Fill in page template."""
+    values = {
+        "title": "McCole",
+        "content": body,
+        "copyrightyear": config["copyrightyear"],
+        "author": config["author"],
+        "builddate": datetime.today().strftime('%Y-%m-%d')
+    }
+    return config["page_template"].format(**values)
 
 
 def _next_major(entry, major):

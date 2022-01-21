@@ -19,25 +19,27 @@ from .util import LOGGER_NAME, McColeExc, pretty
 
 
 LOGGING_LEVELS = "debug info warning error critical".split()
+LOGGER = None
 
 
 def main(args):
     """Parse arguments and execute."""
     try:
         options = _parse_args(args)
-        logger = _setup(options)
+        _setup(options)
         config = get_config(options.config)
-        logger.info(f"configuration is {pretty(config)}")
+        LOGGER.info(f"configuration is {pretty(config)}")
 
         load_bib(config)
         load_gloss(config)
+        _load_template(config)
 
         chapters = collect_chapters(config)
-        logger.info(f"chapters are {pretty(chapters)}")
+        LOGGER.info(f"chapters are {pretty(chapters)}")
 
         tokenize(config, chapters)
         xref = cross_reference(config, chapters)
-        logger.info(f"xref is {pretty(xref)}")
+        LOGGER.info(f"xref is {pretty(xref)}")
 
         generate_pages(config, xref, chapters)
         copy_files(config)
@@ -45,11 +47,20 @@ def main(args):
         _run_server(options, config["dst"])
 
     except McColeExc as exc:
-        logger.error(f"McCole failed: {exc.msg}")
+        LOGGER.error(f"McCole failed: {exc.msg}")
         sys.exit(1)
 
 
 # ----------------------------------------------------------------------
+
+
+def _load_template(config):
+    """Load page template."""
+    if "template" not in config:
+        config["page_template"] = None
+    else:
+        with open(config["template"], "r") as reader:
+            config["page_template"] = reader.read()
 
 
 def _parse_args(args):
@@ -99,20 +110,23 @@ def _run_server(options, root_dir):
             super().__init__(*args, directory=root_dir, **kwargs)
 
     with socketserver.TCPServer(("", options.run), handler) as httpd:
-        httpd.serve_forever()
+        try:
+            LOGGER.info(f"serving port {options.run}")
+            httpd.serve_forever()
+        finally:
+            httpd.server_close()
 
 
 def _setup(options):
     """Do initial setup."""
     # Logging.
+    global LOGGER
     level_name = options.logging.upper()
     logging.basicConfig(format="%(levelname)s: %(message)s")
-    logger = logging.getLogger(LOGGER_NAME)
-    logger.setLevel(logging._nameToLevel[level_name])
+    LOGGER = logging.getLogger(LOGGER_NAME)
+    LOGGER.setLevel(logging._nameToLevel[level_name])
 
     # Working directory.
     if options.chdir is not None:
         logging.info(f"changing working directory to {options.chdir}")
         os.chdir(options.chdir)
-
-    return logger

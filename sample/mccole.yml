@@ -1,11 +1,19 @@
 src: .
 dst: _site
-links: data/links.yml
-bib: data/bibliography.bib
-gloss: data/glossary.yml
+links: _data/links.yml
+bib: _data/bibliography.bib
+gloss: _data/glossary.yml
+
+template: _data/template.html
+copyrightyear: 2022
+author: "Greg Wilson"
+
 copy:
 - "*/figures/*.svg"
 - "*/figures/*.pdf"
+- "static/*.*"
+- "favicon.ico"
+
 chapters:
 - slug: "short"
 - slug: "file-backup"
