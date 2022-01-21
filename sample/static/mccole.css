@@ -22,22 +22,61 @@
   font-weight: bold;
 }
 
+/* Define style parameters */
 :root {
     /* Colors */
     --text-color: #202020;
+    --highlight-color: #F0F0F0;
 
     /* Dimensions */
-    --page-width: 70rem;
+    --page-width: 60rem;
     --text-size: 12pt;
     --line-spacing: 18pt;
+    --internal-padding: 0.5rem;
+
+    /* Tables */
+    --table-border-width: 1px;
 }
 
+/* Overall appearance */
 body {
     width: var(--page-width);
     color: var(--text-color);
     font: normal var(--text-size)/var(--line-spacing) "Crimson";
 }
 
+/* Code blocks */
+pre {
+    background-color: var(--highlight-color);
+    padding-left: var(--internal-padding);
+    padding-right: var(--internal-padding);
+}
+
+/* Table settings */
 table {
+    border-collapse: collapse;
     caption-side: bottom;
+    border: var(--table-border-width) solid var(--text-color);
+}
+
+th {
+    text-align: left;
+    border: var(--table-border-width) solid var(--text-color);
+    padding-left: var(--internal-padding);
+    padding-right: var(--internal-padding);
+}
+
+td {
+    text-align: left;
+    border: var(--table-border-width) solid var(--text-color);
+    padding-left: var(--internal-padding);
+    padding-right: var(--internal-padding);
+}
+
+tbody tr:nth-child(odd) td {
+    background-color: var(--highlight-color);
+}
+
+caption {
+    font-weight: bold;
 }
