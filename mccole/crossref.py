@@ -12,6 +12,7 @@ from .util import (
     TABLE_LBL,
     TABLE_START,
     McColeExc,
+    err
 )
 
 # Where to report.
@@ -51,10 +52,10 @@ def _figures(config, xref, chapters):
             alt = FIGURE_ALT.search(match.group(0))
             caption = FIGURE_CAP.search(match.group(0))
             if not all([fig_id, src, alt, caption]):
-                raise McColeExc(f"Badly-formatted figure on line {token.map[1]}.")
+                err(config, "Badly-formatted figure ({info['src']}/{token.map[1]}).")
 
             if fig_id in lookup:
-                raise McColeExc(f"Duplicate figure ID on line {token.map[1]}.")
+                err(config, "Duplicate figure ID {fig_id} ({info['src']}/{token.map[1]}).")
 
             current[1] += 1
             label = tuple(current)
@@ -91,10 +92,10 @@ def _headings(config, xref, chapters):
                 continue
 
             level = _heading_level(previous)
-            index = tuple(str(i) for i in _heading_index(token, label_stack, level))
+            index = tuple(str(i) for i in _heading_index(config, info['src'], token, label_stack, level))
 
             if (label in lbl_to_index) or (label in lbl_to_title):
-                raise McColeExc(f"Duplicate label {label}{_line(token)}.")
+                err(config, f"Duplicate heading label {label} ({info['src']}/{_line(token)}).")
 
             lbl_to_index[label] = index
             lbl_to_title[label] = title
@@ -103,29 +104,24 @@ def _headings(config, xref, chapters):
             previous = token
 
 
-def _heading_index(token, stack, level):
+def _heading_index(config, filename, token, stack, level):
     """Get the next heading level, adjusting `stack` as a side effect."""
     # Treat chapter titles specially.
     if level == 1:
         return tuple(stack)
 
-    # Moving up too quickly?
+    # Moving up
     if level > len(stack) + 1:
-        raise McColeExc(
-            f"Heading {level} immediately under {len(stack)}{_line(token)}."
-        )
+        if level > len(stack) + 1:
+            err(config, f"Heading {level} out of place ({filename}/{_line(token)})")
+        while len(stack) < level:
+            stack.append(1)
 
-    # Next level up?
-    elif level == len(stack) + 1:
-        stack.append(1)
-
-    # Same level?
+    # Same level
     elif level == len(stack):
-        if len(stack) == 1:
-            raise McColeExc(f"Can only have one title per chapter{_line(token)}.")
         stack[-1] += 1
 
-    # Going down?
+    # Going down
     else:
         while len(stack) > level:
             stack.pop()
@@ -182,7 +178,7 @@ def _tables(config, xref, chapters):
             tbl_id = TABLE_LBL.search(token.content).group(1)
 
             if tbl_id in lookup:
-                raise McColeExc(f"Duplicate table ID on line {token.map[1]}.")
+                err(config, f"Duplicate table ID on line ({info['src']}/{token.map[1]}).")
 
             current[1] += 1
             label = tuple(current)

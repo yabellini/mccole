@@ -65,9 +65,11 @@ class McColeExc(Exception):
         self.msg = msg
 
 
-def pretty(obj):
-    """Create pretty-printed JSON string."""
-    return json.dumps(_pretty_keys(obj), indent=2)
+def err(config, msg):
+    """Record an error for later display."""
+    if "error_log" not in config:
+        config["error_log"] = []
+    config["error_log"].append(msg)
 
 
 def make_md():
@@ -78,6 +80,11 @@ def make_md():
         .use(deflist_plugin)
         .use(front_matter_plugin)
     )
+
+
+def pretty(obj):
+    """Create pretty-printed JSON string."""
+    return json.dumps(_pretty_keys(obj), indent=2)
 
 
 def _pretty_keys(obj):

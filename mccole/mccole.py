@@ -47,6 +47,7 @@ def main(args):
         copy_files(config)
 
         _warn_unused(options, config, xref, seen)
+        _report_errors(config)
 
         _run_server(options, config["dst"])
 
@@ -110,6 +111,13 @@ def _parse_args(args):
     )
     parser.add_argument("-u", "--unused", action="store_true", help="Warn about unreferenced items.")
     return parser.parse_args(args)
+
+
+def _report_errors(config):
+    """Report any errors found."""
+    if "error_log" in config:
+        for msg in config["error_log"]:
+            print(msg)
 
 
 def _run_server(options, root_dir):
