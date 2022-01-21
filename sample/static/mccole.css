@@ -37,3 +37,7 @@ body {
     color: var(--text-color);
     font: normal var(--text-size)/var(--line-spacing) "Crimson";
 }
+
+table {
+    caption-side: bottom;
+}
