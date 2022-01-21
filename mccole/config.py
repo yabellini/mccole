@@ -21,6 +21,7 @@ DEFAULTS = {
         DEFAULT_CONFIG_FILE,
         ".git",
         "*~",
+        ".DS_Store"
     ],
 }
 

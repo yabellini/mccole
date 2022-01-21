@@ -1,8 +1,9 @@
 """File collection, input, and output."""
 
-from datetime import datetime
 import logging
 import os
+from datetime import datetime
+from fnmatch import fnmatch
 from glob import glob
 from pathlib import Path
 
@@ -45,6 +46,7 @@ def copy_files(config):
     """Copy static files."""
     for pattern in config["copy"]:
         filenames = glob(os.path.join(config["src"], pattern))
+        filenames = [f for f in filenames if not any(fnmatch(f, p) for p in config["exclude"])]
         filenames = [_pair_src_dst(config, f) for f in filenames]
         for (src_path, dst_path) in filenames:
             _copy_file(src_path, dst_path)
