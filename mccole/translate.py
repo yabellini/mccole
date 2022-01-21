@@ -8,6 +8,7 @@ from .bib import bib_to_html
 from .gloss import gloss_to_html
 from .util import (
     BIBLIOGRAPHY,
+    FIGURE,
     FIGURE_REF,
     GLOSS_DEF,
     GLOSS_INDEX_DEF,
@@ -71,6 +72,7 @@ class McColeRenderer(RendererHTML):
         """Look for special entries for bibliography, glossary, etc."""
         for (pat, method) in (
             (BIBLIOGRAPHY, self._bibliography),
+            (FIGURE, self._figure),
             (GLOSSARY, self._glossary),
             (TABLE_START, self._table),
         ):
@@ -99,6 +101,10 @@ class McColeRenderer(RendererHTML):
     def _bibliography(self, tokens, idx, options, env, match):
         """Generate a bibliography."""
         return bib_to_html(self.config)
+
+    def _figure(self, tokens, idx, options, env, match):
+        """Generate a figure."""
+        return tokens[idx].content
 
     def _glossary(self, tokens, idx, options, env, match):
         """Generate a glossary."""
