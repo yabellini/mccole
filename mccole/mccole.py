@@ -4,6 +4,7 @@ import argparse
 import http.server
 import logging
 import os
+import shutil
 import socketserver
 import sys
 
@@ -41,6 +42,7 @@ def main(args):
         xref = cross_reference(config, chapters)
         LOGGER.info(f"xref is {pretty(xref)}")
 
+        _clean_output(options, config)
         generate_pages(config, xref, chapters)
         copy_files(config)
 
@@ -52,6 +54,12 @@ def main(args):
 
 
 # ----------------------------------------------------------------------
+
+
+def _clean_output(options, config):
+    """Delete output directory unless told not to."""
+    if not options.keep:
+        shutil.rmtree(config["dst"])
 
 
 def _load_template(config):
@@ -85,6 +93,7 @@ def _parse_args(args):
         default=DEFAULT_CONFIG_FILE,
         help="Configuration file.",
     )
+    parser.add_argument("-k", "--keep", action="store_true", help="Keep pre-existing output.")
     parser.add_argument(
         "-L",
         "--logging",
