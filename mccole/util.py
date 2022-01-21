@@ -16,6 +16,9 @@ FIGURE_REF = re.compile(r'<a\s+figure="(.+?)"\s*/>')
 SECTION_REF = re.compile(r'<a\s+section="(.+?)"\s*/>')
 TABLE_REF = re.compile(r'<a\s+table="(.+?)"\s*/>')
 
+# Bibliographic citations are `<cite>key,key</cite>`.
+CITE = re.compile(r'<cite>')
+
 # Definitions are `<span g="key">text</span>` for glossary terms,
 # `<span i="key">text</span>` for indexing terms,
 # and `<span g="key" i="other_key">text</span>` for both.

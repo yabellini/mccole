@@ -8,6 +8,7 @@ from .bib import bib_to_html
 from .gloss import gloss_to_html
 from .util import (
     BIBLIOGRAPHY,
+    CITE,
     FIGURE,
     FIGURE_REF,
     GLOSS_DEF,
@@ -84,6 +85,7 @@ class McColeRenderer(RendererHTML):
     def html_inline(self, tokens, idx, options, env):
         """Fill in span elements with cross-references."""
         for (pat, method) in (
+            (CITE, self._cite),
             (FIGURE_REF, self._figure_ref),
             (GLOSS_DEF, self._gloss_def),
             (INDEX_DEF, self._index_def),
@@ -101,6 +103,14 @@ class McColeRenderer(RendererHTML):
     def _bibliography(self, tokens, idx, options, env, match):
         """Generate a bibliography."""
         return bib_to_html(self.config)
+
+    def _cite(self, tokens, idx, options, env, match):
+        """Translate bibliographic citations."""
+        assert tokens[idx+1].type == "text"
+        keys = [k.strip() for k in tokens[idx+1].content.split(',')]
+        refs = [f'<a href="../bibliography/#{k}">{k}</a>' for k in keys]
+        del tokens[idx:idx+3]  # Get rid of text and closing </cite>
+        return f"[{', '.join(refs)}]"
 
     def _figure(self, tokens, idx, options, env, match):
         """Generate a figure."""
