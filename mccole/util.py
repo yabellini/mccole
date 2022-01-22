@@ -1,6 +1,7 @@
 """Utilities."""
 
 import json
+from types import SimpleNamespace as SN
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
@@ -37,6 +38,18 @@ def make_md():
         .use(deflist_plugin)
         .use(front_matter_plugin)
     )
+
+
+def obj_to_namespace(obj):
+    """Convert JSON object to simple namespace."""
+    if isinstance(obj, dict):
+        result = SN()
+        for key in obj:
+            setattr(result, key, obj_to_namespace(obj[key]))
+        return result
+    if isinstance(obj, list) or isinstance(obj, tuple):
+        return [obj_to_namespace(x) for x in obj]
+    return obj
 
 
 def pretty(obj):

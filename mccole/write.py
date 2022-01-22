@@ -8,7 +8,7 @@ from glob import glob
 from pathlib import Path
 
 from .render import render
-from .util import LOGGER_NAME, err
+from .util import LOGGER_NAME, err, obj_to_namespace
 
 # Directory permissions.
 DIR_PERMS = 0o755
@@ -42,9 +42,18 @@ def generate_pages(config, xref, chapters):
         "index_ref": set(),
         "table_ref": set()
     }
+    site = obj_to_namespace({
+        "title": "McCole",
+        "copyrightyear": config["copyrightyear"],
+        "author": config["author"],
+        "builddate": datetime.today().strftime('%Y-%m-%d')
+    })
     for info in chapters:
         html = render(config, xref, seen, info["tokens"])
-        html = _fill_template(config, info, html)
+        page = obj_to_namespace({
+            "content": html
+        })
+        html = _fill_template(config, info, site, page)
         _write_file(info["dst"], html)
     return seen
 
@@ -60,7 +69,7 @@ def _copy_file(src, dst):
     dst.write_bytes(Path(src).read_bytes())
 
 
-def _fill_template(config, info, body):
+def _fill_template(config, info, site, page):
     """Fill in page template if present."""
     template_name = info["metadata"].get("template", None)
     if not template_name:
@@ -71,14 +80,7 @@ def _fill_template(config, info, body):
         err(config, f"Unknown template {template_name} in {info['src']}.")
         return body
 
-    values = {
-        "title": "McCole",
-        "content": body,
-        "copyrightyear": config["copyrightyear"],
-        "author": config["author"],
-        "builddate": datetime.today().strftime('%Y-%m-%d')
-    }
-    return template.format(**values)
+    return template.format(site=site, page=page)
 
 
 def _pair_src_dst(config, src_file):

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{title}</title>
+    <title>{site.title}</title>
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link href="/static/mccole.css" rel="stylesheet" type="text/css">
   </head>
@@ -11,16 +11,16 @@
     <nav>
     </nav>
     <main>
-      {content}
+      {page.content}
     </main>
     <footer>
       <hr/>
-      Copyright © {copyrightyear}
-      {author}
+      Copyright © {site.copyrightyear}
+      {site.author}
       &middot;
       Powered by <a href="https://github.com/gvwilson/mccole">McCole</a>
       &middot;
-      Last built {builddate}
+      Last built {site.builddate}
     </footer>
   </body>
 </html>
