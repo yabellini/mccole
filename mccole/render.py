@@ -1,7 +1,5 @@
 """Convert token streams to HTML."""
 
-import yaml
-
 from markdown_it.presets import commonmark
 from markdown_it.renderer import RendererHTML
 from markdown_it.utils import OptionsDict

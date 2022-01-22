@@ -13,7 +13,6 @@ from .patterns import (
 )
 from .util import LOGGER_NAME, McColeExc, err
 
-
 # Where to report.
 LOGGER = logging.getLogger(LOGGER_NAME)
 
@@ -54,7 +53,10 @@ def _figures(config, xref, chapters):
                 err(config, "Badly-formatted figure ({info['src']}/{token.map[1]}).")
 
             if fig_id in lookup:
-                err(config, "Duplicate figure ID {fig_id} ({info['src']}/{token.map[1]}).")
+                err(
+                    config,
+                    "Duplicate figure ID {fig_id} ({info['src']}/{token.map[1]}).",
+                )
 
             current[1] += 1
             label = tuple(current)
@@ -91,10 +93,16 @@ def _headings(config, xref, chapters):
                 continue
 
             level = _heading_level(previous)
-            index = tuple(str(i) for i in _heading_index(config, info['src'], token, label_stack, level))
+            index = tuple(
+                str(i)
+                for i in _heading_index(config, info["src"], token, label_stack, level)
+            )
 
             if (label in lbl_to_index) or (label in lbl_to_title):
-                err(config, f"Duplicate heading label {label} ({info['src']}/{_line(token)}).")
+                err(
+                    config,
+                    f"Duplicate heading label {label} ({info['src']}/{_line(token)}).",
+                )
 
             lbl_to_index[label] = index
             lbl_to_title[label] = title
@@ -177,7 +185,10 @@ def _tables(config, xref, chapters):
             tbl_id = TABLE_LBL.search(token.content).group(1)
 
             if tbl_id in lookup:
-                err(config, f"Duplicate table ID on line ({info['src']}/{token.map[1]}).")
+                err(
+                    config,
+                    f"Duplicate table ID on line ({info['src']}/{token.map[1]}).",
+                )
 
             current[1] += 1
             label = tuple(current)

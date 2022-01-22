@@ -1,6 +1,7 @@
 """Turn chapters into tokens."""
 
 import yaml
+
 from .util import make_md
 
 

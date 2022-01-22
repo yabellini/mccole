@@ -1,7 +1,8 @@
 """Manage program configuration."""
 
-from glob import glob
 import os
+from glob import glob
+
 import yaml
 
 from .util import McColeExc
@@ -17,12 +18,7 @@ DEFAULT_CONFIG_FILE = "mccole.yml"
 DEFAULTS = {
     "src": os.curdir,  # Process current directory.
     "dst": "_site",  # Write HTML to `_site`.
-    "exclude": [  # Don't copy these.
-        DEFAULT_CONFIG_FILE,
-        ".git",
-        "*~",
-        ".DS_Store"
-    ],
+    "exclude": [DEFAULT_CONFIG_FILE, ".git", "*~", ".DS_Store"],  # Don't copy these.
 }
 
 
