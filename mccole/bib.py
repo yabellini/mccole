@@ -46,11 +46,10 @@ def _article(entry):
         _title(entry, quote=True),
         " ",
         _journal(entry),
-        _volnum(entry, prefix=", "),
+        _vol_num(entry, prefix=", "),
         _date(entry),
         _publisher(entry),
-        _doi(entry, prefix=", "),
-        _url(entry, prefix=", "),
+        _doi_url(entry, prefix=", "),
         ".",
     ]
 
@@ -103,8 +102,7 @@ def _inproceedings(entry):
         _date(entry),
         _publisher(entry, prefix=", "),
         ", ",
-        _doi(entry),
-        _url(entry, prefix=", "),
+        _doi_url(entry),
         ".",
     ]
 
@@ -175,20 +173,23 @@ def _date(entry):
     return f"{MONTH[entry['month']]} {entry['year']}"
 
 
-def _doi(entry):
-    return entry.get("doi", None)
+def _doi_url(entry, prefix=None):
+    if "doi" not in entry:
+        return _url(entry, prefix)
+    doi = entry["doi"]
+    return _with_prefix(f'<a href="https://doi.org/{doi}">{doi}</a>', prefix)
 
 
 def _isbn(entry, prefix=None):
-    return _with_prefix(entry, "isbn", prefix)
+    return _with_prefix(entry.get("isbn"), prefix)
 
 
 def _journal(entry):
-    return entry["journal"]
+    return entry.get("journal")
 
 
 def _publisher(entry, prefix=None):
-    return _with_prefix(entry, "publisher", prefix)
+    return _with_prefix(entry.get("publisher"), prefix)
 
 
 def _title(entry, quote=False, emph=False):
@@ -200,10 +201,13 @@ def _title(entry, quote=False, emph=False):
 
 
 def _url(entry, prefix=None):
-    return _with_prefix(entry, "url", prefix)
+    if "url" not in entry:
+        return None
+    url = entry["url"]
+    return _with_prefix(f'<a href="{url}">{url}</a>', prefix)
 
 
-def _volnum(entry):
+def _vol_num(entry):
     if "volume" not in entry:
         return None
     if "number" not in entry:
@@ -211,11 +215,10 @@ def _volnum(entry):
     return f"{entry['volume']}({entry['number']})"
 
 
-def _with_prefix(entry, key, prefix):
-    result = entry.get(key, None)
-    if result is None:
-        return result
+def _with_prefix(text, prefix):
+    if text is None:
+        return text
     elif prefix is None:
-        return result
+        return text
     else:
-        return f"{prefix} {result}"
+        return f"{prefix} {text}"
