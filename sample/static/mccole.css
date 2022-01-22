@@ -33,6 +33,8 @@
     --text-size: 12pt;
     --line-spacing: 18pt;
     --internal-padding: 0.5rem;
+    --indent: 1.5rem;
+    --indent-neg: -1.5rem;
 
     /* Tables */
     --table-border-width: 1px;
@@ -43,6 +45,7 @@ body {
     width: var(--page-width);
     color: var(--text-color);
     font: normal var(--text-size)/var(--line-spacing) "Crimson";
+    margin-left: var(--indent);
 }
 
 /* Code blocks */
@@ -52,11 +55,13 @@ pre {
     padding-right: var(--internal-padding);
 }
 
-/* Table settings */
+/* Tables */
 table {
     border-collapse: collapse;
     caption-side: bottom;
     border: var(--table-border-width) solid var(--text-color);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 th {
@@ -78,5 +83,19 @@ tbody tr:nth-child(odd) td {
 }
 
 caption {
+    font-weight: bold;
+}
+
+/* Figures */
+figure {
+    text-align: center;
+}
+
+/* Bibliography */
+p.bib {
+    padding-left: var(--indent);
+    text-indent: var(--indent-neg);
+}
+span.bib {
     font-weight: bold;
 }

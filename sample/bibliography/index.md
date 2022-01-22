@@ -1,4 +1,6 @@
 ---
 ---
 
+# Bibliography
+
 <div class="bibliography" />

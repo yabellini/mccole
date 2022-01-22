@@ -115,9 +115,9 @@ def _misc(entry):
         ": ",
         _title(entry, quote=True),
         " ",
-        _date(entry),
-        ", ",
         _url(entry),
+        ", ",
+        _date(entry),
         ".",
     ]
 
@@ -135,7 +135,7 @@ def _booktitle(entry, quote=False, emph=False):
     if quote:
         return f'"{entry["booktitle"]}"'
     if emph:
-        return f"<cite>{entry['booktitle']}</cite>"
+        return f"<em>{entry['booktitle']}</em>"
     return entry["booktitle"]
 
 
@@ -195,7 +195,7 @@ def _title(entry, quote=False, emph=False):
     if quote:
         return f'"{entry["title"]}"'
     if emph:
-        return f"<cite>{entry['title']}</cite>"
+        return f"<em>{entry['title']}</em>"
     return entry["title"]
 
 
