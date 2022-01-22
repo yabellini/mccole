@@ -1,11 +1,9 @@
 """Main entry point."""
 
 import argparse
-import http.server
 import logging
 import os
 import shutil
-import socketserver
 import sys
 
 from .bib import bib_keys, load_bib
@@ -13,6 +11,7 @@ from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config, load_templates
 from .crossref import cross_reference
 from .gloss import gloss_keys, load_gloss
 from .read import collect_pages
+from .server import run_server
 from .tokenize import tokenize
 from .util import LOGGER_NAME, McColeExc, pretty
 from .write import copy_files, generate_pages
@@ -50,7 +49,7 @@ def main(args):
         _warn_unused(options, config, xref, seen)
         _report_errors(config)
 
-        _run_server(options, config["dst"])
+        run_server(options, config["dst"])
 
     except McColeExc as exc:
         LOGGER.error(f"McCole failed: {exc.msg}")
@@ -114,23 +113,6 @@ def _report_errors(config):
     if "error_log" in config:
         for msg in config["error_log"]:
             print(msg)
-
-
-def _run_server(options, root_dir):
-    """Run web server on specified port."""
-    if not options.run:
-        return
-
-    class handler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, directory=root_dir, **kwargs)
-
-    with socketserver.TCPServer(("", options.run), handler) as httpd:
-        try:
-            LOGGER.info(f"serving port {options.run}")
-            httpd.serve_forever()
-        finally:
-            httpd.server_close()
 
 
 def _setup(options):
