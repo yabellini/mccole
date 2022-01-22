@@ -91,7 +91,7 @@ def _headings(config, xref, pages):
                     f"Unexpected token type {token.type} for heading{_line(token)}."
                 )
 
-            label, title = _heading_info(token)
+            title, label = _heading_info(token)
             if not label:
                 previous = token
                 continue
@@ -147,8 +147,8 @@ def _heading_info(token):
     assert token.type == "inline"
     match = HEADING_KEY.search(token.content)
     if not match:
-        return None, token
-    return match.group(1), token
+        return None, None
+    return match.group(1), match.group(2)
 
 
 def _heading_level(token):
