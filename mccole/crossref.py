@@ -2,18 +2,17 @@
 
 import logging
 
-from .util import (
+from .patterns import (
     FIGURE,
     FIGURE_ALT,
     FIGURE_CAP,
     FIGURE_SRC,
     HEADING_KEY,
-    LOGGER_NAME,
     TABLE_LBL,
     TABLE_START,
-    McColeExc,
-    err
 )
+from .util import LOGGER_NAME, McColeExc, err
+
 
 # Where to report.
 LOGGER = logging.getLogger(LOGGER_NAME)

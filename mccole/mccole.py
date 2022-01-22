@@ -11,10 +11,11 @@ import sys
 from .bib import bib_keys, load_bib
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config, load_templates
 from .crossref import cross_reference
-from .fileio import collect_chapters, copy_files, generate_pages
 from .gloss import gloss_keys, load_gloss
-from .translate import tokenize
+from .read import collect_chapters
+from .tokenize import tokenize
 from .util import LOGGER_NAME, McColeExc, pretty
+from .write import copy_files, generate_pages
 
 # ----------------------------------------------------------------------
 

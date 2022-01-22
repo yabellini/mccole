@@ -1,4 +1,4 @@
-"""Parse Markdown files."""
+"""Convert token streams to HTML."""
 
 import yaml
 
@@ -8,7 +8,7 @@ from markdown_it.utils import OptionsDict
 
 from .bib import bib_to_html
 from .gloss import gloss_to_html
-from .util import (
+from .patterns import (
     BIBLIOGRAPHY,
     CITE,
     FIGURE,
@@ -24,31 +24,11 @@ from .util import (
     TABLE_LBL,
     TABLE_REF,
     TABLE_START,
-    make_md,
 )
+from .util import make_md
 
 
-def tokenize(config, chapters):
-    """Parse each file in turn."""
-    md = make_md()
-    links_table = _make_links_table(config)
-    for info in chapters:
-        with open(info["src"], "r") as reader:
-            text = reader.read()
-            text += links_table
-            info["tokens"] = md.parse(text)
-            info["metadata"] = _get_metadata(info["tokens"])
-
-
-def _get_metadata(tokens):
-    """Find and parse metadata (if present)."""
-    for token in tokens:
-        if token.type == "front_matter":
-            return yaml.safe_load(token.content)
-    return {}
-
-
-def untokenize(config, xref, seen, tokens):
+def render(config, xref, seen, tokens):
     """Turn token stream into HTML."""
     options = OptionsDict(commonmark.make()["options"])
     renderer = McColeRenderer(config, xref, seen)
@@ -199,11 +179,3 @@ class McColeRenderer(RendererHTML):
         else:
             label = "MISSING"
         return f'<a class="tblref" href="{key}">Table&nbsp;{label}</a>'
-
-
-def _make_links_table(config):
-    """Make Markdown links table from configuration."""
-    if "links" not in config:
-        return ""
-
-    return "\n\n" + "\n".join(f"[{ln['key']}]: {ln['url']}" for ln in config["links"])

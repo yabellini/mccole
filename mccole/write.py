@@ -1,4 +1,4 @@
-"""File collection, input, and output."""
+"""Write outputs."""
 
 import logging
 import os
@@ -7,8 +7,7 @@ from fnmatch import fnmatch
 from glob import glob
 from pathlib import Path
 
-from .config import MAIN_DST_FILE, MAIN_SRC_FILE
-from .translate import untokenize
+from .render import render
 from .util import LOGGER_NAME, err
 
 # Directory permissions.
@@ -22,24 +21,6 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 # ----------------------------------------------------------------------
-
-
-def collect_chapters(config):
-    """Return chapter file information."""
-    major = 0
-    result = []
-    for entry in config["chapters"]:
-        major = _next_major(entry, major)
-        result.append(
-            {
-                "slug": entry["slug"],
-                "src": _src_path(config, entry),
-                "dst": _dst_path(config, entry),
-                "major": major,
-                "tokens": None,
-            }
-        )
-    return result
 
 
 def copy_files(config):
@@ -62,7 +43,7 @@ def generate_pages(config, xref, chapters):
         "table_ref": set()
     }
     for info in chapters:
-        html = untokenize(config, xref, seen, info["tokens"])
+        html = render(config, xref, seen, info["tokens"])
         html = _fill_template(config, info, html)
         _write_file(info["dst"], html)
     return seen
@@ -77,11 +58,6 @@ def _copy_file(src, dst):
     dst = Path(dst)
     dst.parent.mkdir(mode=DIR_PERMS, parents=True, exist_ok=True)
     dst.write_bytes(Path(src).read_bytes())
-
-
-def _dst_path(config, entry):
-    """Construct output path for entry."""
-    return os.path.join(config["dst"], entry["slug"], MAIN_DST_FILE)
 
 
 def _fill_template(config, info, body):
@@ -105,35 +81,10 @@ def _fill_template(config, info, body):
     return template.format(**values)
 
 
-def _next_major(entry, major):
-    """Create next major heading index."""
-    # First appendix.
-    if entry.get("appendix", False):
-        return "A"
-
-    # Chapters are numbered.
-    if isinstance(major, int):
-        return major + 1
-
-    # Appendices are lettered.
-    assert isinstance(major, str) and (len(major) == 1)
-    return chr(ord(major) + 1)
-
-
 def _pair_src_dst(config, src_file):
     """Construct a pair (src_file, dst_file)."""
     dst_file = os.path.normpath(src_file.replace(config["src"], config["dst"], 1))
     return (src_file, dst_file)
-
-
-def _src_path(config, entry):
-    """Construct input path for entry."""
-    # Explicit source file (e.g., "LICENSE.md" => "license/index.md").
-    if "file" in entry:
-        return os.path.join(config["src"], entry["file"])
-
-    # Default source file.
-    return os.path.join(config["src"], entry["slug"], MAIN_SRC_FILE)
 
 
 def _write_file(dst, html):
