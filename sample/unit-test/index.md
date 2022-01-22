@@ -2,7 +2,9 @@
 template: page.html
 ---
 
-# Unit Testing {#unit-testing}
+# Unit Testing {#unit-test}
+
+<div class="toc" level="2" />
 
 We have written many small programs in the previous two chapters,
 but haven't really tested any of them.

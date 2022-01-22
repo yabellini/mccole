@@ -5,11 +5,11 @@ import yaml
 from .util import make_md
 
 
-def tokenize(config, chapters):
+def tokenize(config):
     """Parse each file in turn."""
     md = make_md()
     links_table = _make_links_table(config)
-    for info in chapters:
+    for info in config["pages"]:
         with open(info["src"], "r") as reader:
             text = reader.read()
             text += links_table

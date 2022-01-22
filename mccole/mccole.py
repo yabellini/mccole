@@ -36,15 +36,15 @@ def main(args):
         load_gloss(config)
         load_templates(config)
 
-        pages = collect_pages(config)
-        LOGGER.info(f"pages are {pretty(pages)}")
+        config["pages"] = collect_pages(config)
+        LOGGER.info(f"pages are {pretty(config['pages'])}")
 
-        tokenize(config, pages)
-        xref = cross_reference(config, pages)
+        tokenize(config)
+        xref = cross_reference(config)
         LOGGER.info(f"xref is {pretty(xref)}")
 
         _clean_output(options, config)
-        seen = generate_pages(config, xref, pages)
+        seen = generate_pages(config, xref)
         copy_files(config)
 
         _warn_unused(options, config, xref, seen)

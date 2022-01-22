@@ -7,7 +7,7 @@ from .patterns import (
     FIGURE_ALT,
     FIGURE_CAP,
     FIGURE_SRC,
-    HEADING_KEY,
+    HEADING_AND_KEY,
     TABLE_LBL,
     TABLE_START,
 )
@@ -17,10 +17,10 @@ from .util import LOGGER_NAME, McColeExc, err
 LOGGER = logging.getLogger(LOGGER_NAME)
 
 
-def cross_reference(config, pages):
+def cross_reference(config):
     """Create cross-reference tables for all pages."""
     # Exclude un-indexed pages (e.g., home page).
-    pages = [p for p in pages if p["major"] is not None]
+    pages = [p for p in config["pages"] if p["major"] is not None]
     
     xref = {}
     _headings(config, xref, pages)
@@ -80,6 +80,7 @@ def _headings(config, xref, pages):
 
     for info in pages:
         label_stack = [info["major"]]
+        info["major"] = str(info["major"])
         previous = None
         for token in info["tokens"]:
             if (previous is None) or (previous.type != "heading_open"):
@@ -97,10 +98,7 @@ def _headings(config, xref, pages):
                 continue
 
             level = _heading_level(previous)
-            index = tuple(
-                str(i)
-                for i in _heading_index(config, info["src"], token, label_stack, level)
-            )
+            index = _heading_index(config, info["src"], token, label_stack, level)
 
             if (label in lbl_to_index) or (label in lbl_to_title):
                 err(
@@ -119,10 +117,10 @@ def _heading_index(config, filename, token, stack, level):
     """Get the next heading level, adjusting `stack` as a side effect."""
     # Treat chapter titles specially.
     if level == 1:
-        return tuple(stack)
+        return tuple(str(i) for i in stack)
 
     # Moving up
-    if level > len(stack) + 1:
+    if level > len(stack):
         if level > len(stack) + 1:
             err(config, f"Heading {level} out of place ({filename}/{_line(token)})")
         while len(stack) < level:
@@ -139,16 +137,16 @@ def _heading_index(config, filename, token, stack, level):
         stack[-1] += 1
 
     # Report.
-    return tuple(stack)
+    return tuple(str(i) for i in stack)
 
 
 def _heading_info(token):
     """Get title and label (or None) from token."""
     assert token.type == "inline"
-    match = HEADING_KEY.search(token.content)
+    match = HEADING_AND_KEY.search(token.content)
     if not match:
         return None, None
-    return match.group(1), match.group(2)
+    return match.group(1), match.group(3)
 
 
 def _heading_level(token):

@@ -4,6 +4,8 @@ template: page.html
 
 # Short {#short}
 
+<div class="toc" level="2" />
+
 Long enough to wrap around.
 Long enough to wrap around.
 Long enough to wrap around.
