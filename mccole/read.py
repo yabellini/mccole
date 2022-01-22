@@ -5,21 +5,29 @@ import os
 from .config import MAIN_DST_FILE, MAIN_SRC_FILE
 
 
-def collect_chapters(config):
-    """Return chapter file information."""
+def collect_pages(config):
+    """Return page information."""
     major = 0
     result = []
     for entry in config["chapters"]:
         major = _next_major(entry, major)
-        result.append(
-            {
-                "slug": entry["slug"],
-                "src": _src_path(config, entry),
-                "dst": _dst_path(config, entry),
-                "major": major,
-                "tokens": None,
-            }
-        )
+        result.append({
+            "slug": entry["slug"],
+            "src": _src_path(config, entry),
+            "dst": _dst_path(config, entry),
+            "major": major,
+            "tokens": None,
+        })
+
+    if "root" in config:
+        result.append({
+            "slug": "_index",
+            "src": os.path.join(config["src"], config["root"]),
+            "dst": os.path.join(config["dst"], "index.html"),
+            "major": None,
+            "tokens": None
+        })
+
     return result
 
 

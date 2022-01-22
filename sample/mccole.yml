@@ -13,6 +13,7 @@ copy:
 - "static/*.*"
 - "favicon.ico"
 
+root: index.md
 chapters:
 - slug: "short"
 - slug: "file-backup"

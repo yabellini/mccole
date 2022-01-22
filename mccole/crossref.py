@@ -17,24 +17,28 @@ from .util import LOGGER_NAME, McColeExc, err
 LOGGER = logging.getLogger(LOGGER_NAME)
 
 
-def cross_reference(config, chapters):
-    """Create cross-reference tables for all chapters."""
+def cross_reference(config, pages):
+    """Create cross-reference tables for all pages."""
+    # Exclude un-indexed pages (e.g., home page).
+    pages = [p for p in pages if p["major"] is not None]
+    
     xref = {}
-    _headings(config, xref, chapters)
-    _figures(config, xref, chapters)
-    _tables(config, xref, chapters)
+    _headings(config, xref, pages)
+    _figures(config, xref, pages)
+    _tables(config, xref, pages)
+
     return xref
 
 
 # ----------------------------------------------------------------------
 
 
-def _figures(config, xref, chapters):
+def _figures(config, xref, pages):
     """Build cross-references for figures."""
     lookup = {}
     xref |= {"fig_lbl_to_index": lookup}
 
-    for info in chapters:
+    for info in pages:
         current = [info["major"], 0]
 
         for token in info["tokens"]:
@@ -63,7 +67,7 @@ def _figures(config, xref, chapters):
             lookup[fig_id] = label
 
 
-def _headings(config, xref, chapters):
+def _headings(config, xref, pages):
     """Compile headings."""
     lbl_to_index = {}
     lbl_to_title = {}
@@ -74,7 +78,7 @@ def _headings(config, xref, chapters):
         "heading_index_to_lbl": index_to_lbl,
     }
 
-    for info in chapters:
+    for info in pages:
         label_stack = [info["major"]]
         previous = None
         for token in info["tokens"]:
@@ -166,12 +170,12 @@ def _line(token):
     return f" (line {token.map[1]})"
 
 
-def _tables(config, xref, chapters):
+def _tables(config, xref, pages):
     """Build cross-references for tables."""
     lookup = {}
     xref |= {"tbl_lbl_to_index": lookup}
 
-    for info in chapters:
+    for info in pages:
         current = [info["major"], 0]
 
         for token in info["tokens"]:

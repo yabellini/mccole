@@ -12,7 +12,7 @@ from .bib import bib_keys, load_bib
 from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config, load_templates
 from .crossref import cross_reference
 from .gloss import gloss_keys, load_gloss
-from .read import collect_chapters
+from .read import collect_pages
 from .tokenize import tokenize
 from .util import LOGGER_NAME, McColeExc, pretty
 from .write import copy_files, generate_pages
@@ -36,15 +36,15 @@ def main(args):
         load_gloss(config)
         load_templates(config)
 
-        chapters = collect_chapters(config)
-        LOGGER.info(f"chapters are {pretty(chapters)}")
+        pages = collect_pages(config)
+        LOGGER.info(f"pages are {pretty(pages)}")
 
-        tokenize(config, chapters)
-        xref = cross_reference(config, chapters)
+        tokenize(config, pages)
+        xref = cross_reference(config, pages)
         LOGGER.info(f"xref is {pretty(xref)}")
 
         _clean_output(options, config)
-        seen = generate_pages(config, xref, chapters)
+        seen = generate_pages(config, xref, pages)
         copy_files(config)
 
         _warn_unused(options, config, xref, seen)
