@@ -35,7 +35,7 @@ def copy_files(config):
             _copy_file(src_path, dst_path)
 
 
-def generate_pages(config, xref, chapters):
+def generate_pages(config, xref):
     """Generate output for each chapter in turn, filling in cross-references."""
     seen = {
         "cite": set(),
@@ -52,8 +52,8 @@ def generate_pages(config, xref, chapters):
             "builddate": datetime.today().strftime("%Y-%m-%d"),
         }
     )
-    for info in chapters:
-        html = render(config, xref, seen, info["src"], info["tokens"])
+    for info in config["pages"]:
+        html = render(config, xref, seen, info)
         page = obj_to_namespace({"content": html})
         html = _fill_template(config, info, site, page)
         _write_file(info["dst"], html)

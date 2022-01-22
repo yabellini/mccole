@@ -4,6 +4,8 @@ template: page.html
 
 # File Backup {#file-backup}
 
+<div class="toc" level="2" />
+
 Now that we can test software we have something worth saving.
 A <span g="version_control_system" i="version control system">version control system</span>
 like <span i="Git; version control system!Git">[Git][git]</span>

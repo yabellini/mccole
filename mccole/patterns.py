@@ -18,12 +18,14 @@ INDEX_DEF = re.compile(r'<span\s+i="(.+?)">')
 GLOSS_INDEX_DEF = re.compile(r'<span\s+g="(.+?)"\s+i="(.+?)">')
 
 # Headings are `## Text {#key}`.
-HEADING_KEY = re.compile(r"\{\#(.+?)\}")
+HEADING_AND_KEY = re.compile(r"\s*(.+?)(\s*\{\#(.+?)\})")
 
 # `<div class="bibliography"/>` and `<div class="glossary"/>`
 # show where the bibliography and glossary should go.
+# `<div class="toc" level="N"/>` shows where the table of contents goes.
 BIBLIOGRAPHY = re.compile(r'<div\s+class="bibliography"\s*/>')
 GLOSSARY = re.compile(r'<div\s+class="glossary"\s*/>')
+TOC = re.compile(r'<div\s+class="toc"\s+level="(.+)"\s*/>')
 
 # `<div class="include" ...parameters... />`
 INCLUSION = re.compile(r'<div\s+class="include"(.*?)/>')

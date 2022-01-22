@@ -4,6 +4,8 @@ template: page.html
 
 # Pattern Matching {#pattern-matching}
 
+<div class="toc" level="2" />
+
 We have been globbing to match filenames against patterns since <a secref="systems-programming"/>.
 This lesson will explore how that works
 by building a simple version of the <span g="regular_expression" i="regular expression">regular expressions</span>

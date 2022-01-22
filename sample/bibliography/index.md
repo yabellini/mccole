@@ -2,6 +2,6 @@
 template: page.html
 ---
 
-# Bibliography
+# Bibliography {#bibliography}
 
 <div class="bibliography" />

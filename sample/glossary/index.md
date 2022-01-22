@@ -2,6 +2,6 @@
 template: page.html
 ---
 
-# Glossary
+# Glossary {#glossary}
 
 <div class="glossary" />
