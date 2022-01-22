@@ -4,7 +4,6 @@ links: _data/links.yml
 bib: _data/bibliography.bib
 gloss: _data/glossary.yml
 
-template: _data/template.html
 copyrightyear: 2022
 author: "Greg Wilson"
 

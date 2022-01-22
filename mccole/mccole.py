@@ -9,7 +9,7 @@ import socketserver
 import sys
 
 from .bib import bib_keys, load_bib
-from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config
+from .config import DEFAULT_CONFIG_FILE, DEFAULTS, get_config, load_templates
 from .crossref import cross_reference
 from .fileio import collect_chapters, copy_files, generate_pages
 from .gloss import gloss_keys, load_gloss
@@ -33,7 +33,7 @@ def main(args):
 
         load_bib(config)
         load_gloss(config)
-        _load_template(config)
+        load_templates(config)
 
         chapters = collect_chapters(config)
         LOGGER.info(f"chapters are {pretty(chapters)}")
@@ -61,17 +61,8 @@ def main(args):
 
 def _clean_output(options, config):
     """Delete output directory unless told not to."""
-    if not options.keep:
+    if (not options.keep) and os.path.exists(config["dst"]):
         shutil.rmtree(config["dst"])
-
-
-def _load_template(config):
-    """Load page template."""
-    if "template" not in config:
-        config["page_template"] = None
-    else:
-        with open(config["template"], "r") as reader:
-            config["page_template"] = reader.read()
 
 
 def _parse_args(args):

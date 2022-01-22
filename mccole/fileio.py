@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .config import MAIN_DST_FILE, MAIN_SRC_FILE
 from .translate import untokenize
-from .util import LOGGER_NAME
+from .util import LOGGER_NAME, err
 
 # Directory permissions.
 DIR_PERMS = 0o755
@@ -25,7 +25,7 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 def collect_chapters(config):
-    """Return chapter files."""
+    """Return chapter file information."""
     major = 0
     result = []
     for entry in config["chapters"]:
@@ -63,8 +63,7 @@ def generate_pages(config, xref, chapters):
     }
     for info in chapters:
         html = untokenize(config, xref, seen, info["tokens"])
-        if "page_template" in config:
-            html = _fill_template(config, html)
+        html = _fill_template(config, info, html)
         _write_file(info["dst"], html)
     return seen
 
@@ -85,8 +84,17 @@ def _dst_path(config, entry):
     return os.path.join(config["dst"], entry["slug"], MAIN_DST_FILE)
 
 
-def _fill_template(config, body):
-    """Fill in page template."""
+def _fill_template(config, info, body):
+    """Fill in page template if present."""
+    template_name = info["metadata"].get("template", None)
+    if not template_name:
+        return body
+
+    template = config["template"].get(template_name, None)
+    if not template:
+        err(config, f"Unknown template {template_name} in {info['src']}.")
+        return body
+
     values = {
         "title": "McCole",
         "content": body,
@@ -94,7 +102,7 @@ def _fill_template(config, body):
         "author": config["author"],
         "builddate": datetime.today().strftime('%Y-%m-%d')
     }
-    return config["page_template"].format(**values)
+    return template.format(**values)
 
 
 def _next_major(entry, major):

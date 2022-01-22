@@ -1,5 +1,7 @@
 """Parse Markdown files."""
 
+import yaml
+
 from markdown_it.presets import commonmark
 from markdown_it.renderer import RendererHTML
 from markdown_it.utils import OptionsDict
@@ -35,6 +37,15 @@ def tokenize(config, chapters):
             text = reader.read()
             text += links_table
             info["tokens"] = md.parse(text)
+            info["metadata"] = _get_metadata(info["tokens"])
+
+
+def _get_metadata(tokens):
+    """Find and parse metadata (if present)."""
+    for token in tokens:
+        if token.type == "front_matter":
+            return yaml.safe_load(token.content)
+    return {}
 
 
 def untokenize(config, xref, seen, tokens):

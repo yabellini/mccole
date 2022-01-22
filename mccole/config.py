@@ -1,7 +1,7 @@
 """Manage program configuration."""
 
+from glob import glob
 import os
-
 import yaml
 
 from .util import McColeExc
@@ -38,6 +38,15 @@ def get_config(filename):
 
     except OSError as exc:
         raise McColeExc(str(exc))
+
+
+def load_templates(config):
+    """Load page templates."""
+    config["template"] = {}
+    for filename in glob("_template/*.html"):
+        label = os.path.basename(filename)
+        with open(filename, "r") as reader:
+            config["template"][label] = reader.read()
 
 
 def _read_links(filename):
