@@ -53,7 +53,7 @@ def generate_pages(config, xref, chapters):
         }
     )
     for info in chapters:
-        html = render(config, xref, seen, info["tokens"])
+        html = render(config, xref, seen, info["src"], info["tokens"])
         page = obj_to_namespace({"content": html})
         html = _fill_template(config, info, site, page)
         _write_file(info["dst"], html)

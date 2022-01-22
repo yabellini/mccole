@@ -25,6 +25,9 @@ HEADING_KEY = re.compile(r"\{\#(.+?)\}")
 BIBLIOGRAPHY = re.compile(r'<div\s+class="bibliography"\s*/>')
 GLOSSARY = re.compile(r'<div\s+class="glossary"\s*/>')
 
+# `<div class="include" ...parameters... />`
+INCLUSION = re.compile(r'<div\s+class="include"(.*?)/>')
+
 # Figures are:
 # <figure id="key">
 #   <img src="file" alt="short"/>

@@ -6,6 +6,7 @@ from markdown_it.utils import OptionsDict
 
 from .bib import bib_to_html
 from .gloss import gloss_to_html
+from .include import inclusion_to_html
 from .patterns import (
     BIBLIOGRAPHY,
     CITE,
@@ -16,6 +17,7 @@ from .patterns import (
     GLOSSARY,
     HEADING_KEY,
     INDEX_DEF,
+    INCLUSION,
     SECTION_REF,
     TABLE_BODY,
     TABLE_CAP,
@@ -26,10 +28,10 @@ from .patterns import (
 from .util import make_md
 
 
-def render(config, xref, seen, tokens):
+def render(config, xref, seen, filename, tokens):
     """Turn token stream into HTML."""
     options = OptionsDict(commonmark.make()["options"])
-    renderer = McColeRenderer(config, xref, seen)
+    renderer = McColeRenderer(config, xref, seen, filename)
     return renderer.render(tokens, options, {})
 
 
@@ -39,12 +41,13 @@ def render(config, xref, seen, tokens):
 class McColeRenderer(RendererHTML):
     """Translate token stream to HTML."""
 
-    def __init__(self, config, xref, seen):
+    def __init__(self, config, xref, seen, filename):
         """Remember settings and cross-reference information."""
         super().__init__(self)
         self.config = config
         self.xref = xref
         self.seen = seen
+        self.filename = filename
 
     def heading_open(self, tokens, idx, options, env):
         """Add IDs to headings if requested."""
@@ -65,6 +68,7 @@ class McColeRenderer(RendererHTML):
             (BIBLIOGRAPHY, self._bibliography),
             (FIGURE, self._figure),
             (GLOSSARY, self._glossary),
+            (INCLUSION, self._inclusion),
             (TABLE_START, self._table),
         ):
             match = pat.search(tokens[idx].content)
@@ -108,10 +112,6 @@ class McColeRenderer(RendererHTML):
         """Generate a figure."""
         return tokens[idx].content
 
-    def _glossary(self, tokens, idx, options, env, match):
-        """Generate a glossary."""
-        return gloss_to_html(self.config)
-
     def _figure_ref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
         key = match.group(1)
@@ -122,6 +122,10 @@ class McColeRenderer(RendererHTML):
         else:
             label = "MISSING"
         return f'<a class="figref" href="{key}">Figure&nbsp;{label}</a>'
+
+    def _glossary(self, tokens, idx, options, env, match):
+        """Generate a glossary."""
+        return gloss_to_html(self.config)
 
     def _gloss_def(self, tokens, idx, options, env, match):
         """Fill in glossary definition."""
@@ -136,6 +140,10 @@ class McColeRenderer(RendererHTML):
         self.seen["gloss_ref"].add(gloss_key)
         self.seen["index_ref"].add(index_key)
         return f'<span g="{gloss_key}" i="{index_key}">'
+
+    def _inclusion(self, tokens, idx, options, env, match):
+        """Fill in file inclusion."""
+        return inclusion_to_html(self.filename, match.group(1))
 
     def _index_def(self, tokens, idx, options, env, match):
         """Fill in index definition."""

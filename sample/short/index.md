@@ -13,6 +13,8 @@ Long enough to wrap around.
 Long enough to wrap around.
 Long enough to wrap around.
 
+<div class="include" file="test.py" />
+
 Self-reference: <a section="short"/>.
 
 Glossary: <span g="gloss_key">text</span>
