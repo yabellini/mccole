@@ -18,10 +18,10 @@ INDEX_DEF = re.compile(r'<span\s+i="(.+?)">')
 GLOSS_INDEX_DEF = re.compile(r'<span\s+g="(.+?)"\s+i="(.+?)">')
 
 # Headings with classes are `### Text {.class}`.
-HEADING_CLASS = re.compile(r"\s*(.+?).?(\s*\{\.(.+?)\})")
+HEADING_CLASS = re.compile(r"\s*(.+?)(\s*\{\.(.+?)\})")
 
 # Labeled headings are `## Text {#key}`.
-HEADING_ID = re.compile(r"\s*(.+?).?(\s*\{\#(.+?)\})")
+HEADING_ID = re.compile(r"\s*(.+?)(\s*\{\#(.+?)\})")
 
 # `<div class="bibliography"/>` and `<div class="glossary"/>`
 # show where the bibliography and glossary should go.
