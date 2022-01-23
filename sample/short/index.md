@@ -6,6 +6,20 @@ template: page.html
 
 <div class="toc" level="2" />
 
+Self-reference: <a section="short-section"/>.
+
+Cross-references: <a section="file-backup"/> and <a section="unit-test-structure"/>.
+
+Glossary: <span g="gloss_key">text</span>
+
+Index: <span i="index term">text</span>
+
+Glossary plus index: <span g="gloss_key" i="index term">text</span>
+
+Index wrapping link: <span i="index term">[name][acorn]</span>
+
+Citation: <cite>Oram2007</cite>.
+
 > ### Blockquote
 >
 > This is a paragraph.
@@ -57,18 +71,6 @@ Keep beta erase gamma:
 Multi-inclusion of `.py` and `.out`
 
 <div class="include" pat="multi.*" fill="py out" />
-
-Self-reference: <a section="short"/>.
-
-Glossary: <span g="gloss_key">text</span>
-
-Index: <span i="index term">text</span>
-
-Glossary plus index: <span g="gloss_key" i="index term">text</span>
-
-Index wrapping link: <span i="index term">[name][acorn]</span>
-
-Citation: <cite>Oram2007</cite>.
 
 ```python
 for word in code:
