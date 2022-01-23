@@ -13,6 +13,7 @@ def collect_pages(config):
         major = _next_major(entry, major)
         result.append({
             "slug": entry["slug"],
+            "to_root": os.pardir,
             "src": _src_path(config, entry),
             "dst": _dst_path(config, entry),
             "major": major,
@@ -22,6 +23,7 @@ def collect_pages(config):
     if "root" in config:
         result.append({
             "slug": "_index",
+            "to_root": os.curdir,
             "src": os.path.join(config["src"], config["root"]),
             "dst": os.path.join(config["dst"], "index.html"),
             "major": None,

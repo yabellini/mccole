@@ -124,7 +124,7 @@ class McColeRenderer(RendererHTML):
         """Generate a figure."""
         text = tokens[idx].content
         figure_id = FIGURE.search(text).group(1)
-        label = self.xref["fig_lbl_to_index"].get(figure_id, None)
+        label = self.xref["fig_id_to_index"].get(figure_id, None)
         if label:
             label = ".".join(str(i) for i in label)
         else:
@@ -137,12 +137,9 @@ class McColeRenderer(RendererHTML):
         """Fill in figure reference."""
         key = match.group(1)
         self.seen["figure_ref"].add(key)
-        label = self.xref["fig_lbl_to_index"].get(key, None)
-        if label:
-            label = ".".join(str(i) for i in label)
-        else:
-            label = "MISSING"
-        return f'<a class="figref" href="{key}">Figure&nbsp;{label}</a>'
+        label = self._make_crossref_label("fig_id_to_index", key, "Figure")
+        href = self._make_crossref_href("fig_id_to_slug", key)
+        return f'<a class="figref" href="{href}">{label}</a>'
 
     def _glossary(self, tokens, idx, options, env, match):
         """Generate a glossary."""
@@ -174,20 +171,21 @@ class McColeRenderer(RendererHTML):
     def _section_ref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
         key = match.group(1)
-        label = self.xref["heading_lbl_to_index"].get(key, None)
+        label = self.xref["hd_id_to_index"].get(key, None)
         if label:
-            word = "Chapter" if label[0].isdigit() else "Appendix"
+            word = self._choose_heading_term(label)
             label = ".".join(str(i) for i in label)
-            fill = f"{word}&nbsp;{label}"
+            label = f"{word}&nbsp;{label}"
         else:
-            fill = "MISSING"
-        return f'<a class="secref" href="{key}">{fill}</a>'
+            label = "MISSING"
+        href = self._make_crossref_href("hd_id_to_slug", key)
+        return f'<a class="secref" href="{href}">{label}</a>'
 
     def _table(self, tokens, idx, options, env, match):
         """Parse a table nested inside a div."""
         content = tokens[idx].content
         table_id = TABLE_ID.search(content).group(1)
-        label = self.xref["tbl_lbl_to_index"].get(table_id, None)
+        label = self.xref["tbl_id_to_index"].get(table_id, None)
         if label:
             label = ".".join(str(i) for i in label)
         else:
@@ -205,12 +203,9 @@ class McColeRenderer(RendererHTML):
         """Fill in table reference."""
         key = match.group(1)
         self.seen["table_ref"].add(key)
-        label = self.xref["tbl_lbl_to_index"].get(key, None)
-        if label:
-            label = ".".join(str(i) for i in label)
-        else:
-            label = "MISSING"
-        return f'<a class="tblref" href="{key}">Table&nbsp;{label}</a>'
+        label = self._make_crossref_label("tbl_id_to_index", key, "Table")
+        href = self._make_crossref_href("tbl_id_to_slug", key)
+        return f'<a class="tblref" href="{href}">{label}</a>'
 
     def _toc(self, tokens, idx, options, env, match):
         """Fill in table of contents."""
@@ -218,7 +213,7 @@ class McColeRenderer(RendererHTML):
         if level == 1:
             slugs = [entry["slug"] for entry in self.config["pages"] if entry["major"] is not None]
             majors = [entry["major"] for entry in self.config["pages"]]
-            titles = [self.xref["heading_lbl_to_title"][slug] for slug in slugs]
+            titles = [self.xref["hd_id_to_title"][slug] for slug in slugs]
             combined = list(zip(slugs, majors, titles))
             refs = [f'<li value="{major}"><a href="./{slug}/">{title}</a></li>' for (slug, major, title) in combined]
             refs = "\n".join(refs)
@@ -226,9 +221,9 @@ class McColeRenderer(RendererHTML):
 
         if level == 2:
             major = self.info["major"]
-            indexes = [x for x in self.xref["heading_index_to_lbl"] if (x[0] == major) and (len(x) == 2)]
-            labels = [self.xref["heading_index_to_lbl"][i] for i in indexes]
-            titles = [self.xref["heading_lbl_to_title"][lbl] for lbl in labels]
+            indexes = [x for x in self.xref["hd_index_to_id"] if (x[0] == major) and (len(x) == 2)]
+            labels = [self.xref["hd_index_to_id"][i] for i in indexes]
+            titles = [self.xref["hd_id_to_title"][lbl] for lbl in labels]
             combined = list(zip(indexes, labels, titles))
             links = [f'<li><a href="#{label}">{title}</a></li>' for (index, label, title) in combined]
             links = "\n".join(links)
@@ -237,3 +232,30 @@ class McColeRenderer(RendererHTML):
 
         err(config, f"Unknown table of contents level {level}.")
         return ""
+
+    def _choose_heading_term(self, label):
+        """Choose 'Chapter', 'Section', or 'Appendix'."""
+        if len(label) > 1:
+            return "Section"
+        if label[0].isdigit():
+            return "Chapter"
+        return "Appendix"
+
+    def _make_crossref_href(self, lookup_key, item_key):
+        """Make cross-reference URL."""
+        slug = self.xref[lookup_key].get(item_key, None)
+        if slug is None:
+            return "MISSING"
+        elif slug == self.info["slug"]:
+            return f"#{item_key}"
+        else:
+            return f"{self.info['to_root']}/{slug}#{item_key}"
+
+    def _make_crossref_label(self, lookup_key, item_key, prefix):
+        """Make cross-reference label text."""
+        label = self.xref[lookup_key].get(item_key, None)
+        if label:
+            label = ".".join(str(i) for i in label)
+        else:
+            label = "MISSING"
+        return f"{prefix}&nbsp;{label}"

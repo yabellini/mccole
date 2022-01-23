@@ -35,8 +35,12 @@ def cross_reference(config):
 
 def _figures(config, xref, pages):
     """Build cross-references for figures."""
-    lookup = {}
-    xref |= {"fig_lbl_to_index": lookup}
+    fig_id_to_index = {}
+    fig_id_to_slug = {}
+    xref |= {
+        "fig_id_to_index": fig_id_to_index,
+        "fig_id_to_slug": fig_id_to_slug
+    }
 
     for info in pages:
         current = [info["major"], 0]
@@ -56,7 +60,7 @@ def _figures(config, xref, pages):
             if not all([fig_id, src, alt, caption]):
                 err(config, "Badly-formatted figure ({info['src']}/{token.map[1]}).")
 
-            if fig_id in lookup:
+            if fig_id in fig_id_to_index:
                 err(
                     config,
                     "Duplicate figure ID {fig_id} ({info['src']}/{token.map[1]}).",
@@ -64,18 +68,21 @@ def _figures(config, xref, pages):
 
             current[1] += 1
             label = tuple(current)
-            lookup[fig_id] = label
+            fig_id_to_index[fig_id] = label
+            fig_id_to_slug[fig_id] = info["slug"]
 
 
 def _headings(config, xref, pages):
     """Compile headings."""
-    lbl_to_index = {}
-    lbl_to_title = {}
-    index_to_lbl = {}
+    hd_id_to_index = {}
+    hd_id_to_title = {}
+    hd_id_to_slug = {}
+    hd_index_to_id = {}
     xref |= {
-        "heading_lbl_to_index": lbl_to_index,
-        "heading_lbl_to_title": lbl_to_title,
-        "heading_index_to_lbl": index_to_lbl,
+        "hd_id_to_index": hd_id_to_index,
+        "hd_id_to_title": hd_id_to_title,
+        "hd_id_to_slug": hd_id_to_slug,
+        "hd_index_to_id": hd_index_to_id,
     }
 
     for info in pages:
@@ -100,15 +107,16 @@ def _headings(config, xref, pages):
             level = _heading_level(previous)
             index = _heading_index(config, info["src"], token, label_stack, level)
 
-            if (label in lbl_to_index) or (label in lbl_to_title):
+            if (label in hd_id_to_index) or (label in hd_id_to_title):
                 err(
                     config,
                     f"Duplicate heading label {label} ({info['src']}/{_line(token)}).",
                 )
 
-            lbl_to_index[label] = index
-            lbl_to_title[label] = title
-            index_to_lbl[index] = label
+            hd_id_to_index[label] = index
+            hd_id_to_title[label] = title
+            hd_id_to_slug[label] = info["slug"]
+            hd_index_to_id[index] = label
 
             previous = token
 
@@ -170,8 +178,12 @@ def _line(token):
 
 def _tables(config, xref, pages):
     """Build cross-references for tables."""
-    lookup = {}
-    xref |= {"tbl_lbl_to_index": lookup}
+    tbl_id_to_index = {}
+    tbl_id_to_slug = {}
+    xref |= {
+        "tbl_id_to_index": tbl_id_to_index,
+        "tbl_id_to_slug": tbl_id_to_slug
+    }
 
     for info in pages:
         current = [info["major"], 0]
@@ -186,7 +198,7 @@ def _tables(config, xref, pages):
 
             tbl_id = TABLE_ID.search(token.content).group(1)
 
-            if tbl_id in lookup:
+            if tbl_id in tbl_id_to_index:
                 err(
                     config,
                     f"Duplicate table ID on line ({info['src']}/{token.map[1]}).",
@@ -194,4 +206,5 @@ def _tables(config, xref, pages):
 
             current[1] += 1
             label = tuple(current)
-            lookup[tbl_id] = label
+            tbl_id_to_index[tbl_id] = label
+            tbl_id_to_slug[tbl_id] = info["slug"]

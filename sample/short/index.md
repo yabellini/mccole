@@ -8,7 +8,7 @@ template: page.html
 
 Self-reference: <a section="short-section"/>.
 
-Cross-references: <a section="file-backup"/> and <a section="unit-test-structure"/>.
+Cross-references: <a section="file-backup"/> and <a section="unit-test-structure"/> and <a section="glossary"/>.
 
 Glossary: <span g="gloss_key">text</span>
 

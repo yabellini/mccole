@@ -139,8 +139,8 @@ def _warn_unused(options, config, xref, seen):
     _warn_unused_title("glossary", gloss_keys(config) - seen["gloss_ref"])
 
     for (title, defined_key, used_key) in (
-        ("figure", "fig_lbl_to_index", "figure_ref"),
-        ("table", "tbl_lbl_to_index", "table_ref"),
+        ("figure", "fig_id_to_index", "figure_ref"),
+        ("table", "tbl_id_to_index", "table_ref"),
     ):
         defined = set(xref[defined_key].keys())
         used = seen[used_key]
