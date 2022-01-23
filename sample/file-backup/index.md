@@ -360,7 +360,9 @@ Why doesn't this solve the time of check/time of use race condition mentioned ea
 ### Mock Hashes {.exercise}
 
 1.  Modify the file backup program so that it uses a function called `ourHash` to hash files.
+
 2.  Create a replacement that returns some predictable value, such as the first few characters of the data.
+
 3.  Rewrite the tests to use this function.
 
 How did you modify the main program so that the tests could control which hashing function is used?
@@ -371,10 +373,13 @@ Write a program `compare-manifests.js` that reads two manifest files and reports
 
 -   Which files have the same names but different hashes
     (i.e., their contents have changed).
+
 -   Which files have the same hashes but different names
     (i.e., they have been renamed).
+
 -   Which files are in the first hash but neither their names nor their hashes are in the second
     (i.e., they have been deleted).
+
 -   Which files are in the second hash but neither their names nor their hashes are in the first
     (i.e., they have been added).
 
