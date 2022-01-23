@@ -355,6 +355,18 @@ McCole uses the files in `_template` as page templates.
 Values are filled in using simple Python string formatting;
 all of the HTML generated from a Markdown page is copied as one chunk.
 
+## Links
+
+All external links are defined in a YAML file (by default, `_data/links.yml`).
+They are turned into a Markdown link table:
+
+```
+[key-1]: url-1
+[key-2]: url-2
+```
+
+which is appended to every Markdown file during parsing.
+
 ## Implementation
 
 McCole uses:
@@ -362,6 +374,8 @@ McCole uses:
 -   [markdown-it-py][markdown-it-py] to parse and render Markdown.
 
 -   [bibtexparser][bibtexparser] to parse BibTeX bibliographies.
+
+-   [paged.js][paged-js] for pagination (experimental).
 
 The processing cycle is:
 
@@ -394,13 +408,25 @@ The processing cycle is:
 
 1.  Run a preview server if asked to.
 
+## Colophon
+
+This book is typeset in [Crimson][crimson-font].
+McCole ("muh-COAL") is named after Robert McCole Wilson (1934-2015),
+who taught me how to write
+and that writing well is important.
+Thanks, Dad.
+
+<p align="center"><img src="./sample/static/mccole.jpg" alt="Robert McCole Wilson" /></p>
+
 [bibtex]: http://www.bibtex.org/
 [bibtexparser]: https://bibtexparser.readthedocs.io/
 [commonmark]: https://commonmark.org/
 [conda-install]: https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html
+[crimson-font]: https://www.1001fonts.com/crimson-font.html
 [glosario]: https://glosario.carpentries.org/
 [iso-lang-codes]: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 [latex]: https://www.latex-project.org/
 [markdown-it-py]: https://markdown-it-py.readthedocs.io/
+[paged-js]: https://www.pagedjs.org/
 [pandoc]: https://pandoc.org/
 [ssg]: https://jamstack.org/generators/
