@@ -57,6 +57,7 @@ def generate_pages(config, xref):
     for info in config["pages"]:
         html = render(config, xref, seen, info)
         page = obj_to_namespace({"content": html})
+        page.to_root = info["to_root"]
         html = _fill_template(config, info, site, page)
         _write_file(info["dst"], html)
     return seen
