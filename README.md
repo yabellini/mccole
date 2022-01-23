@@ -16,7 +16,7 @@ but it's smaller and less brittle.
         and create a conda environment with `conda create -n mccole python=3.9`.
 1.  Clone <https://github.com/gvwilson/mccole/> and go into the `mccole` directory.
 1.  Install dependencies with `pip install -r requirements.txt`.
-1.  Build the test project using `python -m mccole -C sample.
+1.  Build the test project using `python -m mccole -C sample`.
     -   You can now examine the generated files in `sample/_site`.
 1.  Preview the test project using `python -m mccole -C sample -r 4000`.
     -   You can view the generated files on <http://localhost:4000>.
