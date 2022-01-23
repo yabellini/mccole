@@ -68,10 +68,10 @@ we just want hashes that are random to make <span g="collision" i="hash function
 > and a 99.9% chance with 70 people.
 >
 > We can use the same math to calculate how many files we need to hash before there's a 50% chance of a collision.
-> Instead of 365 we use $$2^{160}$$ (the number of values that are 160 bits long),
+> Instead of 365 we use \\(2^{160}\\) (the number of values that are 160 bits long),
 > and after checking [Wikipedia][wikipedia-birthday-problem]
 > and doing a few calculations with <span i="Wolfram Alpha">[Wolfram Alpha][wolfram-alpha]</span>,
-> we calculate that we would need to have approximately $$10^{24}$$ files
+> we calculate that we would need to have approximately \\(10^{24}\\) files
 > in order to have a 50% chance of a collision.
 > We're willing to take that risk…
 
