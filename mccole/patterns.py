@@ -29,6 +29,11 @@ TOC = re.compile(r'<div\s+class="toc"\s+level="(.+)"\s*/>')
 
 # `<div class="include" ...parameters... />`
 INCLUSION = re.compile(r'<div\s+class="include"(.*?)/>')
+INCLUSION_FILE = re.compile(r'^\s*file="([^"]+)"\s*$')
+INCLUSION_KEEP = re.compile(r'^\s*file="([^"]+)"\s+keep="([^"]+)"\s*$')
+INCLUSION_ERASE = re.compile(r'^\s*file="([^"]+)"\s+erase="([^"]+)"\s*$')
+INCLUSION_KEEP_ERASE = re.compile(r'^\s*file="([^"]+)"\s+keep="([^"]+)"\s+erase="([^"]+)"\s*$')
+INCLUSION_MULTI = re.compile(r'^\s*pat="([^"]+)"\s+fill="([^"]+)"\s*$')
 
 # Figures are:
 # <figure id="key">

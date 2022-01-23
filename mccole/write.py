@@ -50,6 +50,8 @@ def generate_pages(config, xref):
             "copyrightyear": config["copyrightyear"],
             "author": config["author"],
             "builddate": datetime.today().strftime("%Y-%m-%d"),
+            "repo": config["repo"],
+            "tool": config["tool"],
         }
     )
     for info in config["pages"]:

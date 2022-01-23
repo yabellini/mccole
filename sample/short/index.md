@@ -15,7 +15,25 @@ Long enough to wrap around.
 Long enough to wrap around.
 Long enough to wrap around.
 
+File inclusion:
+
 <div class="include" file="test.py" />
+
+Keep alpha:
+
+<div class="include" file="test.txt" keep="alpha" />
+
+Erase beta:
+
+<div class="include" file="test.txt" erase="beta" />
+
+Keep beta erase gamma:
+
+<div class="include" file="test.txt" keep="beta" erase="gamma" />
+
+Multi-inclusion of `.py` and `.out`
+
+<div class="include" pat="multi.*" fill="py out" />
 
 Self-reference: <a section="short"/>.
 

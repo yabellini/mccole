@@ -12,15 +12,15 @@
     </nav>
     <main>
       {page.content}
+      <footer>
+	<hr/>
+	Copyright © {site.copyrightyear}
+	{site.author}
+	&middot;
+	Powered by <a href="{site.repo}">{site.tool}</a>
+	&middot;
+	Last built {site.builddate}
+      </footer>
     </main>
-    <footer>
-      <hr/>
-      Copyright © {site.copyrightyear}
-      {site.author}
-      &middot;
-      Powered by <a href="https://github.com/gvwilson/mccole">McCole</a>
-      &middot;
-      Last built {site.builddate}
-    </footer>
   </body>
 </html>
