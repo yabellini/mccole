@@ -146,7 +146,7 @@ class McColeRenderer(RendererHTML):
 
     def _inclusion(self, tokens, idx, options, env, match):
         """Fill in file inclusion."""
-        return inclusion_to_html(self.info, match.group(1))
+        return inclusion_to_html(self.config, self.info, match.group(1))
 
     def _index_def(self, tokens, idx, options, env, match):
         """Fill in index definition."""

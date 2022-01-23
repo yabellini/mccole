@@ -1,11 +1,13 @@
+copyrightyear: 2022
+author: "Greg Wilson"
+repo: https://github.com/gvwilson/mccole
+tool: McCole
+
 src: .
 dst: _site
 links: _data/links.yml
 bib: _data/bibliography.bib
 gloss: _data/glossary.yml
-
-copyrightyear: 2022
-author: "Greg Wilson"
 
 copy:
 - "*/figures/*.svg"
