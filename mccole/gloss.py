@@ -16,8 +16,9 @@ def gloss_keys(config):
 
 def gloss_to_html(config):
     """Convert glossary data to HTML."""
-    internal = {entry["key"]: entry["term"] for entry in config["gloss_data"]}
-    entries = [_gloss_to_markdown(e, internal) for e in config["gloss_data"]]
+    lang = config["lang"]
+    internal = {entry["key"]:entry[lang]["term"] for entry in config["gloss_data"]}
+    entries = [_gloss_to_markdown(entry, lang, internal) for entry in config["gloss_data"]]
     text = "\n\n".join(entries)
     md = make_md()
     html = md.render(text)
@@ -36,14 +37,14 @@ def load_gloss(config):
 # ----------------------------------------------------------------------
 
 
-def _gloss_to_markdown(entry, internal):
+def _gloss_to_markdown(entry, lang, internal):
     """Convert single glossary entry to Markdown."""
-    first = f'<span class="glosskey" id="{entry["key"]}">{entry["term"]}</span>'
+    first = f'<span class="glosskey" id="{entry["key"]}">{entry[lang]["term"]}</span>'
 
-    if "acronym" in entry:
-        first += f" ({entry['acronym']})"
+    if "acronym" in entry[lang]:
+        first += f" ({entry[lang]['acronym']})"
 
-    body = MULTISPACE.sub(entry["def"], " ")
+    body = MULTISPACE.sub(entry[lang]["def"], " ")
 
     if "ref" in entry:
         refs = [f"[{internal[key]}](#{key})" for key in entry["ref"]]

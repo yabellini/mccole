@@ -8,6 +8,7 @@ dst: _site
 links: _data/links.yml
 bib: _data/bibliography.bib
 gloss: _data/glossary.yml
+lang: en
 
 copy:
 - "*/figures/*.svg"
