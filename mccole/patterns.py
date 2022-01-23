@@ -53,6 +53,6 @@ FIGURE_CAP = re.compile(r"<figcaption>(.+?)</figcaption>")
 # ...Markdown table...
 # </div>
 TABLE_START = re.compile(r'<div.+?class="table"')
-TABLE_LBL = re.compile(r'id="(.+?)"')
+TABLE_ID = re.compile(r'id="(.+?)"')
 TABLE_CAP = re.compile(r'cap="(.+?)"')
 TABLE_BODY = re.compile(r"<div.+?>\n(.+)\n</div>", re.DOTALL)

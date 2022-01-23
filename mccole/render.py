@@ -11,6 +11,7 @@ from .patterns import (
     BIBLIOGRAPHY,
     CITE,
     FIGURE,
+    FIGURE_CAP,
     FIGURE_REF,
     GLOSS_DEF,
     GLOSS_INDEX_DEF,
@@ -22,7 +23,7 @@ from .patterns import (
     SECTION_REF,
     TABLE_BODY,
     TABLE_CAP,
-    TABLE_LBL,
+    TABLE_ID,
     TABLE_REF,
     TABLE_START,
     TOC,
@@ -121,7 +122,16 @@ class McColeRenderer(RendererHTML):
 
     def _figure(self, tokens, idx, options, env, match):
         """Generate a figure."""
-        return tokens[idx].content
+        text = tokens[idx].content
+        figure_id = FIGURE.search(text).group(1)
+        label = self.xref["fig_lbl_to_index"].get(figure_id, None)
+        if label:
+            label = ".".join(str(i) for i in label)
+        else:
+            label = "MISSING"
+        original_caption = FIGURE_CAP.search(text).group(1)
+        fixed_caption = f"Figure&nbsp;{label}: {original_caption}"
+        return text.replace(original_caption, fixed_caption)
 
     def _figure_ref(self, tokens, idx, options, env, match):
         """Fill in figure reference."""
@@ -176,11 +186,16 @@ class McColeRenderer(RendererHTML):
     def _table(self, tokens, idx, options, env, match):
         """Parse a table nested inside a div."""
         content = tokens[idx].content
-        lbl = TABLE_LBL.search(content).group(1)
+        table_id = TABLE_ID.search(content).group(1)
+        label = self.xref["tbl_lbl_to_index"].get(table_id, None)
+        if label:
+            label = ".".join(str(i) for i in label)
+        else:
+            label = "MISSING"
         cap = TABLE_CAP.search(content).group(1)
         body = TABLE_BODY.search(content).group(1)
-        opening = f'<table id="{lbl}">'
-        closing = f"<caption>{cap}</caption>\n</table>"
+        opening = f'<table id="{table_id}">'
+        closing = f"<caption>Table&nbsp;{label}: {cap}</caption>\n</table>"
         md = make_md()
         html = md.render(body)
         html = html.replace("<table>", opening).replace("</table>", closing)

@@ -8,7 +8,7 @@ from .patterns import (
     FIGURE_CAP,
     FIGURE_SRC,
     HEADING_ID,
-    TABLE_LBL,
+    TABLE_ID,
     TABLE_START,
 )
 from .util import LOGGER_NAME, McColeExc, err
@@ -184,7 +184,7 @@ def _tables(config, xref, pages):
             if not match:
                 continue
 
-            tbl_id = TABLE_LBL.search(token.content).group(1)
+            tbl_id = TABLE_ID.search(token.content).group(1)
 
             if tbl_id in lookup:
                 err(
