@@ -31,10 +31,12 @@
     /* Dimensions */
     --page-width: 60rem;
     --text-size: 12pt;
-    --line-spacing: 18pt;
     --internal-padding: 0.5rem;
+    --line-spacing: 18pt;
+    --list-padding: 2rem;
     --indent: 1.0rem;
     --indent-neg: -1.0rem;
+    --outline-width: 5px;
 
     /* Tables */
     --table-border-width: 1px;
@@ -48,11 +50,56 @@ body {
     margin-left: var(--indent);
 }
 
+/* Bibliography */
+p.bib {
+    padding-left: var(--indent);
+    text-indent: var(--indent-neg);
+}
+span.bib {
+    font-weight: bold;
+}
+
+/* Blockquotes (callouts) */
+blockquote {
+    margin-left: 0px;
+    border-left: var(--indent) solid var(--highlight-color);
+    padding-left: var(--indent);
+}
+
 /* Code blocks */
 pre {
     background-color: var(--highlight-color);
     padding-left: var(--internal-padding);
     padding-right: var(--internal-padding);
+}
+
+.language-out {
+    font-style: italic;
+}
+
+/* Figures */
+figure {
+    text-align: center;
+}
+
+/* Glossary entries */
+span[g] {
+    font-weight: bold;
+}
+
+/* Headings */
+blockquote h3::before {
+    content: "\2606 "; /* star */
+}
+
+h3.exercise::before {
+    content: "\270E "; /* pencil */
+}
+
+/* Lists */
+ol, ul {
+    padding-left: var(--list-padding);
+    list-style-position: outside;
 }
 
 /* Tables */
@@ -86,16 +133,9 @@ caption {
     font-weight: bold;
 }
 
-/* Figures */
-figure {
-    text-align: center;
-}
-
-/* Bibliography */
-p.bib {
-    padding-left: var(--indent);
-    text-indent: var(--indent-neg);
-}
-span.bib {
+/* Table of contents */
+ol.toc {
+    border: var(--outline-width) solid var(--highlight-color);
+    padding-left: calc(var(--list-padding) - var(--outline-width));
     font-weight: bold;
 }

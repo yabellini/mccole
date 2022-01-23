@@ -15,7 +15,8 @@ from .patterns import (
     GLOSS_DEF,
     GLOSS_INDEX_DEF,
     GLOSSARY,
-    HEADING_AND_KEY,
+    HEADING_CLASS,
+    HEADING_ID,
     INDEX_DEF,
     INCLUSION,
     SECTION_REF,
@@ -56,11 +57,18 @@ class McColeRenderer(RendererHTML):
         assert inline.type == "inline"
         for child in inline.children:
             if child.type == "text":
-                match = HEADING_AND_KEY.search(child.content)
+                match = HEADING_CLASS.search(child.content)
+                if match:
+                    heading_class = match.group(3)
+                    child.content = child.content.replace(match.group(2), "")
+                    tokens[idx].attrSet("class", heading_class)
+
+                match = HEADING_ID.search(child.content)
                 if match:
                     heading_id = match.group(3)
                     child.content = child.content.replace(match.group(2), "")
                     tokens[idx].attrSet("id", heading_id)
+                
         result = RendererHTML.renderToken(self, tokens, idx, options, env)
         return result
 

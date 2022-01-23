@@ -7,7 +7,7 @@ from .patterns import (
     FIGURE_ALT,
     FIGURE_CAP,
     FIGURE_SRC,
-    HEADING_AND_KEY,
+    HEADING_ID,
     TABLE_LBL,
     TABLE_START,
 )
@@ -143,7 +143,7 @@ def _heading_index(config, filename, token, stack, level):
 def _heading_info(token):
     """Get title and label (or None) from token."""
     assert token.type == "inline"
-    match = HEADING_AND_KEY.search(token.content)
+    match = HEADING_ID.search(token.content)
     if not match:
         return None, None
     return match.group(1), match.group(3)

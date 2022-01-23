@@ -15,7 +15,6 @@ Its heart is a way to archive files that:
 
 1.  records which versions of which files existed at the same time
     (so that we can go back to a consistent previous state), and
-
 1.  stores any particular version of a file only once,
     so that we don't waste disk space.
 
@@ -58,27 +57,23 @@ These are not random enough to keep data secret from a patient, well-funded atta
 but that's not what we're using them for:
 we just want hashes that are random to make <span g="collision" i="hash function!collision; collision (in hashing)">collision</span> extremely unlikely.
 
-<div class="callout" markdown="1">
-
-### The Birthday Problem
-
-The odds that two people share a birthday are 1/365 (ignoring February 29).
-The odds that they *don't* are therefore 364/365.
-When we add a third person,
-the odds that they don't share a birthday with either of the preceding two people are 363/365,
-so the overall odds that nobody shares a birthday are (365/365)×(364/365)×(363/365).
-If we keep calculating, there's a 50% chance of two people sharing a birthday in a group of just 23 people,
-and a 99.9% chance with 70 people.
-
-We can use the same math to calculate how many files we need to hash before there's a 50% chance of a collision.
-Instead of 365 we use $$2^{160}$$ (the number of values that are 160 bits long),
-and after checking [Wikipedia][wikipedia-birthday-problem]
-and doing a few calculations with <span i="Wolfram Alpha">[Wolfram Alpha][wolfram-alpha]</span>,
-we calculate that we would need to have approximately $$10^{24}$$ files
-in order to have a 50% chance of a collision.
-We're willing to take that risk…
-
-</div>
+> ### The Birthday Problem
+>
+> The odds that two people share a birthday are 1/365 (ignoring February 29).
+> The odds that they *don't* are therefore 364/365.
+> When we add a third person,
+> the odds that they don't share a birthday with either of the preceding two people are 363/365,
+> so the overall odds that nobody shares a birthday are (365/365)×(364/365)×(363/365).
+> If we keep calculating, there's a 50% chance of two people sharing a birthday in a group of just 23 people,
+> and a 99.9% chance with 70 people.
+>
+> We can use the same math to calculate how many files we need to hash before there's a 50% chance of a collision.
+> Instead of 365 we use $$2^{160}$$ (the number of values that are 160 bits long),
+> and after checking [Wikipedia][wikipedia-birthday-problem]
+> and doing a few calculations with <span i="Wolfram Alpha">[Wolfram Alpha][wolfram-alpha]</span>,
+> we calculate that we would need to have approximately $$10^{24}$$ files
+> in order to have a 50% chance of a collision.
+> We're willing to take that risk…
 
 [Node's][nodejs] [`crypto`][node-crypto] module provides tools to create a SHA-1 hash.
 To use them,
@@ -89,17 +84,17 @@ When we are done,
 we call its `.end` method
 and then use its `.read` method to get the final result:
 
-{% include multi pat='hash-text.*' fill='js sh out' %}
+<div class="include" pat="hash-text.*" fill="js sh out" />
 
 Hashing a file instead of a fixed string is straightforward:
 we just read the file's contents and pass those characters to the hashing object:
 
-{% include multi pat='hash-file.*' fill='js sh out' %}
+<div class="include" pat="hash-file.*" fill="js sh out" />
 
 However,
 it is more efficient to process the file as a <span g="stream">stream</span>:
 
-{% include multi pat='hash-stream.*' fill='js sh out' %}
+<div class="include" pat="hash-stream.*" fill="js sh out" />
 
 {: .continue}
 This kind of interface is called
@@ -156,7 +151,7 @@ and then:
 
 1.  calculates hashes for those files.
 
-{% include keep file='hash-existing-promise.js' key='main' %}
+<div class="include" file="hash-existing-promise.js" keep="main" />
 
 {: .continue}
 This function uses `Promise.all`
@@ -169,23 +164,23 @@ and use one `Promise.all` at the end to bring them all together.
 The first two <span i="helper function">helper functions</span> that `hashExisting` relies on
 wrap asynchronous operation in promises:
 
-{% include keep file='hash-existing-promise.js' key='helpers' %}
+<div class="include" file="hash-existing-promise.js" keep="helpers" />
 
 The final helper function calculates the hash synchronously,
 but we can use `Promise.all` to wait on those operations finishing anyway:
 
-{% include keep file='hash-existing-promise.js' key='hashPath' %}
+<div class="include" file="hash-existing-promise.js" keep="hashPath" />
 
 Let's try running it:
 
-{% include multi pat='run-hash-existing-promise.*' fill='js sh slice.out' %}
+<div class="include" pat="run-hash-existing-promise.*" fill="js sh slice.out" />
 
 The code we have written is clearer than it would be with callbacks
 (try rewriting it if you don't believe this)
 but the layer of promises around everything still obscures its meaning.
 The same operations are easier to read when written using `async` and `await`:
 
-{% include keep file='hash-existing-async.js' key='main' %}
+<div class="include" file="hash-existing-async.js" keep="main" />
 
 {: .continue}
 This version creates and resolves exactly the same promises as the previous one,
@@ -193,7 +188,7 @@ but those promises are created for us automatically by Node.
 To check that it works,
 let's run it for the same input files:
 
-{% include multi pat='run-hash-existing-async.*' fill='js sh slice.out' %}
+<div class="include" pat="run-hash-existing-async.*" fill="js sh slice.out" />
 
 ## How can we track which files have already been backed up? {#file-backup-track}
 
@@ -205,30 +200,26 @@ where `ssssssssss` is the <span g="utc">UTC</span> <span g="timestamp">timestamp
 and the `.csv` extension indicates that the file is formatted as <span g="csv">comma-separated values</span>.
 (We could store these files as <span g="json">JSON</span>, but CSV is easier for people to read.)
 
-<div class="callout" markdown="1">
+> ### Time of check/time of use
+>
+> Our naming convention for index files will fail if we try to create more than one backup per second.
+> This might seem very unlikely,
+> but many faults and security holes are the result of programmers assuming things weren't going to happen.
+>
+> We could try to avoid this problem by using a two-part naming scheme `ssssssss-a.csv`,
+> `ssssssss-b.csv`, and so on,
+> but this leads to a <span g="race_condition" i="race condition">race condition</span>
+> called <span g="toctou" i="race condition!time of check/time of use; time of check/time of use">time of check/time of use</span>.
+> If two users run the backup tool at the same time,
+> they will both see that there isn't a file (yet) with the current timestamp,
+> so they will both try to create the first one.
 
-### Time of check/time of use
-
-Our naming convention for index files will fail if we try to create more than one backup per second.
-This might seem very unlikely,
-but many faults and security holes are the result of programmers assuming things weren't going to happen.
-
-We could try to avoid this problem by using a two-part naming scheme `ssssssss-a.csv`,
-`ssssssss-b.csv`, and so on,
-but this leads to a <span g="race_condition" i="race condition">race condition</span>
-called <span g="toctou" i="race condition!time of check/time of use; time of check/time of use">time of check/time of use</span>.
-If two users run the backup tool at the same time,
-they will both see that there isn't a file (yet) with the current timestamp,
-so they will both try to create the first one.
-
-</div>
-
-{% include file file='check-existing-files.js' %}
+<div class="include" file="check-existing-files.js" />
 
 To test our program,
 let's manually create testing directories with manufactured (shortened) hashes:
 
-{% include multi pat='tree-test.*' fill='sh out' %}
+<div class="include" pat="tree-test.*" fill="sh out" />
 
 We use <span i="Mocha">[Mocha][mocha]</span> to manage our tests.
 Every test is an `async` function;
@@ -247,12 +238,12 @@ Mocha looks for files in `test` sub-directories of the directories holding our l
 
 Here are our first few tests:
 
-{% include file file='test/test-find.js' %}
+<div class="include" file="test/test-find.js" />
 
 {: .continue}
 and here is Mocha's report:
 
-{% include file file='test-check-filesystem.out' %}
+<div class="include" file="test-check-filesystem.out" />
 
 ## How can we test code that modifies files? {#file-backup-test}
 
@@ -283,7 +274,7 @@ and also makes tests much faster
 We can create a mock filesystem by giving the library a JSON description of
 the files and what they should contain:
 
-{% include erase file='test/test-find-mock.js' key='tests' %}
+<div class="include" file="test/test-find-mock.js" erase="tests" />
 
 {: .continue}
 <span i="Mocha!beforeEach">Mocha</span> automatically calls `beforeEach` before running each tests,
@@ -295,31 +286,124 @@ nothing in our application needs to change either.
 
 We are finally ready to write the program that actually backs up files:
 
-{% include file file='backup.js' %}
+<div class="include" file="backup.js" />
 
 The tests for this are more complicated than tests we have written previously
 because we want to check with actual file hashes.
 Let's set up some fixtures to run tests on:
 
-{% include keep file='test/test-backup.js' key='fixtures' %}
+<div class="include" file="test/test-backup.js" keep="fixtures" />
 
 {: .continue}
 and then run some tests:
 
-{% include keep file='test/test-backup.js' key='tests' %}
-{% include file file='test-backup.out' %}
+<div class="include" file="test/test-backup.js" keep="tests" />
+<div class="include" file="test-backup.out" />
 
-<div class="callout" markdown="1">
+> ### Design for test
+>
+> One of the best ways---maybe *the* best way---to evaluate software design
+> is by thinking about <span i="testability!as design criterion; software design!testability">testability</span> <cite>Feathers2004</cite>.
+> We were able to use a mock filesystem instead of a real one
+> because the filesystem has a well-defined API
+> that is provided to us in a single library,
+> so replacing it is a matter of changing one thing in one place.
+> If you have to change several parts of your code in order to test it,
+> the code is telling you to consolidate those parts into one component.
 
-### Design for test
+## Exercises {#file-backup-exercises}
 
-One of the best ways---maybe *the* best way---to evaluate software design
-is by thinking about <span i="testability!as design criterion; software design!testability">testability</span> <cite>Feathers2004</cite>.
-We were able to use a mock filesystem instead of a real one
-because the filesystem has a well-defined API
-that is provided to us in a single library,
-so replacing it is a matter of changing one thing in one place.
-If you have to change several parts of your code in order to test it,
-the code is telling you to consolidate those parts into one component.
+### Odds of Collision {.exercise}
 
-</div>
+If hashes were only 2 bits long,
+then the chances of collision with each successive file
+assuming no previous collision are:
+
+| Number of Files | Odds of Collision |
+| --------------- | ----------------- |
+| 1               | 0%                |
+| 2               | 25%               |
+| 3               | 50%               |
+| 4               | 75%               |
+| 5               | 100%              |
+
+A colleague of yours says this means that if we hash four files,
+there's only a 75% chance of any collision occurring.
+What are the actual odds?
+
+### Streaming I/O {.exercise}
+
+Write a small program using `fs.createReadStream` and `fs.createWriteStream`
+that copies a file piece by piece
+instead of reading it into memory and then writing it out again.
+
+### Sequencing Backups {.exercise}
+
+Modify the backup program so that manifests are numbered sequentially
+as `00000001.csv`, `00000002.csv`, and so on
+rather than being timestamped.
+Why doesn't this solve the time of check/time of use race condition mentioned earlier.
+
+### JSON Manifests {.exercise}
+
+1.  Modify `backup.js` so that it can save JSON manifests as well as CSV manifests
+    based on a command-line flag.
+
+2.  Write another program called `migrate.js` that converts a set of manifests
+    from CSV to JSON.
+    (The program's name comes from the term <span g="data_migration">data migration</span>.)
+
+3.  Modify `backup.js` programs so that each manifest stores the user name of the person who created it
+    along with file hashes,
+    and then modify `migrate.js` to transform old files into the new format.
+
+### Mock Hashes {.exercise}
+
+1.  Modify the file backup program so that it uses a function called `ourHash` to hash files.
+2.  Create a replacement that returns some predictable value, such as the first few characters of the data.
+3.  Rewrite the tests to use this function.
+
+How did you modify the main program so that the tests could control which hashing function is used?
+
+### Comparing Manifests {.exercise}
+
+Write a program `compare-manifests.js` that reads two manifest files and reports:
+
+-   Which files have the same names but different hashes
+    (i.e., their contents have changed).
+-   Which files have the same hashes but different names
+    (i.e., they have been renamed).
+-   Which files are in the first hash but neither their names nor their hashes are in the second
+    (i.e., they have been deleted).
+-   Which files are in the second hash but neither their names nor their hashes are in the first
+    (i.e., they have been added).
+
+### From One State to Another {.exercise}
+
+1.  Write a program called `from-to.js` that takes the name of a directory
+    and the name of a manifest file
+    as its command-line arguments,
+    then adds, removes, and/or renames files in the directory
+    to restore the state described in the manifest.
+    The program should only perform file operations when it needs to,
+    e.g.,
+    it should not delete a file and re-add it if the contents have not changed.
+
+2.  Write some tests for `from-to.js` using Mocha and `mock-fs`.
+
+### File History {.exercise}
+
+1.  Write a program called `file-history.js`
+    that takes the name of a file as a command-line argument
+    and displays the history of that file
+    by tracing it back in time through the available manifests.
+
+2.  Write tests for your program using Mocha and `mock-fs`.
+
+### Pre-commit Hooks {.exercise}
+
+Modify `backup.js` to load and run a function called `preCommit` from a file called `pre-commit.js`
+stored in the root directory of the files being backed up.
+If `preCommit` returns `true`, the backup proceeds;
+if it returns `false` or throws an exception,
+no backup is created.
