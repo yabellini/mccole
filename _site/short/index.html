@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>McCole</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link href="/static/mccole.css" rel="stylesheet" type="text/css">
+    <script>MathJax = {tex: {inlineMath: [['\\(', '\\)']]}, svg: {fontCache: 'global'}};</script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script type="text/javascript" src="../static/paged.polyfill.js"></script>
+    <script type="text/css" rel="stylesheet" src="../static/paged.interface.css"></script>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+      
+<h1 id="short">Short</h1>
+<ol class="toc">
+<li><a href="#short-section">Section heading</a></li>
+</ol>
+<p>Self-reference: <a class="secref" href="#short-section">Section&nbsp;1.1</a>.</p>
+<p>Cross-references: <a class="secref" href="../file-backup#file-backup">Chapter&nbsp;2</a> and <a class="secref" href="../unit-test#unit-test-structure">Section&nbsp;3.1</a> and <a class="secref" href="../glossary#glossary">Appendix&nbsp;B</a>.</p>
+<p>Glossary: <span g="gloss_key">text</span></p>
+<p>Index: <span i="index term">text</span></p>
+<p>Glossary plus index: <span g="gloss_key" i="index term">text</span></p>
+<p>Index wrapping link: <span i="index term"><a href="https://github.com/acornjs/acorn">name</a></span></p>
+<p>Citation: [<a href="../bibliography/#Oram2007">Oram2007</a>]</p>
+<blockquote>
+<h3>Blockquote</h3>
+<p>This is a paragraph.</p>
+<p>So is this.</p>
+</blockquote>
+<ol>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+<li>item</li>
+</ol>
+<p>Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.
+Long enough to wrap around.</p>
+<p>File inclusion:</p>
+<pre><code class="language-py">def test():
+    return True
+</code></pre>
+<p>Keep alpha:</p>
+<pre><code class="language-txt">alpha 1 of 2
+alpha 2 of 2
+</code></pre>
+<p>Erase beta:</p>
+<pre><code class="language-txt">before alpha
+
+[alpha]
+alpha 1 of 2
+alpha 2 of 2
+[/alpha]
+
+after alpha
+</code></pre>
+<p>Keep beta erase gamma:</p>
+<pre><code class="language-txt">beta 1 before gamma
+beta 2 after gamma
+</code></pre>
+<p>Multi-inclusion of <code>.py</code> and <code>.out</code></p>
+<pre><code class="language-py">print(&quot;hello&quot;)
+</code></pre>
+
+
+<pre><code class="language-out">hello
+</code></pre>
+<pre><code class="language-python">for word in code:
+    print f&quot;{word} is formatted&quot;
+</code></pre>
+<h2 id="short-section">Section heading</h2>
+<p>Figure reference: <a class="figref" href="#short-figure">Figure&nbsp;1.1</a></p>
+<figure id="short-figure">
+  <img src="figures/short.svg" alt="Short caption" />
+  <figcaption>Figure&nbsp;1.1: Long version of short caption.</figcaption>
+</figure>
+<p>Table reference: <a class="tblref" href="#short-table">Table&nbsp;1.1</a></p>
+<table id="short-table">
+<thead>
+<tr>
+<th>Meaning</th>
+<th>Selector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Element with tag <code>&quot;elt&quot;</code></td>
+<td><code>elt</code></td>
+</tr>
+<tr>
+<td>Element with <code>class=&quot;cls&quot;</code></td>
+<td><code>.cls</code></td>
+</tr>
+<tr>
+<td>Element with <code>id=&quot;ident&quot;</code></td>
+<td><code>#ident</code></td>
+</tr>
+<tr>
+<td><code>child</code> element inside a <code>parent</code> element</td>
+<td><code>parent child</code></td>
+</tr>
+</tbody>
+<caption>Table&nbsp;1.1: Short table caption.</caption>
+</table>
+
+      <footer>
+	<hr/>
+	Copyright © 2022
+	Greg Wilson
+	&middot;
+	Powered by <a href="https://github.com/gvwilson/mccole">McCole</a>
+	&middot;
+	Last built 2022-01-23
+      </footer>
+    </main>
+  </body>
+</html>

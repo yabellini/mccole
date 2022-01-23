@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>McCole</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link href="/static/mccole.css" rel="stylesheet" type="text/css">
+    <script>MathJax = {tex: {inlineMath: [['\\(', '\\)']]}, svg: {fontCache: 'global'}};</script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script type="text/javascript" src="../static/paged.polyfill.js"></script>
+    <script type="text/css" rel="stylesheet" src="../static/paged.interface.css"></script>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+      
+<h1 id="pattern-matching">Pattern Matching</h1>
+<ol class="toc">
+<li><a href="#pattern-matching-selectors">How can we match query selectors?</a></li>
+<li><a href="#pattern-matching-re">How can we implement a simple regular expression matcher?</a></li>
+<li><a href="#pattern-matching-extensible">How can we implement an extensible matcher?</a></li>
+</ol>
+<p>We have been globbing to match filenames against patterns since < />.
+This lesson will explore how that works
+by building a simple version of the <span g="regular_expression" i="regular expression">regular expressions</span>
+used to match text in everything from editor and shell commands to web scrapers.
+Our approach is inspired by <span i="Kernighan, Brian"><a href="https://en.wikipedia.org/wiki/Brian_Kernighan">Brian Kernighan's</a></span> entry
+in [<a href="../bibliography/#Oram2007">Oram2007</a>]</p>
+<p>Regular expressions have inspired pattern matching for many other kinds of data,
+such as <span g="query_selector" i="query selector (for HTML)">query selectors</span> for HTML.
+They are easier to understand and implement than patterns for matching text,
+so we will start by looking at them.</p>
+<h2 id="pattern-matching-selectors">How can we match query selectors?</h2>
+<p>Programs stores HTML pages in memory using a <span g="dom" i="DOM; Document Object Model">document object model</span> or DOM.
+Each element in the page,
+such as a heading and or paragraph,
+is a <span g="node">nodes</span>;
+the <span g="child_tree">children</span> of a node are the elements it contains
+(< />).</p>
+<figure id="pattern-matching-dom-tree">
+  <img src="figures/dom-tree.svg" alt="The Document Object Model" />
+  <figcaption>Figure&nbsp;4.1: Representing an HTML document as a tree.</figcaption>
+</figure>
+<p>The first step is to define the patterns we want to support
+(< />).</p>
+<table id="pattern-matching-supported">
+<thead>
+<tr>
+<th>Meaning</th>
+<th>Selector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Element with tag <code>&quot;elt&quot;</code></td>
+<td><code>elt</code></td>
+</tr>
+<tr>
+<td>Element with <code>class=&quot;cls&quot;</code></td>
+<td><code>.cls</code></td>
+</tr>
+<tr>
+<td>Element with <code>id=&quot;ident&quot;</code></td>
+<td><code>#ident</code></td>
+</tr>
+<tr>
+<td><code>child</code> element inside a <code>parent</code> element</td>
+<td><code>parent child</code></td>
+</tr>
+</tbody>
+<caption>Table&nbsp;4.1: Supported patterns.</caption>
+</table>
+<p>According to this grammar,
+<code>blockquote#important p.highlight</code> is a highlighted paragraph inside the blockquote whose ID is <code>&quot;important&quot;</code>.
+To find elements in a page that match it,
+our <code>select</code> function breaks the query into pieces
+and uses <code>firstMatch</code> to search recursively down the document tree
+until all the selectors in the query string have matched or no matches have been found
+(< />).</p>
+<figure id="pattern-matching-query-selectors">
+  <img src="figures/query-selectors.svg" alt="Matching query selectors" />
+  <figcaption>Figure&nbsp;4.2: Matching a simple set of query selectors.</figcaption>
+</figure>
+<p>{% include erase file='simple-selectors.js' key='skip' %}</p>
+<p>The <code>firstMatch</code> function handles three cases:</p>
+<ol>
+<li>
+<p>This node isn't an element, i.e., it is plain text or a comment.
+This can't match a selector, and these nodes don't have children,
+so the function returns <code>null</code> to indicate that matching has failed.</p>
+</li>
+<li>
+<p>This node matches the current selector.
+If there aren't any selectors left then the whole pattern must have matched,
+so the function returns this node as the match.
+If there <em>are</em> more selectors,
+we try to match those that remain against this node's children
+and return whatever result that produces.</p>
+</li>
+<li>
+<p>This node <em>doesn't</em> match the current selector,
+so we search the children one by one to see if there is a match further down.</p>
+</li>
+</ol>
+<p>This algorithm is called <span g="depth_first" i="depth-first search; search!depth-first">depth-first search</span>:
+it explores one possible match to the end before considering any others.
+<code>firstMatch</code> relies on a helper function called <code>firstChildMatch</code>,
+which finds the first child of a node to match a set of selectors:</p>
+<p>{% include keep file='simple-selectors.js' key='firstChild' %}</p>
+<p>{: .continue}
+and on the function <code>matchHere</code> which compares a node against a selector:</p>
+<p>{% include keep file='simple-selectors.js' key='matchHere' %}</p>
+<p>This version of <code>matchHere</code> is simple but inefficient,
+since it breaks the selector into parts each time it is called
+rather than doing that once and re-using the results.
+We will build a more efficient version in the exercises,
+but let's try out the one we have.
+Our test cases are all in one piece of HTML:</p>
+<p>{% include keep file='simple-selectors-test.js' key='tests' %}</p>
+<p>The program contains a table of queries and the expected matches.
+The function <code>main</code> loops over it to report whether each test passes or fails:</p>
+<p>{% include keep file='simple-selectors-test.js' key='main' %}</p>
+<p>{: .continue}
+<code>main</code> uses a helper function called <code>getText</code> to extract text from a node
+or return an error message if something has gone wrong:</p>
+<p>{% include keep file='simple-selectors-test.js' key='getText' %}</p>
+<p>When we run our program it produces this result:</p>
+<p>{% include file file='simple-selectors-test.out' %}</p>
+<p>We will rewrite these tests using <span i="Mocha"><a href="https://mochajs.org/">Mocha</a></span> in the exercises.</p>
+< />
+<h3>Test then build</h3>
+<p>We actually wrote our test cases <em>before</em> implementing the code to match query selectors
+in order to give ourselves a goal to work toward.
+Doing this is called <span g="tdd" i="test-driven development; TDD">test-driven development</span>, or TDD;
+while research doesn't support the claim that
+it makes programmers more productive [<a href="../bibliography/#Fucci2016">Fucci2016</a>, <a href="../bibliography/#Fucci2017">Fucci2017</a>]
+we find it helps prevent <span g="scope_creep" i="scope creep!when writing lessons">scope creep</span> when writing lessons.</p>
+< />
+<h2 id="pattern-matching-re">How can we implement a simple regular expression matcher?</h2>
+<p>Matching regular expressions against text relies on the same recursive strategy
+as matching query selectors against nodes in an HTML page.
+If the first element of the pattern matches where we are,
+we see if the rest of the pattern matches what's left;
+otherwise,
+we see if the the pattern will match further along.
+Our matcher will initially handle just the five cases shown in
+< />.</p>
+<table id="pattern-matching-cases">
+<thead>
+<tr>
+<th>Meaning</th>
+<th>Character</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Any literal character <em>c</em></td>
+<td><em>c</em></td>
+</tr>
+<tr>
+<td>Any single character</td>
+<td>.</td>
+</tr>
+<tr>
+<td>Beginning of input</td>
+<td>^</td>
+</tr>
+<tr>
+<td>End of input</td>
+<td>$</td>
+</tr>
+<tr>
+<td>Zero or more of the previous character</td>
+<td>*</td>
+</tr>
+</tbody>
+<caption>Table&nbsp;4.2: Pattern matching cases.</caption>
+</table>
+<p>{: .continue}
+These five cases are a small subset of what JavaScript provides,
+but as <span i="Kernighan, Brian">Kernighan</span> wrote,
+&quot;This is quite a useful class;
+in my own experience of using regular expressions on a day-to-day basis,
+it easily accounts for 95 percent of all instances.&quot;</p>
+<p>The top-level function that users call
+handles the special case of <code>^</code> at the start of a pattern
+matching the start of the target string being searched.
+It then tries the pattern against each successive substring of the target string
+until it finds a match or runs out of characters:</p>
+<p>{% include keep file='simple-regex.js' key='match' %}</p>
+<p><code>matchHere</code> does the matching and recursing:</p>
+<p>{% include keep file='simple-regex.js' key='matchHere' %}</p>
+<p>Once again,
+we use a table of test cases and expected results to test it:</p>
+<p>{% include keep file='simple-regex.js' key='tests' %}
+{% include file file='simple-regex.out' %}</p>
+<p>This program seems to work,
+but it actually contains an error that we will correct in the exercises.
+(Think about what happens if we match the pattern <code>/a*ab/</code> against the string <code>'aab'</code>.)
+Our design is also hard to extend:
+handling parentheses in patterns like <code>/a(bc)*d/</code> will require major changes.
+We need to explore a different approach.</p>
+<h2 id="pattern-matching-extensible">How can we implement an extensible matcher?</h2>
+<p>Instead of packing all of our code into one long function,
+we can implement each kind of match as separate function.
+Doing this makes it much easier to add more matchers:
+we just define a function that we can mix in with calls to the ones we already have.</p>
+<p>Rather than having these functions do the matching immediately,
+though,
+we will have each one return an object that knows how to match itself against some text.
+Doing this allows us to build a complex match once and re-use it many times.
+This is a common pattern in text processing:
+we may want to apply a regular expression to each line in a large set of files,
+so recycling the matchers will make our programs more efficient.</p>
+<p>Each matching object has a method that takes the target string and the index to start matching at as inputs.
+Its output is the index to continue matching at
+or <code>undefined</code> indicating that matching failed.
+We can then combine these objects to match complex patterns
+(< />).</p>
+<figure id="pattern-matching-regex-objects">
+  <img src="figures/regex-objects.svg" alt="Implementing regex with objects" />
+  <figcaption>Figure&nbsp;4.3: Using nested objects to match regular expressions.</figcaption>
+</figure>
+<p>The first step in implementing this is is to write test cases,
+which forces us to define the syntax we are going to support:</p>
+<p>{% include file file='regex-initial/regex-complete.js' %}</p>
+<p>Next,
+we define a <span g="base_class">base class</span> that all matchers will inherit from.
+This class contains the <code>match</code> method that users will call
+so that we can start matching right away
+no matter what kind of matcher we have at the top level of our pattern.</p>
+<p>{% include file file='regex-initial/regex-base.js' %}</p>
+<p>{: .continue}
+The base class also defines a <code>_match</code> method (with a leading underscore)
+that other classes will fill in with actual matching code.
+The base implementation of this method throws an exception
+so that if we forget to provide <code>_match</code> in a <span g="derived_class">derived class</span>
+our code will fail with a meaningful reminder.</p>
+< />
+<h3>One interface to call them all</h3>
+<p>Our design makes use of <span g="polymorphism" i="polymorphism (in software design); software design!polymorphism">polymorphism</span>,
+which literally means &quot;having multiple forms&quot;.
+If a set of objects all have methods that can be called the same way,
+then those objects can be used interchangeably;
+putting it another way,
+a program can use them without knowing exactly what they are.
+Polymorphism reduces the <span g="coupling" i="coupling; software design!coupling">coupling</span> between different parts of our program,
+which in turn makes it easier for those programs to evolve.</p>
+< />
+<p>We can now define empty versions of each matching class that all say &quot;no match here&quot;
+like this one for literal characters:</p>
+<p>{% include file file='regex-initial/regex-lit.js' %}</p>
+<p>{: .continue}
+Our tests now run, but most of them fail:
+&quot;most&quot; because we expect some tests not to match,
+so the test runner reports <code>true</code>.</p>
+<p>{% include file file='regex-initial.out' %}</p>
+<p>{: .continue}
+This output tells us how much work we have left to do:
+when all of these tests pass,
+we're finished.</p>
+<p>Let's implement a literal character string matcher first:</p>
+<p>{% include file file='regex-beginning/regex-lit.js' %}</p>
+<p>Some tests now pass, others still fail as expected:</p>
+<p>{% include file file='regex-beginning.out' %}</p>
+<p>We will tackle <code>RegexSeq</code> next so that we can combine other matchers.
+This is why we have tests for <code>Seq(Lit('a'), Lit('b'))</code> and <code>Lit('ab')</code>:
+all children have to match in order without gaps.</p>
+<p>But wait:
+suppose we have the pattern <code>/a*ab/</code>.
+This ought to match the text <code>&quot;ab&quot;</code>, but will it?
+The <code>/*/</code> is <span g="greedy_algorithm" i="greedy algorithm; algorithm!greedy">greedy</span>: it matches as much as it can
+(which is also called <span g="eager_matching" i="eager matching; matching!eager">eager matching</span>).
+As a result,
+<code>/a*/</code> will match the leading <code>&quot;a&quot;</code>, leaving nothing for the literal <code>/a/</code> to match
+(< />).
+Our current implementation doesn't give us a way to try other possible matches when this happens.</p>
+<figure id="pattern-matching-greedy-failure">
+  <img src="figures/greedy-failure.svg" alt="Overly-greedy matching fails" />
+  <figcaption>Figure&nbsp;4.4: Why overly-greedy matching doesn't work.</figcaption>
+</figure>
+<p>Let's re-think our design
+and have each matcher take its own arguments and a <code>rest</code> parameter containing the rest of the matchers
+(< />).
+(We will provide a default of <code>null</code> in the creation function
+so we don't have to type <code>null</code> over and over again.)
+Each matcher will try each of its possibilities and then see if the rest will also match.</p>
+<figure id="pattern-matching-rest">
+  <img src="figures/rest.svg" alt="Matching the rest of the pattern" />
+  <figcaption>Figure&nbsp;4.5: Using "rest" to match the remainder of a pattern.</figcaption>
+</figure>
+<p>This design means we can get rid of <code>RegexSeq</code>,
+but it does make our tests a little harder to read:</p>
+<p>{% include file file='regex-recursive/regex-complete.js' %}</p>
+<p>Here's how this works for matching a literal expression:</p>
+<p>{% include file file='regex-recursive/regex-lit.js' %}</p>
+<p>{: .continue}
+The <code>_match</code> method checks whether all of the pattern matches the target text starting at the current location.
+If so, it checks whether the rest of the overall pattern matches what's left.
+Matching the start <code>/^/</code> and end <code>/$/</code> anchors is just as straightforward:</p>
+<p>{% include file file='regex-recursive/regex-start.js' %}</p>
+<p>{% include file file='regex-recursive/regex-end.js' %}</p>
+<p>Matching either/or is done by trying the first pattern and the rest,
+and if that fails,
+trying the second pattern and the rest:</p>
+<p>{% include file file='regex-recursive/regex-alt.js' %}</p>
+<p>To match a repetition,
+we figure out the maximum number of matches that might be left,
+then count down until something succeeds.
+(We start with the maximum because matching is supposed to be greedy.)
+Each non-empty repetition matches at least one character,
+so the number of remaining characters is the maximum number of matches worth trying.</p>
+<p>{% include file file='regex-recursive/regex-any.js' %}</p>
+<p>With these classes in place,
+our tests all pass:</p>
+<p>{% include file file='regex-recursive.out' %}</p>
+<p>The most important thing about this design is how extensible it is:
+if we want to add other kinds of matching,
+all we have to do is add more classes.
+That extensibility comes from the lack of centralized decision-making,
+which in turn comes from our use of polymorphism
+and the <span g="chain_of_responsibility_pattern" i="Chain of Responsibility pattern; design pattern!Chain of Responsibility">Chain of Responsibility</span> design pattern.
+Each component does its part and asks something else to handle the remaining work;
+so long as each component takes the same inputs,
+we can put them together however we want.</p>
+< />
+<h3>The Open-Closed Principle</h3>
+<p>The <span g="open_closed_principle" i="Open-Closed Principle; software design!Open-Closed Principle">Open-Closed Principle</span> states that
+software should be open for extension but closed for modification,
+i.e., that it should be possible to extend functionality
+without having to rewrite existing code.
+As we said in < />,
+this allows old code to use new code,
+but only if our design permits the kinds of extensions people are going to want to make.
+Since we can't anticipate everything,
+it is normal to have to revise a design the first two or three times we try to extend it.
+As [<a href="../bibliography/#Brand1995">Brand1995</a>]
+the things we make learn how to do things better as we use them.</p>
+< />
+
+      <footer>
+	<hr/>
+	Copyright © 2022
+	Greg Wilson
+	&middot;
+	Powered by <a href="https://github.com/gvwilson/mccole">McCole</a>
+	&middot;
+	Last built 2022-01-23
+      </footer>
+    </main>
+  </body>
+</html>

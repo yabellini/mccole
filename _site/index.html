@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{site.title}</title>
+    <title>McCole</title>
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link href="/static/mccole.css" rel="stylesheet" type="text/css">
-    <script>MathJax = {{tex: {{inlineMath: [['\\(', '\\)']]}}, svg: {{fontCache: 'global'}}}};</script>
+    <script>MathJax = {tex: {inlineMath: [['\\(', '\\)']]}, svg: {fontCache: 'global'}};</script>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <script type="text/javascript" src="./static/paged.polyfill.js"></script>
     <script type="text/css" rel="stylesheet" src="./static/paged.interface.css"></script>
@@ -15,16 +15,23 @@
     <nav>
     </nav>
     <main>
-      <h1>{site.title}</h1>
-      {page.content}
+      <h1>McCole</h1>
+      <ol class="toc">
+<li value="1"><a href="./short/">Short</a></li>
+<li value="2"><a href="./file-backup/">File Backup</a></li>
+<li value="3"><a href="./unit-test/">Unit Testing</a></li>
+<li value="4"><a href="./pattern-matching/">Pattern Matching</a></li>
+<li value="A"><a href="./bibliography/">Bibliography</a></li>
+<li value="B"><a href="./glossary/">Glossary</a></li>
+</ol>
       <footer>
 	<hr/>
-	Copyright © {site.copyrightyear}
-	{site.author}
+	Copyright © 2022
+	Greg Wilson
 	&middot;
-	Powered by <a href="{site.repo}">{site.tool}</a>
+	Powered by <a href="https://github.com/gvwilson/mccole">McCole</a>
 	&middot;
-	Last built {site.builddate}
+	Last built 2022-01-23
       </footer>
     </main>
   </body>

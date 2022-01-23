@@ -28,7 +28,7 @@ def main(args):
     try:
         options = _parse_args(args)
         _setup(options)
-        config = get_config(options.config)
+        config = get_config(options)
         LOGGER.info(f"configuration is {pretty(config)}")
 
         load_bib(config)

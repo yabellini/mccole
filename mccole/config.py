@@ -22,14 +22,20 @@ DEFAULTS = {
 }
 
 
-def get_config(filename):
+def get_config(options):
     """Read configuration file."""
     try:
-        with open(filename, "r") as reader:
+        with open(options.config, "r") as reader:
             config = yaml.safe_load(reader) or {}
             config = DEFAULTS | config
+
+            if "dst" in options:
+                config["dst"] = options.dst
             if "links" in config:
                 config["links"] = _read_links(config["links"])
+            if "src" in options:
+                config["src"] = options.src
+
             return config
 
     except OSError as exc:
